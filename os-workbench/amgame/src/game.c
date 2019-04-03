@@ -400,6 +400,7 @@ int main() {
 
   show_welcome();
   setTimeout(3000);
+  CLEAR_SCREEN(); 
 
   while(1){
     n_clock = uptime();
