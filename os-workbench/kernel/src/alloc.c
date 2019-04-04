@@ -8,6 +8,8 @@
 #include <lock.h>
 #include <klib.h>
 
+#define POOL_SIZE (4*1024)
+
 enum{UNUSED=0,UNALLOCATED=1,ALLOCATED=2};
 
 lock_t memoplk;
@@ -19,7 +21,7 @@ struct mem_block {
   uintptr_t begin, end;
   struct mem_block *prev;
   struct mem_block *next;
-}pool[2048], special[2];
+}pool[POOL_SIZE], special[2];
 typedef struct mem_block mem_block;
 
 //--- data structure ---//
@@ -37,7 +39,7 @@ typedef struct block_list block_list;
  */
 static int get_unused_block(){
   int ret = -1;
-  for(int i = 0; i < 2048; i++)
+  for(int i = 0; i < POOL_SIZE; i++)
     if(pool[i].state == UNUSED){
       ret = i; break;
     }
@@ -51,7 +53,7 @@ static int get_unused_block(){
  */
 static int get_allocated_block(uintptr_t begin){
   int ret = -1;
-  for(int i = 0; i < 2048; i++){
+  for(int i = 0; i < POOL_SIZE; i++){
     if(pool[i].state == ALLOCATED && pool[i].begin == begin){
       ret = i; break;
     }
@@ -66,7 +68,7 @@ static int get_allocated_block(uintptr_t begin){
  * start always help a lot
  */
 static void free_init(uintptr_t begin, uintptr_t end){
-  for(int i = 0; i < 2048; i ++)
+  for(int i = 0; i < POOL_SIZE; i ++)
     pool[i].id = i, pool[i].state = UNUSED;
   // state == UNUSED means the node is totally new
   free.head = &special[0];
@@ -266,7 +268,7 @@ static void free_delete(mem_block *block){
  */
 #define KB *1024
 static mem_block *free_find(size_t size){
-  size_t newsz = 4 KB;
+  size_t newsz = 1 KB;
   while(newsz < size) newsz <<= 1;
   mem_block *block = free.head->next;
   while((block != free.tail) && (block->size < newsz)){

@@ -17,13 +17,17 @@ static void hello() {
 #ifdef DEBUG 
 static void test() {
   hello();
-#define TEST_SIZE 128
+#define TEST_SIZE 800
+#define LITTLE_BLOCK_SIZE 16
+#define LARGE_BLOCK_SIZE 32
 #define FOR(var, start, end) \
   for(int var = start; var < end; i++)
 #define ALLOC(integer) \
   do { \
     FOR(i, 0, TEST_SIZE){ \
-      int tmp = (rand() % 128) * 1024; \
+      int tmp = (rand() % 6 < 5) ? \
+        ((rand() % LITTLE_BLOCK_SIZE) * 1024): \
+        (((rand() % LARGE_BLOCK_SIZE) + LARGE_BLOCK_SIZE) * 1024); \
       if(arr[i] == NULL) { \
         arr[i] = pmm->alloc(tmp); \
         arr[i][0] = i + integer * 1000; \
@@ -66,7 +70,7 @@ static void test() {
 
   extern void extern_free_print();
   int *arr[TEST_SIZE]={};
-  extern_free_print(0);
+  //extern_free_print(0);
   ALLOC(0);
   //SHOW();
   //extern_free_print();
@@ -75,10 +79,10 @@ static void test() {
   //extern_free_print();
   ALLOC(1);
   //SHOW();
-  extern_free_print(1);
+  //extern_free_print(1);
   FREE();
   //SHOW();
-  extern_free_print(2);
+  //extern_free_print(2);
   ALLOC(2);
   //SHOW();
   //extern_free_print();

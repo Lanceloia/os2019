@@ -10,7 +10,8 @@ static int atomic_xchg(volatile int *addr, int newval){
 }
 
 void mutex_lock(lock_t *lk){
-  while(atomic_xchg(&lk->locked, 1)) ;
+  while(atomic_xchg(&lk->locked, 1))
+    ;
 }
 
 void mutex_unlock(lock_t *lk){
