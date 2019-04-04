@@ -127,7 +127,7 @@ static void free_print(){
 
 void extern_free_print(int flag){
   mutex_lock(&memoplk);
-  printf("CPU: %d, Flag: %d\n", _cpu(), flag);
+  printf("[CPU: %d Flag: %d]\n", _cpu(), flag);
   free_print();
   mutex_unlock(&memoplk);
 }
