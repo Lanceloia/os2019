@@ -179,7 +179,7 @@ static void free_merge(mem_block *former, mem_block *latter){
   assert(latter != free.tail);
   assert(former->state == UNALLOCATED);
   assert(latter->state == UNALLOCATED);
-  
+
   // delete latter
   former->next = latter->next;
   latter->next->prev = former;
@@ -226,7 +226,7 @@ static void free_insert(mem_block *block){
     latter = latter->next;
   }
   assert(free_cmp(former, block) && free_cmp(block, latter));
-  
+
   // link
   block->prev = former, block->next = latter;
   former->next = block, latter->prev = block;
@@ -286,10 +286,10 @@ static uintptr_t pm_start, pm_end;
 
 static void pmm_init() {
   mutex_lock(&memoplk);
-  
+
   pm_start = (uintptr_t)_heap.start;
   pm_end   = (uintptr_t)_heap.end;
-    
+
   free_init(pm_start, pm_end);
   mutex_unlock(&memoplk);
 }
@@ -297,22 +297,22 @@ static void pmm_init() {
 
 static void *kalloc(size_t size) {
   mutex_lock(&memoplk);
-  
+
   mem_block *block = free_find(size);
   assert(block != NULL);
   free_check();
   assert(block->begin != 0);
-  
+
   mutex_unlock(&memoplk);
   return (void *)block->begin;
 }
 
 static void kfree(void *ptr) {
   mutex_lock(&memoplk);
-  
+
   int idx = get_allocated_block((uintptr_t)ptr);
   free_insert(&pool[idx]);
-  
+
   mutex_unlock(&memoplk);
 }
 

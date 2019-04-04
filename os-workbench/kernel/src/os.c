@@ -43,11 +43,11 @@ static void test() {
     printf("\nCompare: \n"); \
     FOR(i, 0, TEST_SIZE){ \
       if(arr[i]) \
-       printf("arr[%3d][0]=%4d \t", i, arr[i][0]); \
+      printf("arr[%3d][0]=%4d \t", i, arr[i][0]); \
       else \
-       printf("arr[%3d][0]=miss \t", i); \
+      printf("arr[%3d][0]=miss \t", i); \
       if(i % 3 == 2) \
-        printf("\n"); \
+      printf("\n"); \
     } \
     printf("\n"); \
   }while(0)
@@ -93,33 +93,8 @@ static void test() {
 #undef TEST_SIZE
 }
 
-/*
-static void test2(){
-  hello();
-  // Thanks for YZY
-  extern void extern_free_print();
-  void *space[100];
-  int i;
-  extern_free_print(0);
-  for(i = 0; i < 100; ++i){
-    space[i] = pmm->alloc(rand() % ((1<<10) - 1));
-  }
-  extern_free_print(1);
-  for(i = 0; i < 1000; ++i){
-    int temp = rand() % 10;
-    pmm->free(space[temp]);
-    space[temp] = pmm->alloc(rand() % ((1<<10) - 1));
-  }
-  extern_free_print(2);
-  for(i = 0; i < 100; ++i){
-    pmm->free(space[i]);
-  }
-  extern_free_print(3);
-}
-*/
-
 static void os_run() {
-  test(); // hello();
+  hello(); // test();
   _intr_write(1);
   while (1) {
     _yield();
@@ -135,7 +110,7 @@ static void os_on_irq(int seq, int event, handler_t handler) {
 
 MODULE_DEF(os) {
   .init   = os_init,
-  .run    = os_run,
-  .trap   = os_trap,
-  .on_irq = os_on_irq,
+    .run    = os_run,
+    .trap   = os_trap,
+    .on_irq = os_on_irq,
 };
