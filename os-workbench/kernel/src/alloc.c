@@ -88,7 +88,7 @@ static void free_init(uintptr_t begin, uintptr_t end){
 static void free_print(){
   mem_block *block = free.head->next;
   printf("---------------------------------------------\n");
-  printf("  id   state     size      begin      next_id\n");
+  printf("  id   state      size      begin     next_id\n");
   printf("---------------------------------------------\n");
   while(block != free.tail){
     printf("%4d   %2d   %8dKB  %10x    %4d\n",
