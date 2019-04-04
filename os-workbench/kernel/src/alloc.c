@@ -31,27 +31,14 @@ struct block_list {
 typedef struct block_list block_list;
 
 //--- pool helper functions ---//
-/* function pool_print
- * now no use
- */
-/*
-static void pool_print(){
-  for(int i = 0; i < 2048; i++)
-    if(pool[i].size != 0 || pool[i].begin != 0)
-    printf("id:%d, sta:%d, size:%8dKB\tbegin:%d\tend:%d\n",
-        pool[i].id, pool[i].state, pool[i].size / 1024,
-        pool[i].begin, pool[i].end);
-}
-*/
-
 /* function get_unused_block()
- * search for an unuesd block
+ * search for an unuesd block, for wich there is
+ * state == UNUSED
  */
 static int get_unused_block(){
   int ret = -1;
   for(int i = 0; i < 2048; i++)
     if(pool[i].state == UNUSED){
-      // not in the <list>
       ret = i; break;
     }
   assert(ret >= 0);
@@ -59,8 +46,8 @@ static int get_unused_block(){
 }
 
 /* function get_allocated_block()
- * search for the used block, for which there
- * is block->begin == begin
+ * search for the used block, for which there is
+ * state == ALLOCATED and block->begin == begin
  */
 static int get_allocated_block(uintptr_t begin){
   int ret = -1;
@@ -68,23 +55,15 @@ static int get_allocated_block(uintptr_t begin){
     if(pool[i].state == ALLOCATED && pool[i].begin == begin){
       ret = i; break;
     }
-    if(pool[i].begin){
-      //printf("pool[%d].begin == %d\n", i, pool[i].begin);
-    }
   }
-  /*
-  if(ret < 0){
-    printf("want to return: %d\n", begin);
-    pool_print();
-  }
-  */
   assert(ret >= 0);
   return ret;
 }
 
 //--- free member functions ---//
-/* function free_init()
- * initial the <list> free
+/* function free_init(): interface
+ * initial the <list> free, keep a well-order when
+ * start always help a lot
  */
 static void free_init(uintptr_t begin, uintptr_t end){
   for(int i = 0; i < 2048; i ++)
@@ -103,7 +82,8 @@ static void free_init(uintptr_t begin, uintptr_t end){
 
 /* function free_print()
  * print the <list> free, show each item's [id], [state],
- * [size], [begin], [next_id]
+ * [size], [begin], [next_id], notice that all the [state]
+ * shouble [1]UNALLOCATED
  */
 static void free_print(){
   mem_block *block = free.head->next;
@@ -119,7 +99,7 @@ static void free_print(){
   printf("---------------------------------------------\n\n");
 }
 
-/* function extern_free_print()
+/* function extern_free_print(): interface
  * an extern interface of free_print()
  * print the current [cpu] and flag to make
  * checking log eaiser 
