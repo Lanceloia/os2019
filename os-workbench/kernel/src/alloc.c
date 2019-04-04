@@ -91,7 +91,7 @@ static void free_print(){
   printf("  id   state     size      begin      next_id\n");
   printf("---------------------------------------------\n");
   while(block != free.tail){
-    printf("%4d   %d  %8dKB  %10x    %4d\n",
+    printf("%4d   %2d   %8dKB  %10x    %4d\n",
         block->id, block->state, block->size / 1024,
         block->begin, block->next->id);
     block = block->next;
