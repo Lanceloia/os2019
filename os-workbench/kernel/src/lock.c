@@ -19,7 +19,7 @@ int atomic_xchg(int *locked, int num){
 void spin_lock(spinlock_t *lk){
   lock();
   while(atomic_xchg(&lk->locked, 1))
-     ;//_yield();//printf("death lock  ");
+     _yield();//printf("death lock  ");
   unlock();
 }
 
