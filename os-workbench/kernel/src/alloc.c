@@ -130,18 +130,19 @@ void extern_free_print(int index){
 
 /* function free_check()
  * check the <list> free, if it failed, show the log
+ * checkpoint 1: block->next->prev == block
+ * checkpoint 2: block->prev->next == block
+ * checkpoint 3: free.list_size == free.size()
  */
 static void free_check(){
-  int flag = 1;
   int cnt = 0;
   mem_block *block = free.head->next;
   while(block != free.tail){
     cnt ++;
-    flag &= (block->next->prev == block);
-    flag &= (block->prev->next == block);
+    assert(block->next->prev == block);
+    assert(block->prev->next == block);
     block = block->next;
   }
-  assert(flag);
   assert(cnt == free.list_size);
 }
 
@@ -239,13 +240,9 @@ static void free_insert(mem_block *block){
   mem_block *former = free.head;
   mem_block *latter = former->next;
   while(!(free_cmp(former, block) && free_cmp(block, latter))){
-    if(latter == free.tail){
-      assert(0);
-    }
-    else{
-      former = former->next;
-      latter = latter->next;
-    }
+    assert(latter != free.tail)
+    former = former->next;
+    latter = latter->next;
   }
   assert(free_cmp(former, block) && free_cmp(block, latter));
   
@@ -295,13 +292,6 @@ static mem_block *free_find(size_t size){
     assert(block->state == UNALLOCATED);
     block = block->next;
   }
-  /*
-  if(block == free.tail){
-    free_print();
-    printf("need: %dKB\n", size/1024);
-    printf("newsz: %dKB\n", newsz/1024);
-  }
-  */
   assert(block != free.tail);
   assert(block->size >= newsz);
   if(block->size >= 2 * newsz)
