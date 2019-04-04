@@ -123,8 +123,10 @@ static void free_print(){
 
 void extern_free_print(int index){
   mutex_lock(&memoplk);
-  printf("cpu: %d, %dth\n", _cpu(), index);
+  printf("CPU: %d, Flag: %d\n", _cpu(), index);
+  printf("---------------------\n");
   free_print();
+  printf("---------------------\n");
   mutex_unlock(&memoplk);
 }
 
@@ -148,8 +150,8 @@ static void free_check(){
 
 /* function free_cut()
  * cut block into 2 parts, the former should larger
- * than size, set the new part into allocated, mean
- * the node is belong to <list> free now.
+ * than size, set the new part into unallocated, mean
+ * the new part is belong to <list> free now.
  */
 static void free_cut(mem_block *block, size_t size){
   int newid = get_unused_block();
@@ -224,9 +226,7 @@ static int free_cmp(mem_block *p, mem_block *q){
     return 1;
   assert(p != free.tail);
   assert(q != free.head);
-  if(p->begin == q->begin){
-    assert(0);
-  }
+  assert(p->begin != q->begin);
   return p->begin < q->begin;
 }
 
@@ -240,7 +240,7 @@ static void free_insert(mem_block *block){
   mem_block *former = free.head;
   mem_block *latter = former->next;
   while(!(free_cmp(former, block) && free_cmp(block, latter))){
-    assert(latter != free.tail)
+    assert(latter != free.tail);
     former = former->next;
     latter = latter->next;
   }
