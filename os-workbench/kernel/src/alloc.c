@@ -10,7 +10,7 @@
 
 enum{UNUSED=0,UNALLOCATED=1,ALLOCATED=2};
 
-spinlock_t memoplk;
+lock_t memoplk;
 
 //--- data structure ---//
 struct mem_block {
