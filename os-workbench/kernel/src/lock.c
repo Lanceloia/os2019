@@ -10,11 +10,14 @@ void unlock(){
   _intr_write(1);
 }
 
+/*
 int atomic_xchg(int *locked, int num){
   int temp = *locked;
   *locked = num;
   return temp;
 }
+*/
+extern int atomic_xchg(int *locked, int num);
 
 void spin_lock(spinlock_t *lk){
   lock();
