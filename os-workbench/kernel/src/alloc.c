@@ -102,9 +102,9 @@ static void free_init(uintptr_t begin, uintptr_t end){
 }
 
 /* function free_print()
- * print the <list> free, now no use
+ * print the <list> free, show each item's [id], [state],
+ * [size], [begin], [next_id]
  */
-
 static void free_print(){
   mem_block *block = free.head->next;
   printf("---------------------------------------------\n");
@@ -124,7 +124,6 @@ static void free_print(){
  * print the current [cpu] and flag to make
  * checking log eaiser 
  */
-
 void extern_free_print(int flag){
   mutex_lock(&memoplk);
   printf("[CPU: %d Flag: %d]\n", _cpu(), flag);
