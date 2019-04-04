@@ -12,7 +12,6 @@ static void hello() {
   _putc("12345678"[_cpu()]); _putc('\n');
 }
 
-/*
 static void test() {
   hello();
 #define TEST_SIZE 128
@@ -93,8 +92,8 @@ static void test() {
 #undef FOR
 #undef TEST_SIZE
 }
-*/
 
+/*
 static void test2(){
   hello();
   // Thanks for YZY
@@ -117,9 +116,10 @@ static void test2(){
   }
   extern_free_print(3);
 }
+*/
 
 static void os_run() {
-  test2(); // test(); // hello();
+  test(); // hello();
   _intr_write(1);
   while (1) {
     _yield();
