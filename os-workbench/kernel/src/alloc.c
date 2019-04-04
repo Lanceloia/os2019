@@ -318,16 +318,8 @@ static void pmm_init() {
   
   pm_start = (uintptr_t)_heap.start;
   pm_end   = (uintptr_t)_heap.end;
-  
-  memoplk.locked = 0;
     
-  /*
-  printf("pm_start:%d, \t pm_end:%d\n", pm_start, pm_end);
-  */
   free_init(pm_start, pm_end);
-  /*
-  free_print();
-  */
   mutex_unlock(&memoplk);
 }
 
