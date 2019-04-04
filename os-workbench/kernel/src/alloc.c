@@ -114,7 +114,6 @@ static void free_print(){
         block->begin, block->next->id);
     block = block->next;
   }
-  printf("\n");
 }
 
 /* function extern_free_print()
@@ -126,7 +125,7 @@ void extern_free_print(int index){
   printf("CPU: %d, Flag: %d\n", _cpu(), index);
   printf("---------------------\n");
   free_print();
-  printf("---------------------\n");
+  printf("---------------------\n\n");
   mutex_unlock(&memoplk);
 }
 
