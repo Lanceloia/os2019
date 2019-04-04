@@ -1,20 +1,21 @@
 /* lock.h
  * copyright: Lanceloia
- * date: 2019/4/3
+ * date: 2019/4/4
  */
 
-struct spinlock_t{
+struct lock_t{
   int locked;
   int cpu;
 };
-typedef struct spinlock_t spinlock_t;
 
-void lock();
+typedef struct lock_t lock_t;
 
-void unlock();
+static int atomic_xchg(volatile int *addr, int newval);
 
-int atomic_xchg(int *, int);
+static void lock();
 
-void spin_lock();
+static void unlock();
 
-void spin_unlock();
+void mutex_lock(lock_t *lk);
+
+void mutex_unlock(lock_t *lk);
