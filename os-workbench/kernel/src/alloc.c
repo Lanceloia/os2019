@@ -108,9 +108,9 @@ static void free_init(uintptr_t begin, uintptr_t end){
 static void free_print(){
   mem_block *block = free.head->next;
   printf("free_print():\n");
-  printf("  id   state       size      begin      next\n");
+  printf("  id   state       size      begin    next_id\n");
   while(block != free.tail){
-    printf("%4d     %d  %10dKB  %10d  %4d\n",
+    printf("%4d     %d  %10dKB  %10d   %4d\n",
         block->id, block->state, block->size / 1024,
         block->begin, block->next->id);
     block = block->next;
@@ -124,9 +124,9 @@ static void free_print(){
 void extern_free_print(int index){
   mutex_lock(&memoplk);
   printf("CPU: %d, Flag: %d\n", _cpu(), index);
-  printf("---------------------\n");
+  printf("---------------------------------------------\n");
   free_print();
-  printf("---------------------\n\n");
+  printf("---------------------------------------------\n\n");
   mutex_unlock(&memoplk);
 }
 
