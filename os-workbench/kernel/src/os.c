@@ -1,6 +1,8 @@
 #include <common.h>
 #include <klib.h>
 
+#define DEBUG
+
 static void os_init() {
   pmm->init();
 }
