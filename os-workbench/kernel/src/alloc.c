@@ -107,7 +107,6 @@ static void free_init(uintptr_t begin, uintptr_t end){
 
 static void free_print(){
   mem_block *block = free.head->next;
-  printf("free_print():\n");
   printf("---------------------------------------------\n");
   printf("  id   state       size      begin    next_id\n");
   printf("---------------------------------------------\n");
@@ -122,11 +121,13 @@ static void free_print(){
 
 /* function extern_free_print()
  * an extern interface of free_print()
+ * print the current [cpu] and flag to make
+ * checking log eaiser 
  */
 
-void extern_free_print(int index){
+void extern_free_print(int flag){
   mutex_lock(&memoplk);
-  printf("CPU: %d, Flag: %d\n", _cpu(), index);
+  printf("CPU: %d, Flag: %d\n", _cpu(), flag);
   free_print();
   mutex_unlock(&memoplk);
 }
