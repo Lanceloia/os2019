@@ -139,7 +139,7 @@ Repeat_Length:
     /* end switch*/
 
     /* number */
-    num = va_arg(ap,int);
+    num = va_arg(ap, int);
 
     str = number(str, num, base, flags, length);
 
