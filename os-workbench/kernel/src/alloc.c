@@ -298,13 +298,14 @@ static void pmm_init() {
 
 
 static void *kalloc(size_t size) {
-  mutex_lock(&memoplk);
+  if(size == 0)
+    return NULL;
 
+  mutex_lock(&memoplk);
   mem_block *block = free_find(size);
   assert(block != NULL);
   free_check();
   assert(block->begin != 0);
-
   mutex_unlock(&memoplk);
   return (void *)block->begin;
 }

@@ -3,6 +3,9 @@
  * step 2: execve() strace -T
  * step 3: collect running time
  * step 4: analyze running time
+ *
+ * example usage 32: ./sperf-32 /bin/cat sperf.c
+ * example usage 64: ./sperf-64 /bin/cat sperf.c
  */
 
 #include <unistd.h>
@@ -233,9 +236,7 @@ int main(int argc, char *argv[]) {
     char buf[4096];
     while(fgets(buf, 1024, stdin)){
       int len = strlen(buf);
-      if(len < 2)
-        assert(0);
-      if(buf[len - 2] == '>') {
+      if(len > 2 && buf[len - 2] == '>') {
         int name_begin, name_end, time_begin, time_end;
         name_begin = name_end = 0;
         time_begin = time_end = len - 3;
