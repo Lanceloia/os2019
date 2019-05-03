@@ -122,6 +122,11 @@ Repeat_Length:
             *str ++ = ' ';
         continue;
       }
+      case 'c':{
+        char ch = va_arg(ap, long);
+        *str++ = ch;
+        continue;
+      }
       case 'x':{
         base = 16;
         break;
@@ -139,7 +144,7 @@ Repeat_Length:
     /* end switch*/
 
     /* number */
-    num = va_arg(ap, int);
+    num = va_arg(ap, long);
 
     str = number(str, num, base, flags, length);
 
