@@ -224,14 +224,14 @@ int main(int argc, char *argv[]) {
 
     // catch the stderr
     dup2(_files[1], STDERR_FILENO);
-    close(_files[1]);
+    close(_files[0]);
     execve(filename, newargv, newenvp);
     assert(0);
   }
   else {
     // change the stdin
     dup2(_files[0], STDIN_FILENO);
-    close(_files[0]);
+    close(_files[1]);
 
     char buf[4096];
     while(fgets(buf, 1024, stdin)){
