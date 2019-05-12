@@ -33,6 +33,7 @@ static int tty_pop_back(struct tty_queue *q) {
 
 static void tty_upd_scrollup(tty_t *tty) {
    int move_sz = tty->columns * (tty->lines - 1);
+   extern void *memmove(void *dest, void *src, size_t count);
    memmove(tty->buf, tty->buf + tty->columns, move_sz * sizeof(tty->buf[0]));
    memmove(tty->dirty, tty->dirty + tty->columns, move_sz * sizeof(tty->dirty[0]));
    tty->cursor -= tty->columns;

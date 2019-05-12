@@ -1,6 +1,5 @@
 #include<common.h>
 #include<klib.h>
-#include<lock.h>
 
 static int atomic_xchg(volatile int *addr, int newval){
   int result;

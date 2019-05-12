@@ -5,7 +5,6 @@
  */
 
 #include <common.h>
-#include <lock.h>
 #include <klib.h>
 
 #define POOL_SIZE (4*1024)

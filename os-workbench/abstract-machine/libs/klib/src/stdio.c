@@ -185,6 +185,7 @@ int sprintf(char *out, const char *fmt, ...) {
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {
+  assert(0);
   return 0;
 }
 

@@ -5,6 +5,9 @@
 
 static void os_init() {
   pmm->init();
+  kmt->init();
+  _vme_init(pmm->alloc, pmm->free);
+  dev->init();
 }
 
 static void hello() {
@@ -14,6 +17,7 @@ static void hello() {
   _putc("12345678"[_cpu()]); _putc('\n');
 }
 
+/*
 #ifdef DEBUG 
 static void test() {
   hello();
@@ -100,12 +104,15 @@ static void test() {
 #undef TEST_SIZE
 }
 #endif
+*/
 
 static void os_run() {
   hello();
+/*
 #ifdef DEBUG
   test();
 #endif
+*/
   _intr_write(1);
   while (1) {
     _yield();
@@ -117,6 +124,8 @@ static _Context *os_trap(_Event ev, _Context *context) {
 }
 
 static void os_on_irq(int seq, int event, handler_t handler) {
+  // TODO()
+
 }
 
 MODULE_DEF(os) {
