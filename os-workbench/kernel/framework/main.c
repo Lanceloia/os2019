@@ -3,11 +3,17 @@
 #include "../include/common.h"
 
 static void producer(void *arg) {
-  assert(0);
+  while(1) {
+    for(volatile int i = 0; i < 100000; i++);
+    _putc('(');
+  }
 }
 
 static void consumer(void *arg) {
-  assert(0);
+  while(1) {
+    for(volatile int i = 0; i < 100000; i++);
+    _putc(')');
+  }
 }
 
 static void create_threads() {

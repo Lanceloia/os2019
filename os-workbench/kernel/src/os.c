@@ -17,6 +17,82 @@ static void hello() {
   _putc("12345678"[_cpu()]); _putc('\n');
 }
 
+static void os_run() {
+  hello();
+/*
+#ifdef DEBUG
+  void test();
+  test();
+#endif
+*/
+  if(_cpu() != 0)
+    while(1);
+  _intr_write(1);
+  while (1) {
+    _yield();
+  }
+}
+
+struct item {
+  int seq;
+  int event;
+  handler_t handler;
+};
+
+#define MAX_HANDLER 128
+
+struct {
+ int size;
+ struct item items[MAX_HANDLER];
+}ITEM;
+
+void ITEM_bubble_sort() {
+  for (int i = 0; i < ITEM.size; i++)
+    for (int j = i + 1; j < ITEM.size; j++){
+      if (ITEM.items[i].seq > ITEM.items[j].seq) {
+        int tmp_seq = ITEM.items[i].seq;
+        ITEM.items[i].seq = ITEM.items[j].seq, ITEM.items[j].seq = tmp_seq;
+        int tmp_event = ITEM.items[i].event;
+        ITEM.items[i].event = ITEM.items[j].event, ITEM.items[j].event = tmp_event;
+        handler_t tmp_handler = ITEM.items[i].handler;
+        ITEM.items[i].handler = ITEM.items[j].handler, ITEM.items[j].handler = tmp_handler;
+      }
+    }
+}
+
+static _Context *os_trap(_Event ev, _Context *context) {
+  // TRACE_ENTRY;
+  _Context *ret = NULL;
+  for (int i = 0; i < ITEM.size; i++) {
+    if (ITEM.items[i].event == _EVENT_NULL || ITEM.items[i].event == ev.event) {
+      _Context *next = ITEM.items[i].handler(ev, context);
+      if (next) ret = next;
+    }
+  }
+  return ret;
+}
+
+static void os_on_irq(int seq, int event, handler_t handler) {
+  ITEM.items[ITEM.size].seq = seq;
+  ITEM.items[ITEM.size].event = event;
+  ITEM.items[ITEM.size].handler = handler;
+  ITEM.size ++;
+  ITEM_bubble_sort();
+  printf("%s: seq:%d, event:%d\n", __func__, seq, event);
+}
+
+MODULE_DEF(os) {
+  .init   = os_init,
+    .run    = os_run,
+    .trap   = os_trap,
+    .on_irq = os_on_irq,
+};
+
+
+
+
+
+
 /*
 #ifdef DEBUG 
 static void test() {
@@ -106,31 +182,3 @@ static void test() {
 #endif
 */
 
-static void os_run() {
-  hello();
-/*
-#ifdef DEBUG
-  test();
-#endif
-*/
-  _intr_write(1);
-  while (1) {
-    _yield();
-  }
-}
-
-static _Context *os_trap(_Event ev, _Context *context) {
-  return context;
-}
-
-static void os_on_irq(int seq, int event, handler_t handler) {
-  // TODO()
-
-}
-
-MODULE_DEF(os) {
-  .init   = os_init,
-    .run    = os_run,
-    .trap   = os_trap,
-    .on_irq = os_on_irq,
-};

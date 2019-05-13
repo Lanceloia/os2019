@@ -12,6 +12,8 @@ static struct input_event event(int ctrl, int alt, int data) {
 }
 
 static void push_event(input_t *in, struct input_event ev) {
+//  TRACE_ENTRY;
+
   kmt->spin_lock(&in->lock);
   in->events[in->rear] = ev;
   in->rear = (in->rear + 1) % NEVENTS;
@@ -21,6 +23,8 @@ static void push_event(input_t *in, struct input_event ev) {
 }
 
 static struct input_event pop_event(input_t *in) {
+//  TRACE_ENTRY;
+
   kmt->sem_wait(&in->event_sem);
   kmt->spin_lock(&in->lock);
   if (in->rear == in->front) { panic("input queue empty"); }
