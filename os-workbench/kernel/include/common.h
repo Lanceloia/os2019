@@ -28,13 +28,13 @@ struct task {
 
 struct spinlock {
   char name[32];
-  int locked;
-  int cpu;
+  volatile int locked;
 };
 
 struct semaphore {
   char name[32];
-  int value;
+  volatile int value;
+  struct spinlock lk;
   struct task *slptsk_head;
 };
 
