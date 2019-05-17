@@ -13,7 +13,7 @@ enum {
   UNUSED=0, UNALLOCATED=1, ALLOCATED=2
 };
 
-intprt_t memoplk;
+intptr_t memoplk;
 
 //--- data structure ---//
 struct mem_block {
