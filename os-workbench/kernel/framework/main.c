@@ -15,9 +15,6 @@ static void producer(void *arg) {
     printf("%d ", cnt);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&full);
-
-    if (tot > 1000)
-      break;
   }
 }
 
@@ -29,8 +26,6 @@ static void consumer(void *arg) {
     printf("%d ", cnt);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&empty);
-    if (tot > 1000)
-      break;
   }
 }
 
