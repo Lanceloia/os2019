@@ -27,15 +27,15 @@ static task_t *current_tasks[MAX_CPU];
  */
 
 static _Context *kmt_context_save(_Event ev, _Context *ctx) {
-  kmt_spin_lock(&tasks_list_mutex);
+  kmt_spin_lock(&current_tasks_mutex);
   if (current)
     current->ctx = *ctx;
-  kmt_spin_unlock(&tasks_list_mutex);
+  kmt_spin_unlock(&current_tasks_mutex);
   return NULL;
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
-  kmt_spin_lock(&tasks_list_mutex);
+  kmt_spin_lock(&current_tasks_mutex);
   current->state = RUNNABLE;
 
   do {
@@ -47,7 +47,7 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
   } while (!(current->state == STARTED || current->state == RUNNABLE));
  
   current->state = RUNNING;
-  kmt_spin_unlock(&tasks_list_mutex);
+  kmt_spin_unlock(&current_tasks_mutex);
   return &current->ctx;
 }
 
