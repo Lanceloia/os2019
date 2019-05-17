@@ -61,6 +61,10 @@ void ITEM_bubble_sort() {
     }
 }
 
+extern spinlock_t current_tasks_mutex;
+void kmt_spin_lock(spinlock_t *);
+void kmt_spin_unlock(spinlock_t *);
+
 static _Context *os_trap(_Event ev, _Context *context) {
   // TRACE_ENTRY;
   kmt_spin_lock(&current_tasks_mutex);
