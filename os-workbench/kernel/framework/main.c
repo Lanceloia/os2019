@@ -8,7 +8,7 @@ int cnt;
 
 static void producer(void *arg) {
   while(1) {
-    for(volatile int i = 0; i < 100000; i++);
+    for(volatile int i = 0; i < 10000; i++);
     kmt->sem_wait(&empty);
     kmt->sem_wait(&mutex);
     cnt ++;
@@ -21,7 +21,7 @@ static void producer(void *arg) {
 
 static void consumer(void *arg) {
   while(1) {
-    for(volatile int i = 0; i < 100000; i++);
+    for(volatile int i = 0; i < 10000; i++);
     kmt->sem_wait(&full);
     kmt->sem_wait(&mutex);
     cnt --;
