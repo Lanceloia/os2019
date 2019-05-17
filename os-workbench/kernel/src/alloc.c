@@ -6,13 +6,14 @@
 
 #include <common.h>
 #include <klib.h>
-#include <kthreads.h>
 
 #define POOL_SIZE (4*1024)
 
 enum{UNUSED=0,UNALLOCATED=1,ALLOCATED=2};
 
 spinlock_t memoplk;
+extern void kmt_spin_lock(spinlock_t *);
+extern void kmt_spin_unlock(spinlock_t *);
 
 //--- data structure ---//
 struct mem_block {
