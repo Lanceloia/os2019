@@ -49,8 +49,8 @@ int holding(spinlock_t *lk) {
  * null()
  */
 
-task_t task_null;
+//task_t task_null;
 
-void null(void *arg) {while(1);}
+//void null(void *arg) {while(1);}
 
 #endif
