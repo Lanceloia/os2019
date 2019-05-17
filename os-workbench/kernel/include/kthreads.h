@@ -22,35 +22,6 @@
  task_t *current_tasks[MAX_CPU];
 #define current (current_tasks[_cpu()])
 
-/* tasks-manage
- * push_back(), remove()
- */
-
-static void tasks_push_back(task_t *x) {
-  x->next = tasks_list_head;
-  tasks_list_head = x;
-}
-
-static void tasks_remove(task_t *x) {
-  assert(tasks_list_head != NULL); 
-  if (tasks_list_head->next == NULL) {
-    assert(tasks_list_head == x);
-    tasks_list_head = NULL;
-  }
-  else {
-    if (tasks_list_head == x)
-      tasks_list_head = tasks_list_head->next;
-    else{
-      task_t *p = tasks_list_head;
-      while(p->next != NULL && p->next != x) {p = p->next;}
-      if(p->next != NULL)
-        p->next = p->next->next;
-      else
-        {printf("WARNING: remove error!\n"); _halt(1);}
-    }
-  }
-}
-
 /* spinlock-manage
  * pushcli(), popcli(), holding()
  */
