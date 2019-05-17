@@ -96,7 +96,7 @@ static void wakeup (sem_t *sem) {
   task->state = RUNNABLE;
   tasks_push_back(task);
   kmt_spin_unlock(&tasks_mutex);
-  assert(tasks_mutex->locked == UNLOCKED);
+  assert(tasks_mutex.locked == UNLOCKED);
 }
 
 static void kmt_sem_wait(sem_t *sem) {
