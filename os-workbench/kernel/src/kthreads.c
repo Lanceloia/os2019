@@ -47,8 +47,8 @@ static void kmt_spin_init(spinlock_t *lk, const char *name) {
 }
 
 static void kmt_spin_lock(spinlock_t *lk) {
-  pushcli();
   if (holding(lk)) {printf("%s, locked\n", lk->name); _halt(1);}
+  pushcli();
   while(_atomic_xchg(&lk->locked, LOCKED));
   lk->cpu = _cpu();
   __sync_synchronize();
@@ -75,14 +75,14 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
 }
 
 static void sleep (sem_t *sem) {
-  kmt_spin_lock(&tasks_list_mutex);
+  kmt_spin_lock(&current_tasks_mutex);
   current->state = YIELD;
+  kmt_spin_lock(&tasks_list_mutex);
   tasks_remove(current);
-
+  kmt_spin_unlock(&tasks_list_mutex);
   current->next = sem->head;
   sem->head = current;
-  kmt_spin_unlock(&tasks_list_mutex);
-  assert(tasks_list_mutex.locked == UNLOCKED);
+  kmt_spin_unlock(&current_tasks_mutex);
   kmt_spin_unlock(&sem->lk);
   _yield();
 }
