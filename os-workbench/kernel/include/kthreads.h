@@ -75,7 +75,7 @@ static void tasks_remove(task_t *x) {
       if(p->next != NULL)
         p->next = p->next->next;
       else
-        printf("WARNING: remove error!\n");
+        {printf("WARNING: remove error!\n"); _halt(1);}
     }
   }
 }
