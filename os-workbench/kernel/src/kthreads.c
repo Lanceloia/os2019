@@ -14,11 +14,10 @@ static _Context *kmt_context_save(_Event ev, _Context *ctx) {
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
-  if(current && current->state == RUNNING)
-    current->state = RUNNABLE;
+  if(current)
+    assert(current->state == YIELD);
 
   do {
-    // for(volatile int i = 0; i < 10000; i ++);
     if (!current || current->next == NULL)
       current = tasks_list_head;
     else
