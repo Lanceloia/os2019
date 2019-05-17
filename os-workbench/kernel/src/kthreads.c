@@ -16,7 +16,7 @@ static _Context *kmt_context_save(_Event ev, _Context *ctx) {
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
   if(current && current->state == RUNNING)
     current->state = RUNNABLE;
-  current = NULL;
+  //current = NULL;
   do {
     if (!current || current->next == NULL)
       current = tasks_list_head;
