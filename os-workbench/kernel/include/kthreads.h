@@ -12,16 +12,15 @@ static void kmt_sem_wait(sem_t *);
 static void kmt_sem_signal(sem_t *);
 
 /* data-structure
- * tasks_list_mutex, current_task
+ * tasks_list_head, current_tasks
  */
 
 static spinlock_t tasks_list_mutex;
-
-static task_t *current_task[MAX_CPU];
-
-#define current (current_task[_cpu()])
-
 static task_t *tasks_list_head = NULL;
+
+static spinlock_t current_tasks_mutex
+static task_t *current_tasks[MAX_CPU];
+#define current (current_tasks[_cpu()])
 
 /* callback-functions
  * context_save(), context_switch()
