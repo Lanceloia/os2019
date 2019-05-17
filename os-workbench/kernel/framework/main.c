@@ -4,16 +4,20 @@
 
 sem_t empty, full, mutex;
 const int maxk = 9;
-int cnt = 0;
+int cnt = 0, tot = 0;
 
 static void producer(void *arg) {
   while(1) {
     kmt->sem_wait(&empty);
     kmt->sem_wait(&mutex);
     cnt ++;
+    tot ++;
     printf("%d ", cnt);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&full);
+
+    if (tot > 1000)
+      break;
   }
 }
 
@@ -25,6 +29,9 @@ static void consumer(void *arg) {
     printf("%d ", cnt);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&empty);
+
+    if (tot > 1000)
+      break;
   }
 }
 
