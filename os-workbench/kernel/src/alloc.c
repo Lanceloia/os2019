@@ -11,7 +11,7 @@
 
 enum{UNUSED=0,UNALLOCATED=1,ALLOCATED=2};
 
-lock_t memoplk;
+spin_lock_t memoplk;
 
 //--- data structure ---//
 struct mem_block {
@@ -106,10 +106,10 @@ static void free_print(){
  * checking log eaiser 
  */
 void extern_free_print(int flag){
-  mutex_lock(&memoplk);
+  kmt_spin_lock(&memoplk);
   printf("[CPU: %d Flag: %d]\n", _cpu(), flag);
   free_print();
-  mutex_unlock(&memoplk);
+  kmt_spin_unlock(&memoplk);
 }
 
 /* function free_check()
@@ -286,13 +286,13 @@ static mem_block *free_find(size_t size){
 static uintptr_t pm_start, pm_end;
 
 static void pmm_init() {
-  mutex_lock(&memoplk);
+  kmt_spin_lock(&memoplk);
 
   pm_start = (uintptr_t)_heap.start;
   pm_end   = (uintptr_t)_heap.end;
 
   free_init(pm_start, pm_end);
-  mutex_unlock(&memoplk);
+  kmt_spin_unlock(&memoplk);
 }
 
 
@@ -300,22 +300,22 @@ static void *kalloc(size_t size) {
   if(size == 0)
     return NULL;
 
-  mutex_lock(&memoplk);
+  kmt_spin_lock(&memoplk);
   mem_block *block = free_find(size);
   assert(block != NULL);
   free_check();
   assert(block->begin != 0);
-  mutex_unlock(&memoplk);
+  kmt_spin_unlock(&memoplk);
   return (void *)block->begin;
 }
 
 static void kfree(void *ptr) {
-  mutex_lock(&memoplk);
+  kmt_spin_lock(&memoplk);
 
   int idx = get_allocated_block((uintptr_t)ptr);
   free_insert(&pool[idx]);
 
-  mutex_unlock(&memoplk);
+  kmt_spin_unlock(&memoplk);
 }
 
 MODULE_DEF(pmm) {
