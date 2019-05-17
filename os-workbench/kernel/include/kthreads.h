@@ -29,15 +29,17 @@ static task_t *tasks_head = NULL;
  */
 
 static _Context *kmt_context_save(_Event ev, _Context *ctx) {
+  kmt_spin_lock(&tasks_mutex);
   kmt_spin_lock(&tasks_mutex2);
   if (current)
     current->ctx = *ctx;
   kmt_spin_unlock(&tasks_mutex2);
-  assert(tasks_mutex2.locked == UNLOCKED);
+  kmt_spin_unlock(&tasks_mutex);
   return NULL;
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
+  kmt_spin_lock(&tasks_mutex);
   kmt_spin_lock(&tasks_mutex2);
   current->state = RUNNABLE;
 
@@ -51,7 +53,8 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
  
   current->state = RUNNING;
   kmt_spin_unlock(&tasks_mutex2);
-  assert(tasks_mutex2.locked == UNLOCKED);
+    assert(tasks_mutex2.locked == UNLOCKED);
+  kmt_spin_unlock(&tasks_mutex);
   return &current->ctx;
 }
 
