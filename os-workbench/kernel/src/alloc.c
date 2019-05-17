@@ -7,13 +7,13 @@
 #include <common.h>
 #include <klib.h>
 
-#define POOL_SIZE (4*1024)
+#define POOL_SIZE 4096
 
 enum {
   UNUSED=0, UNALLOCATED=1, ALLOCATED=2
 };
 
-intptr_t memoplk;
+naivelock_t memoplk;
 
 //--- data structure ---//
 struct mem_block {

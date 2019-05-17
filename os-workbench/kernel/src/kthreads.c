@@ -2,6 +2,8 @@
 #include <klib.h>
 #include <kthreads.h>
 
+#define STACK_SIZE 4096
+
 static _Context *kmt_context_save(_Event ev, _Context *ctx) {
   if (current)
     current->ctx = *ctx;
