@@ -11,7 +11,7 @@
 
 enum{UNUSED=0,UNALLOCATED=1,ALLOCATED=2};
 
-spin_lock_t memoplk;
+spinlock_t memoplk;
 
 //--- data structure ---//
 struct mem_block {
