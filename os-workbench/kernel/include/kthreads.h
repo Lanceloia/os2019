@@ -45,12 +45,4 @@ int holding(spinlock_t *lk) {
   return lk->locked && lk->cpu == _cpu();
 }
 
-/* task-wait
- * wait()
- */
-
-task_t task_wait;
-
-void wait(void *arg) {while(1) _yield();}
-
 #endif
