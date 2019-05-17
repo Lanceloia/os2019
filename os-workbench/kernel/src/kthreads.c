@@ -139,7 +139,12 @@ static void sleep (sem_t *sem) {
 }
 
 static void wakeup (sem_t *sem) {
-  if (sem->head == NULL) {printf("WARNING: wakeup error! sem->value: %d\n", sem->value); _halt(1);}
+  if (sem->head == NULL) {
+    printf("\nWARNING: wakeup error! \
+      sem->name: %s, sem->value: %d\n", 
+      sem->name, sem->value);
+    _halt(1);
+  }
   task_t *task = sem->head;
   sem->head = sem->head->next;
   task->state = RUNNABLE;
@@ -152,7 +157,6 @@ static void wakeup (sem_t *sem) {
 static void kmt_sem_wait(sem_t *sem) {
   kmt_spin_lock(&sem->lk);
   sem->value--;
-  //for(volatile int i = 0; i < 5000; i++);
   if (sem->value < 0)
     sleep(sem);
   else
@@ -162,7 +166,6 @@ static void kmt_sem_wait(sem_t *sem) {
 static void kmt_sem_signal(sem_t *sem) {
   kmt_spin_lock(&sem->lk);
   sem->value++;
-  //for(volatile int i = 0; i < 5000; i++);
   if (sem->value <= 0)
     wakeup(sem);
   else
