@@ -47,20 +47,17 @@ static void kmt_spin_init(spinlock_t *lk, const char *name) {
 }
 
 static void kmt_spin_lock(spinlock_t *lk) {
-  __sync_synchronize();
-  pushcli();
   if (holding(lk)) {printf("%s, locked\n", lk->name); _halt(1);}
+  pushcli();
   while(_atomic_xchg(&lk->locked, LOCKED));
   lk->cpu = _cpu();
   __sync_synchronize();
 }
 
 static void kmt_spin_unlock(spinlock_t *lk) {
-  __sync_synchronize();
   if (!holding(lk)) {printf("%s, unlocked\n", lk->name); _halt(1);}
   lk->cpu = -1;
   _atomic_xchg(&(lk->locked), UNLOCKED);
-  assert(lk->locked == UNLOCKED);
   popcli();
   __sync_synchronize();
 }
