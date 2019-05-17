@@ -36,7 +36,7 @@ struct semaphore {
   char name[32];
   volatile int value;
   struct spinlock lk;
-  struct task *slptsk_head;
+  struct task *head;
 };
 
 // Lanceloia lock_t

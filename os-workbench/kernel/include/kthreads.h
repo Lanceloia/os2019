@@ -45,7 +45,6 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
       current = tasks_head;
     else
       current = current->next;
-    //printf("%d", 1);
   } while (!(current->state == STARTED || current->state == RUNNABLE));
  
   current->state = RUNNING;
@@ -74,8 +73,6 @@ static void tasks_remove(task_t *x) {
     else{
       task_t *p = tasks_head;
       while(p->next != NULL && p->next != x) {p = p->next;}
-      // assert(p->next != NULL);
-      // p->next = p->next->next;
       if(p->next != NULL)
         p->next = p->next->next;
       else
