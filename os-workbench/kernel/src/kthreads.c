@@ -3,10 +3,10 @@
 #include <kthreads.h>
 
 static void kmt_init() {
-  os->on_irq(INT32_MIN, _EVENT_NULL, kmt->context_save);
-  os->on_irq(INT32_MAX, _EVENT_NULL, kmt->context_switch);
-  kmt->spin_init(&tasks_mutex, "tasks-mutex");
-  kmt->create(&task_null, "task-null", null, NULL);
+  os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
+  os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_switch);
+  kmt_spin_init(&tasks_mutex, "tasks-mutex");
+  kmt_create(&task_null, "task-null", null, NULL);
 }
 
 /* tasks
@@ -70,64 +70,64 @@ static void kmt_spin_unlock(spinlock_t *lk) {
 static void kmt_sem_init(sem_t *sem, const char *name, int value) {
   strcpy(sem->name, name);
   sem->value = value;
-  kmt->spin_init(&sem->lk, name);
+  kmt_spin_init(&sem->lk, name);
   sem->slptsk_head = NULL;
   printf("[log] created semaphore [%s]\n", sem->name);
 }
 
 static void sleep (sem_t *sem) {
-  kmt->spin_lock(&tasks_mutex);
+  kmt_spin_lock(&tasks_mutex);
   current->state = YIELD;
   tasks_remove(current);
 
   current->next = sem->slptsk_head;
   sem->slptsk_head = current;
-  kmt->spin_unlock(&tasks_mutex);
-  kmt->spin_unlock(&sem->lk);
+  kmt_spin_unlock(&tasks_mutex);
+  kmt_spin_unlock(&sem->lk);
   _yield();
-  kmt->spin_lock(&sem->lk);
+  kmt_spin_lock(&sem->lk);
 }
 
 static void wakeup (sem_t *sem) {
   // assert(sem->slptsk_head != NULL);
   if (sem->slptsk_head == NULL) {printf("WARNING: wakeup error! sem->value: %d\n", sem->value); return;}
-  kmt->spin_lock(&tasks_mutex);
+  kmt_spin_lock(&tasks_mutex);
   task_t *task = sem->slptsk_head;
   sem->slptsk_head = sem->slptsk_head->next;
   // task->next_slp = NULL;
   task->state = RUNNABLE;
   tasks_push_back(task);
-  kmt->spin_unlock(&tasks_mutex);
+  kmt_spin_unlock(&tasks_mutex);
 }
 
 static void kmt_sem_wait(sem_t *sem) {
-  kmt->spin_lock(&sem->lk);
+  kmt_spin_lock(&sem->lk);
   sem->value--;
   //for(volatile int i = 0; i < 5000; i++);
   if (sem->value < 0)
     sleep(sem);
-  kmt->spin_unlock(&sem->lk);
+  kmt_spin_unlock(&sem->lk);
 }
 
 static void kmt_sem_signal(sem_t *sem) {
-  kmt->spin_lock(&sem->lk);
+  kmt_spin_lock(&sem->lk);
   sem->value++;
   //for(volatile int i = 0; i < 5000; i++);
   if (sem->value <= 0)
     wakeup(sem);
-  kmt->spin_unlock(&sem->lk);
+  kmt_spin_unlock(&sem->lk);
 }
 
 MODULE_DEF(kmt) {
-  .init = kmt->init,
-    .create = kmt->create,
-    .teardown = kmt->teardown,
-    .spin_init = kmt->spin_init,
-    .spin_lock = kmt->spin_lock,
-    .spin_unlock = kmt->spin_unlock,
-    .sem_init = kmt->sem_init,
-    .sem_wait = kmt->sem_wait,
-    .sem_signal = kmt->sem_signal,
+  .init = kmt_init,
+    .create = kmt_create,
+    .teardown = kmt_teardown,
+    .spin_init = kmt_spin_init,
+    .spin_lock = kmt_spin_lock,
+    .spin_unlock = kmt_spin_unlock,
+    .sem_init = kmt_sem_init,
+    .sem_wait = kmt_sem_wait,
+    .sem_signal = kmt_sem_signal,
 };
 
 
