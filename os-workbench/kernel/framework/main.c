@@ -29,7 +29,6 @@ static void consumer(void *arg) {
     printf("%d ", cnt);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&empty);
-
     if (tot > 1000)
       break;
   }
