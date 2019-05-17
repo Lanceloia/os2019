@@ -21,9 +21,9 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   task->ctx = *(_kcontext(task->stk, entry, arg));
   task->state = STARTED;
   
-  kmt_spin_lock(tasks_list_mutex);
+  kmt_spin_lock(&tasks_list_mutex);
   tasks_push_back(task);
-  kmt_spin_unlock(tasks_list_mutex);
+  kmt_spin_unlock(&tasks_list_mutex);
   printf("[task] created [%s]\n", task->name);
   return 0; 
 }
