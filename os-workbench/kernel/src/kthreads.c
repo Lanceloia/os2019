@@ -4,6 +4,9 @@
 
 #define STACK_SIZE 4096
 
+static task_t *tasks_list_head = NULL,*current_tasks[MAX_CPU];
+#define current (current_tasks[_cpu()])
+
 static _Context *kmt_context_save(_Event ev, _Context *ctx) {
   if (current)
     current->ctx = *ctx;
