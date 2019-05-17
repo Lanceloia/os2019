@@ -71,7 +71,7 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
   strcpy(sem->name, name);
   sem->value = value;
   kmt_spin_init(&sem->lk, name);
-  sem->slptsk_head = NULL;
+  sem->head = NULL;
   printf("[log] created semaphore [%s]\n", sem->name);
 }
 
@@ -80,8 +80,8 @@ static void sleep (sem_t *sem) {
   current->state = YIELD;
   tasks_remove(current);
 
-  current->next = sem->slptsk_head;
-  sem->slptsk_head = current;
+  current->next = sem->head;
+  sem->head = current;
   kmt_spin_unlock(&tasks_mutex);
   kmt_spin_unlock(&sem->lk);
   _yield();
@@ -89,12 +89,11 @@ static void sleep (sem_t *sem) {
 }
 
 static void wakeup (sem_t *sem) {
-  // assert(sem->slptsk_head != NULL);
-  if (sem->slptsk_head == NULL) {printf("WARNING: wakeup error! sem->value: %d\n", sem->value); return;}
+  // assert(sem->head != NULL);
+  if (sem->head == NULL) {printf("WARNING: wakeup error! sem->value: %d\n", sem->value); return;}
   kmt_spin_lock(&tasks_mutex);
-  task_t *task = sem->slptsk_head;
-  sem->slptsk_head = sem->slptsk_head->next;
-  // task->next_slp = NULL;
+  task_t *task = sem->head;
+  sem->head = sem->head->next;
   task->state = RUNNABLE;
   tasks_push_back(task);
   kmt_spin_unlock(&tasks_mutex);
