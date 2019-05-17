@@ -9,11 +9,15 @@
 
 #define POOL_SIZE (4*1024)
 
-enum{UNUSED=0,UNALLOCATED=1,ALLOCATED=2};
+enum {
+  UNUSED=0, UNALLOCATED=1, ALLOCATED=2
+};
 
-spinlock_t memoplk = {.name = "", .locked = 0, .cpu = -1};
-extern void kmt_spin_lock(spinlock_t *);
-extern void kmt_spin_unlock(spinlock_t *);
+spinlock_t memoplk = {
+  .name = "memory-operation-lock",
+  .locked = UNLOCKED,
+  .cpu = -1
+};
 
 //--- data structure ---//
 struct mem_block {

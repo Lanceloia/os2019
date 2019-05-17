@@ -9,11 +9,11 @@
 enum {
   NIL = 0, STARTED = 1, RUNNABLE = 2,
   RUNNING = 3, YIELD = 4, KILLED = 5
-}; // state
+};
 
 enum {
   UNLOCKED = 0, LOCKED = 1
-}; // lock
+};
 
 #define STACK_SIZE 4096
 
@@ -32,17 +32,14 @@ struct spinlock {
   int cpu;
 };
 
+void spin_lock(spinlock_t *) {while(_atomic_xchg(&lk->locked, LOCKED));}
+void spin_unlock(spinlock_t *) {_atomic_xchg(&lk->locked, UNLOCKED)}
+
 struct semaphore {
   char name[32];
   volatile int value;
   struct spinlock lk;
   struct task *head;
-};
-
-// Lanceloia lock_t
-struct lock{
-  int locked;
-  int cpu;
 };
 
 #define TRACEME
