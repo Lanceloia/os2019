@@ -33,7 +33,7 @@ struct spinlock {
 };
 
 void spin_lock(spinlock_t *) {while(_atomic_xchg(&lk->locked, LOCKED));}
-void spin_unlock(spinlock_t *) {_atomic_xchg(&lk->locked, UNLOCKED)}
+void spin_unlock(spinlock_t *) {_atomic_xchg(&lk->locked, UNLOCKED);}
 
 struct semaphore {
   char name[32];
