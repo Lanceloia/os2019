@@ -14,4 +14,18 @@ struct {
  struct item items[MAX_HANDLER];
 }ITEM;
 
+static void ITEM_bubble_sort() {
+  for (int i = 0; i < ITEM.size; i++)
+    for (int j = i + 1; j < ITEM.size; j++){
+      if (ITEM.items[i].seq > ITEM.items[j].seq) {
+        int tmp_seq = ITEM.items[i].seq;
+        ITEM.items[i].seq = ITEM.items[j].seq, ITEM.items[j].seq = tmp_seq;
+        int tmp_event = ITEM.items[i].event;
+        ITEM.items[i].event = ITEM.items[j].event, ITEM.items[j].event = tmp_event;
+        handler_t tmp_handler = ITEM.items[i].handler;
+        ITEM.items[i].handler = ITEM.items[j].handler, ITEM.items[j].handler = tmp_handler;
+      }
+    }
+}
+
 #endif
