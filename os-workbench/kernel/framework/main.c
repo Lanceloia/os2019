@@ -23,6 +23,7 @@ static void consumer(void *arg) {
     kmt->sem_wait(&full);
     kmt->sem_wait(&mutex);
     cnt --;
+    printf("%d ", cnt);
     // printf("cpu%d: %d ", _cpu(), cnt);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&empty);
