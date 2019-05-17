@@ -40,10 +40,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
 }
 
 static void os_on_irq(int seq, int event, handler_t handler) {
-  ITEM.items[ITEM.size].seq = seq;
-  ITEM.items[ITEM.size].event = event;
-  ITEM.items[ITEM.size].handler = handler;
-  ITEM.size ++;
+  ITEM_push_back(seq, event, handler);
   ITEM_bubble_sort();
   printf("%s: seq:%d, event:%d\n", __func__, seq, event);
 }
