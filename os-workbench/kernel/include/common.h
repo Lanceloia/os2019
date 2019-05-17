@@ -15,7 +15,7 @@ enum {
   UNLOCKED = 0, LOCKED = 1
 };
 
-const int NONE_CPU = -1;
+static const int NONE_CPU = -1;
 
 typedef intptr_t naivelock_t; 
 #define naivelock_lock(locked) { while(_atomic_xchg((&locked), LOCKED)); }
