@@ -5,7 +5,8 @@
 static void kmt_init() {
   os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_switch);
-  kmt_spin_init(&tasks_list_mutex, "tasks-mutex");
+  kmt_spin_init(&tasks_list_mutex, "tasks-list-mutex");
+  kmt_spin_init(&current_tasks_mutex, "current-tasks-mutex");
   kmt_create(&task_null, "task-null", null, NULL);
 }
 
@@ -19,11 +20,11 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   task->stk.end = task->stk.start + STACK_SIZE;
   task->ctx = *(_kcontext(task->stk, entry, arg));
   task->state = STARTED;
-
+  
+  kmt_spin_lock(tasks_list_mutex);
   tasks_push_back(task);
-  printf("[log] created task [%s], prot [%x]\n",
-      task->name, task->ctx.prot);
-  TRACE_EXIT;
+  kmt_spin_unlock(tasks_list_mutex);
+  printf("[task] created [%s]\n", task->name);
   return 0; 
 }
 
