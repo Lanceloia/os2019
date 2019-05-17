@@ -88,15 +88,14 @@ static void sleep (sem_t *sem) {
 }
 
 static void wakeup (sem_t *sem) {
-  // assert(sem->head != NULL);
   if (sem->head == NULL) {printf("WARNING: wakeup error! sem->value: %d\n", sem->value); _halt(1);}
-  kmt_spin_lock(&tasks_list_mutex);
   task_t *task = sem->head;
   sem->head = sem->head->next;
   task->state = RUNNABLE;
+  kmt_spin_lock(&tasks_list_mutex);
   tasks_push_back(task);
   kmt_spin_unlock(&tasks_list_mutex);
-  assert(tasks_list_mutex.locked == UNLOCKED);
+  kmt_spin_unlock(&sem->lk);
 }
 
 static void kmt_sem_wait(sem_t *sem) {
@@ -115,7 +114,8 @@ static void kmt_sem_signal(sem_t *sem) {
   //for(volatile int i = 0; i < 5000; i++);
   if (sem->value <= 0)
     wakeup(sem);
-  kmt_spin_unlock(&sem->lk);
+  else
+    kmt_spin_unlock(&sem->lk);
 }
 
 MODULE_DEF(kmt) {
