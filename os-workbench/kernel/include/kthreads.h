@@ -18,7 +18,7 @@ static void kmt_sem_signal(sem_t *);
 static spinlock_t tasks_list_mutex;
 static task_t *tasks_list_head = NULL;
 
-static spinlock_t current_tasks_mutex
+static spinlock_t current_tasks_mutex;
 static task_t *current_tasks[MAX_CPU];
 #define current (current_tasks[_cpu()])
 
