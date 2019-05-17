@@ -9,7 +9,8 @@ static _Context *kmt_context_save(_Event ev, _Context *ctx) {
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
-  current->state = RUNNABLE;
+  if(current == RUNNING)
+    current->state = RUNNABLE;
 
   do {
     // for(volatile int i = 0; i < 10000; i ++);
