@@ -62,6 +62,7 @@ void ITEM_bubble_sort() {
 
 static _Context *os_trap(_Event ev, _Context *context) {
   // TRACE_ENTRY;
+  kmt_spin_lock(&current_tasks_mutex);
   _Context *ret = NULL;
   for (int i = 0; i < ITEM.size; i++) {
     if (ITEM.items[i].event == _EVENT_NULL || ITEM.items[i].event == ev.event) {
@@ -69,6 +70,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
       if (next) ret = next;
     }
   }
+  kmt_spin_unlock(&current_tasks_mutex);
   return ret;
 }
 
