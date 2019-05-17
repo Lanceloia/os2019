@@ -1,15 +1,15 @@
 #ifndef __KTHREADS_H__
 #define __KTHREADS_H__
 
- void kmt_init();
- int kmt_create(task_t *, const char *, void (*)(void *), void *);
- void kmt_teardown(task_t *);
- void kmt_spin_init(spinlock_t *, const char *);
- void kmt_spin_lock(spinlock_t *);
- void kmt_spin_unlock(spinlock_t *);
- void kmt_sem_init(sem_t *, const char *, int);
- void kmt_sem_wait(sem_t *);
- void kmt_sem_signal(sem_t *);
+ static void kmt_init();
+ static int kmt_create(task_t *, const char *, void (*)(void *), void *);
+ static void kmt_teardown(task_t *);
+ static void kmt_spin_init(spinlock_t *, const char *);
+ static void kmt_spin_lock(spinlock_t *);
+ static void kmt_spin_unlock(spinlock_t *);
+ static void kmt_sem_init(sem_t *, const char *, int);
+ static void kmt_sem_wait(sem_t *);
+ static void kmt_sem_signal(sem_t *);
 
 /* data-structure
  * tasks_list_head, current_tasks

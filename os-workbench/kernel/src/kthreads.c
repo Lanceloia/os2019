@@ -54,7 +54,7 @@ static void tasks_remove(task_t *x) {
   }
 }
 
-void kmt_init() {
+static void kmt_init() {
   os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_switch);
   kmt_spin_init(&tasks_list_mutex, "tasks-list-mutex");
@@ -65,7 +65,7 @@ void kmt_init() {
  * create(), teardown()
  */
 
-int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
+static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
   strcpy(task->name, name);
   task->stk.start = pmm->alloc(STACK_SIZE);
   task->stk.end = task->stk.start + STACK_SIZE;
@@ -79,7 +79,7 @@ int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *a
   return 0; 
 }
 
-void kmt_teardown(task_t *task) {
+static void kmt_teardown(task_t *task) {
   TRACE_ENTRY;
   assert(0);
   tasks_remove(current);
@@ -90,14 +90,14 @@ void kmt_teardown(task_t *task) {
  * spin_init(), spin_lock(), spin_unlock()
  */
 
-void kmt_spin_init(spinlock_t *lk, const char *name) {
+static void kmt_spin_init(spinlock_t *lk, const char *name) {
   strcpy(lk->name, name);
   lk->locked = UNLOCKED;
   lk->cpu = -1;
   printf("[log] created spinlock [%s]\n", lk->name);
 }
 
-void kmt_spin_lock(spinlock_t *lk) {
+static void kmt_spin_lock(spinlock_t *lk) {
   if (holding(lk)) {printf("%s, locked\n", lk->name); _halt(1);}
   pushcli();
   while(_atomic_xchg(&lk->locked, LOCKED));
@@ -105,7 +105,7 @@ void kmt_spin_lock(spinlock_t *lk) {
   __sync_synchronize();
 }
 
-void kmt_spin_unlock(spinlock_t *lk) {
+static void kmt_spin_unlock(spinlock_t *lk) {
   if (!holding(lk)) {printf("%s, unlocked\n", lk->name); _halt(1);}
   lk->cpu = -1;
   _atomic_xchg(&(lk->locked), UNLOCKED);
@@ -117,7 +117,7 @@ void kmt_spin_unlock(spinlock_t *lk) {
  * sem_init(), sem_wait(), sem_signal()
  */
 
-void kmt_sem_init(sem_t *sem, const char *name, int value) {
+static void kmt_sem_init(sem_t *sem, const char *name, int value) {
   strcpy(sem->name, name);
   sem->value = value;
   kmt_spin_init(&sem->lk, name);
@@ -125,7 +125,7 @@ void kmt_sem_init(sem_t *sem, const char *name, int value) {
   printf("[log] created semaphore [%s]\n", sem->name);
 }
 
-void sleep (sem_t *sem) {
+static void sleep (sem_t *sem) {
   kmt_spin_lock(&current_tasks_mutex);
   current->state = YIELD;
   kmt_spin_lock(&tasks_list_mutex);
@@ -138,7 +138,7 @@ void sleep (sem_t *sem) {
   _yield();
 }
 
-void wakeup (sem_t *sem) {
+static void wakeup (sem_t *sem) {
   if (sem->head == NULL) {printf("WARNING: wakeup error! sem->value: %d\n", sem->value); _halt(1);}
   task_t *task = sem->head;
   sem->head = sem->head->next;
@@ -149,7 +149,7 @@ void wakeup (sem_t *sem) {
   kmt_spin_unlock(&sem->lk);
 }
 
-void kmt_sem_wait(sem_t *sem) {
+static void kmt_sem_wait(sem_t *sem) {
   kmt_spin_lock(&sem->lk);
   sem->value--;
   //for(volatile int i = 0; i < 5000; i++);
@@ -159,7 +159,7 @@ void kmt_sem_wait(sem_t *sem) {
     kmt_spin_unlock(&sem->lk);
 }
 
-void kmt_sem_signal(sem_t *sem) {
+static void kmt_sem_signal(sem_t *sem) {
   kmt_spin_lock(&sem->lk);
   sem->value++;
   //for(volatile int i = 0; i < 5000; i++);
