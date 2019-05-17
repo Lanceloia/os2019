@@ -29,7 +29,7 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
   return &current->ctx;
 }
 
-static void tasks_push_back(task_t *x) {
+static void tasks_insert(task_t *x) {
   x->next = tasks_list_head;
   tasks_list_head = x;
 }
@@ -37,7 +37,7 @@ static void tasks_push_back(task_t *x) {
 static void tasks_remove(task_t *x) {
   if (tasks_list_head == NULL)
     panic("\nERROR: tasks_remove error 0!\n");
-    
+
   if (tasks_list_head->next == NULL) {
     if (tasks_list_head != x)
       panic("\nERROR: tasks_remove error 1!\n");
@@ -76,7 +76,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   task->state = STARTED;
   
   kmt_spin_lock(&tasks_list_mutex);
-  tasks_push_back(task);
+  tasks_insert(task);
   kmt_spin_unlock(&tasks_list_mutex);
   printf("[task] created [%s]\n", task->name);
   return 0; 
@@ -163,7 +163,7 @@ static void wakeup (sem_t *sem) {
   sem->head = sem->head->next;
   task->state = RUNNABLE;
   kmt_spin_lock(&tasks_list_mutex);
-  tasks_push_back(task);
+  tasks_insert(task);
   kmt_spin_unlock(&tasks_list_mutex);
   kmt_spin_unlock(&sem->lk);
 }
