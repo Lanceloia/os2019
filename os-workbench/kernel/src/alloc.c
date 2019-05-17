@@ -11,7 +11,7 @@
 
 enum{UNUSED=0,UNALLOCATED=1,ALLOCATED=2};
 
-spinlock_t memoplk = {.name = "memoplk", .locked = 0, .cpu = -1};
+spinlock_t memoplk = {.name = NULL, .locked = 0, .cpu = -1};
 extern void kmt_spin_lock(spinlock_t *);
 extern void kmt_spin_unlock(spinlock_t *);
 
