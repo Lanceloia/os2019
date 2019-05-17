@@ -3,7 +3,7 @@
 #include "../include/common.h"
 
 sem_t empty, full, mutex;
-const int maxk = 9;
+const int maxk = 4;
 int cnt = 0;
 
 static void producer(void *arg) {
