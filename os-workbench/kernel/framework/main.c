@@ -11,7 +11,7 @@ static void producer(void *arg) {
     kmt->sem_wait(&empty);
     kmt->sem_wait(&mutex);
     cnt ++;
-    printf("prod: %d ", cnt);
+    printf("%d ", cnt);
     //printf("%d%c ", cnt, (_cpu() == 0) ? 'a' : 'b');
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&full);
