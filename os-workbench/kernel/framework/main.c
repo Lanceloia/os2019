@@ -8,12 +8,10 @@ int cnt;
 
 static void producer(void *arg) {
   while(1) {
-    //for(volatile int i = 0; i < 1000; i++);
     kmt->sem_wait(&empty);
     kmt->sem_wait(&mutex);
     cnt ++;
-//    printf("%d%c ", cnt, (_cpu() == 0) ? 'a' : 'b');
-    printf("%d ", cnt);
+    printf("%d%c ", cnt, (_cpu() == 0) ? 'a' : 'b');
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&full);
   }
@@ -21,11 +19,9 @@ static void producer(void *arg) {
 
 static void consumer(void *arg) {
   while(1) {
-    //for(volatile int i = 0; i < 1000; i++);
     kmt->sem_wait(&full);
     kmt->sem_wait(&mutex);
     cnt --;
-    printf("%d ", cnt);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&empty);
   }
