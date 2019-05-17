@@ -59,7 +59,7 @@ static void kmt_spin_unlock(spinlock_t *lk) {
   __sync_synchronize();
   if (!holding(lk)) {printf("%s, unlocked\n", lk->name); _halt(1);}
   lk->cpu = -1;
-  _atomic_xchg(&lk->locked, UNLOCKED);
+  while(!_atomic_xchg(&lk->locked, UNLOCKED));
   popcli();
   __sync_synchronize();
 }
