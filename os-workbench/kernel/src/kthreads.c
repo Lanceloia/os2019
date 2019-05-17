@@ -5,8 +5,8 @@
 static void kmt_init() {
   os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_switch);
-  kmt->spin_init(&tasks_mutex, "tasks-mutex");
-  kmt->create(&task_null, "task-null", null, NULL);
+  kmt_spin_init(&tasks_mutex, "tasks-mutex");
+  kmt_create(&task_null, "task-null", null, NULL);
 }
 
 /* tasks
@@ -82,7 +82,7 @@ static void sleep (sem_t *sem) {
 
   current->next = sem->slptsk_head;
   sem->slptsk_head = current;
-  kmt->spin_unlock(&tasks_mutex);
+  kmt_spin_unlock(&tasks_mutex);
   kmt_spin_unlock(&sem->lk);
   _yield();
   kmt_spin_lock(&sem->lk);
