@@ -26,13 +26,13 @@
  * context_save(), context_switch()
  */
 
-static _Context *kmt_context_save(_Event ev, _Context *ctx) {
+_Context *kmt_context_save(_Event ev, _Context *ctx) {
   if (current)
     current->ctx = *ctx;
   return NULL;
 }
 
-static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
+_Context *kmt_context_switch(_Event ev, _Context *ctx) {
   current->state = RUNNABLE;
 
   do {
