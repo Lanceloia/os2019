@@ -45,7 +45,7 @@ task_t wait[MAX_CPU] = {};
 void task_wait(void *arg) {
   while (1) {
     for(volatile int i = 0; i < 1000; i++);
-    printf("nmsl ");
+    printf("\nnmsl %d", _cpu());
     for(volatile int i = 0; i < 1000; i++);
     _yield();
   }
