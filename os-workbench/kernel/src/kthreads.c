@@ -60,6 +60,7 @@ static void kmt_spin_unlock(spinlock_t *lk) {
   if (!holding(lk)) {printf("%s, unlocked\n", lk->name); _halt(1);}
   lk->cpu = -1;
   while(!_atomic_xchg(&lk->locked, UNLOCKED));
+  assert(lk->locked == UNLOCKED);
   popcli();
   __sync_synchronize();
 }
