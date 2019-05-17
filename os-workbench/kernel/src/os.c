@@ -1,5 +1,4 @@
 #include <common.h>
-#include <klib.h>
 #include <os.h>
 
 static void os_init() {
@@ -42,7 +41,6 @@ static _Context *os_trap(_Event ev, _Context *context) {
 static void os_on_irq(int seq, int event, handler_t handler) {
   ITEM_push_back(seq, event, handler);
   ITEM_bubble_sort();
-  printf("%s: seq:%d, event:%d\n", __func__, seq, event);
 }
 
 MODULE_DEF(os) {
