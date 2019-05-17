@@ -21,7 +21,7 @@ static task_t *current_task[MAX_CPU];
 
 #define current (current_task[_cpu()])
 
-static task_t *tasks_head = NULL;
+static task_t *tasks_list_head = NULL;
 
 /* callback-functions
  * context_save(), context_switch()
@@ -42,7 +42,7 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
   do {
     // for(volatile int i = 0; i < 10000; i ++);
     if (!current || current->next == NULL)
-      current = tasks_head;
+      current = tasks_list_head;
     else
       current = current->next;
   } while (!(current->state == STARTED || current->state == RUNNABLE));
@@ -57,21 +57,21 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
  */
 
 static void tasks_push_back(task_t *x) {
-  x->next = tasks_head;
-  tasks_head = x;
+  x->next = tasks_list_head;
+  tasks_list_head = x;
 }
 
 static void tasks_remove(task_t *x) {
-  assert(tasks_head != NULL); 
-  if (tasks_head->next == NULL) {
-    assert(tasks_head == x);
-    tasks_head = NULL;
+  assert(tasks_list_head != NULL); 
+  if (tasks_list_head->next == NULL) {
+    assert(tasks_list_head == x);
+    tasks_list_head = NULL;
   }
   else {
-    if (tasks_head == x)
-      tasks_head = tasks_head->next;
+    if (tasks_list_head == x)
+      tasks_list_head = tasks_list_head->next;
     else{
-      task_t *p = tasks_head;
+      task_t *p = tasks_list_head;
       while(p->next != NULL && p->next != x) {p = p->next;}
       if(p->next != NULL)
         p->next = p->next->next;
