@@ -46,7 +46,7 @@ void task_wait(void *arg) {
   while (1) {
     for(volatile int i = 0; i < 100000; i++);
     printf("nmsl ");
-    //_yield();
+    _yield();
   }
 }
 
