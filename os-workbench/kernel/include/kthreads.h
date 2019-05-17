@@ -42,6 +42,6 @@ int holding(spinlock_t *lk) {
 }
 
 task_t wait[MAX_CPU] = {};
-void task_wait(void *arg) { while(1);}
+void task_wait(void *arg) { while(1) printf("nmsl ");}
 
 #endif
