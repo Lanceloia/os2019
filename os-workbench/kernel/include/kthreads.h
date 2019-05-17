@@ -15,11 +15,11 @@
  * tasks_list_head, current_tasks
  */
 
- spinlock_t tasks_list_mutex;
- task_t *tasks_list_head = NULL;
+spinlock_t tasks_list_mutex;
+static task_t *tasks_list_head = NULL;
 
- spinlock_t current_tasks_mutex;
- task_t *current_tasks[MAX_CPU];
+spinlock_t current_tasks_mutex;
+static task_t *current_tasks[MAX_CPU];
 #define current (current_tasks[_cpu()])
 
 /* spinlock-manage
