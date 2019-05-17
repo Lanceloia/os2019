@@ -32,6 +32,7 @@ static _Context *kmt_context_save(_Event ev, _Context *ctx) {
   if (current)
     current->ctx = *ctx;
   kmt_spin_unlock(&tasks_mutex);
+  assert(tasks_mutex.locked == UNLOCKED);
   return NULL;
 }
 
@@ -49,6 +50,7 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
  
   current->state = RUNNING;
   kmt_spin_unlock(&tasks_mutex);
+  assert(tasks_mutex.locked == UNLOCKED);
   return &current->ctx;
 }
 
