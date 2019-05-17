@@ -112,10 +112,10 @@ static void free_print(){
  * checking log eaiser 
  */
 void extern_free_print(int flag){
-  kmt_spin_lock(&memoplk);
+  spin_lock(&memoplk);
   printf("[CPU: %d Flag: %d]\n", _cpu(), flag);
   free_print();
-  kmt_spin_unlock(&memoplk);
+  spin_unlock(&memoplk);
 }
 
 /* function free_check()
@@ -292,13 +292,13 @@ static mem_block *free_find(size_t size){
 static uintptr_t pm_start, pm_end;
 
 static void pmm_init() {
-  kmt_spin_lock(&memoplk);
+  spin_lock(&memoplk);
 
   pm_start = (uintptr_t)_heap.start;
   pm_end   = (uintptr_t)_heap.end;
 
   free_init(pm_start, pm_end);
-  kmt_spin_unlock(&memoplk);
+  spin_unlock(&memoplk);
 }
 
 
@@ -306,22 +306,22 @@ static void *kalloc(size_t size) {
   if(size == 0)
     return NULL;
 
-  kmt_spin_lock(&memoplk);
+  spin_lock(&memoplk);
   mem_block *block = free_find(size);
   assert(block != NULL);
   free_check();
   assert(block->begin != 0);
-  kmt_spin_unlock(&memoplk);
+  spin_unlock(&memoplk);
   return (void *)block->begin;
 }
 
 static void kfree(void *ptr) {
-  kmt_spin_lock(&memoplk);
+  spin_lock(&memoplk);
 
   int idx = get_allocated_block((uintptr_t)ptr);
   free_insert(&pool[idx]);
 
-  kmt_spin_unlock(&memoplk);
+  spin_unlock(&memoplk);
 }
 
 MODULE_DEF(pmm) {
