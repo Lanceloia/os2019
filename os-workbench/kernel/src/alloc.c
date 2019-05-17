@@ -13,11 +13,7 @@ enum {
   UNUSED=0, UNALLOCATED=1, ALLOCATED=2
 };
 
-spinlock_t memoplk = {
-  .name = "memory-operation-lock",
-  .locked = UNLOCKED,
-  .cpu = -1
-};
+int memoplk;
 
 //--- data structure ---//
 struct mem_block {
