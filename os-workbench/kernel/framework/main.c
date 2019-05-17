@@ -4,7 +4,7 @@
 
 sem_t empty, full, mutex;
 const int maxk = 9;
-int cnt;
+int cnt = 0;
 
 static void producer(void *arg) {
   while(1) {
