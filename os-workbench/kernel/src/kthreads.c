@@ -79,11 +79,13 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
 
 static void sleep (sem_t *sem) {
   kmt_spin_lock(&tasks_mutex);
+  kmt_spin_lock(&tasks_mutex2);
   current->state = YIELD;
   tasks_remove(current);
 
   current->next = sem->head;
   sem->head = current;
+  kmt_spin_unlock(&tasks_mutex2);
   kmt_spin_unlock(&tasks_mutex);
   assert(tasks_mutex.locked == UNLOCKED);
   kmt_spin_unlock(&sem->lk);

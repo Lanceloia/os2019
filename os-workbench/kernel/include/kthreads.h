@@ -53,7 +53,6 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
  
   current->state = RUNNING;
   kmt_spin_unlock(&tasks_mutex2);
-    assert(tasks_mutex2.locked == UNLOCKED);
   kmt_spin_unlock(&tasks_mutex);
   return &current->ctx;
 }
