@@ -35,9 +35,12 @@ static void tasks_push_back(task_t *x) {
 }
 
 static void tasks_remove(task_t *x) {
-  assert(tasks_list_head != NULL); 
+  if (tasks_list_head == NULL)
+    panic("\nERROR: tasks_remove error 0!\n");
+    
   if (tasks_list_head->next == NULL) {
-    assert(tasks_list_head == x);
+    if (tasks_list_head != x)
+      panic("\nERROR: tasks_remove error 1!\n");
     tasks_list_head = NULL;
   }
   else {
@@ -46,10 +49,10 @@ static void tasks_remove(task_t *x) {
     else{
       task_t *p = tasks_list_head;
       while(p->next != NULL && p->next != x) {p = p->next;}
-      if(p->next != NULL)
-        p->next = p->next->next;
+      if(p->next == NULL)
+        panic("\nERROR: tasks_remove error 2!\n");
       else
-        {printf("WARNING: remove error!\n"); _halt(1);}
+        p->next = p->next->next;
     }
   }
 }
@@ -93,23 +96,35 @@ static void kmt_teardown(task_t *task) {
 static void kmt_spin_init(spinlock_t *lk, const char *name) {
   strcpy(lk->name, name);
   lk->locked = UNLOCKED;
-  lk->cpu = -1;
-  printf("[log] created spinlock [%s]\n", lk->name);
+  lk->cpu = NONE_CPU;
+  printf("[spinlock] created [%s]\n", lk->name);
 }
 
 static void kmt_spin_lock(spinlock_t *lk) {
-  if (holding(lk)) {printf("%s, locked\n", lk->name); _halt(1);}
+  if (holding(lk)) {
+    printf("\nERROR: spin_lock error! lk->name: %s\n", 
+      lk->name);
+    _halt(1);
+  }
+
   pushcli();
   while(_atomic_xchg(&lk->locked, LOCKED));
   lk->cpu = _cpu();
+
   __sync_synchronize();
 }
 
 static void kmt_spin_unlock(spinlock_t *lk) {
-  if (!holding(lk)) {printf("%s, unlocked\n", lk->name); _halt(1);}
-  lk->cpu = -1;
+  if (!holding(lk)) {
+    printf("\nERROR: spin_unlock error! lk->name: %s\n", 
+      lk->name);
+    _halt(1);
+  }
+
+  lk->cpu = NONE_CPU;
   _atomic_xchg(&(lk->locked), UNLOCKED);
   popcli();
+
   __sync_synchronize();
 }
 
@@ -140,8 +155,7 @@ static void sleep (sem_t *sem) {
 
 static void wakeup (sem_t *sem) {
   if (sem->head == NULL) {
-    printf("\nWARNING: wakeup error! \
-      sem->name: %s, sem->value: %d\n", 
+    printf("\nERROR: wakeup error! sem->name: %s, sem->value: %d\n", 
       sem->name, sem->value);
     _halt(1);
   }
