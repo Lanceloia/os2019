@@ -89,7 +89,7 @@ static void sleep (sem_t *sem) {
 
 static void wakeup (sem_t *sem) {
   // assert(sem->head != NULL);
-  if (sem->head == NULL) {printf("WARNING: wakeup error! sem->value: %d\n", sem->value); return;}
+  if (sem->head == NULL) {printf("WARNING: wakeup error! sem->value: %d\n", sem->value); _halt(1);}
   kmt_spin_lock(&tasks_mutex);
   task_t *task = sem->head;
   sem->head = sem->head->next;
