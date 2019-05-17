@@ -6,6 +6,7 @@ static void kmt_init() {
   os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_switch);
   kmt_spin_init(&tasks_mutex, "tasks-mutex");
+  kmt_spin_init(&tasks_mutex2, "tasks-mutex2");
   kmt_create(&task_null, "task-null", null, NULL);
 }
 
