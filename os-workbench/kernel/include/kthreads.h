@@ -12,10 +12,10 @@ static void kmt_sem_wait(sem_t *);
 static void kmt_sem_signal(sem_t *);
 
 /* data-structure
- * tasks_mutex, current_task
+ * tasks_list_mutex, current_task
  */
 
-static spinlock_t tasks_mutex;
+static spinlock_t tasks_list_mutex;
 
 static task_t *current_task[MAX_CPU];
 
@@ -28,15 +28,15 @@ static task_t *tasks_head = NULL;
  */
 
 static _Context *kmt_context_save(_Event ev, _Context *ctx) {
-  kmt_spin_lock(&tasks_mutex);
+  kmt_spin_lock(&tasks_list_mutex);
   if (current)
     current->ctx = *ctx;
-  kmt_spin_unlock(&tasks_mutex);
+  kmt_spin_unlock(&tasks_list_mutex);
   return NULL;
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
-  kmt_spin_lock(&tasks_mutex);
+  kmt_spin_lock(&tasks_list_mutex);
   current->state = RUNNABLE;
 
   do {
@@ -48,7 +48,7 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
   } while (!(current->state == STARTED || current->state == RUNNABLE));
  
   current->state = RUNNING;
-  kmt_spin_unlock(&tasks_mutex);
+  kmt_spin_unlock(&tasks_list_mutex);
   return &current->ctx;
 }
 

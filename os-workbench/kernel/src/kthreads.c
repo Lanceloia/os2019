@@ -5,7 +5,7 @@
 static void kmt_init() {
   os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_switch);
-  kmt_spin_init(&tasks_mutex, "tasks-mutex");
+  kmt_spin_init(&tasks_list_mutex, "tasks-mutex");
   kmt_create(&task_null, "task-null", null, NULL);
 }
 
@@ -77,14 +77,14 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
 }
 
 static void sleep (sem_t *sem) {
-  kmt_spin_lock(&tasks_mutex);
+  kmt_spin_lock(&tasks_list_mutex);
   current->state = YIELD;
   tasks_remove(current);
 
   current->next = sem->head;
   sem->head = current;
-  kmt_spin_unlock(&tasks_mutex);
-  assert(tasks_mutex.locked == UNLOCKED);
+  kmt_spin_unlock(&tasks_list_mutex);
+  assert(tasks_list_mutex.locked == UNLOCKED);
   kmt_spin_unlock(&sem->lk);
   _yield();
 }
@@ -92,13 +92,13 @@ static void sleep (sem_t *sem) {
 static void wakeup (sem_t *sem) {
   // assert(sem->head != NULL);
   if (sem->head == NULL) {printf("WARNING: wakeup error! sem->value: %d\n", sem->value); _halt(1);}
-  kmt_spin_lock(&tasks_mutex);
+  kmt_spin_lock(&tasks_list_mutex);
   task_t *task = sem->head;
   sem->head = sem->head->next;
   task->state = RUNNABLE;
   tasks_push_back(task);
-  kmt_spin_unlock(&tasks_mutex);
-  assert(tasks_mutex.locked == UNLOCKED);
+  kmt_spin_unlock(&tasks_list_mutex);
+  assert(tasks_list_mutex.locked == UNLOCKED);
 }
 
 static void kmt_sem_wait(sem_t *sem) {
