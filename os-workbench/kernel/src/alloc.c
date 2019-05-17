@@ -6,6 +6,7 @@
 
 #include <common.h>
 #include <klib.h>
+#include <kthreads.h>
 
 #define POOL_SIZE (4*1024)
 
