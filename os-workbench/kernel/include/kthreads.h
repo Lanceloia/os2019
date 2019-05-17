@@ -26,12 +26,12 @@
  * push_back(), remove()
  */
 
-void tasks_push_back(task_t *x) {
+static void tasks_push_back(task_t *x) {
   x->next = tasks_list_head;
   tasks_list_head = x;
 }
 
- void tasks_remove(task_t *x) {
+static void tasks_remove(task_t *x) {
   assert(tasks_list_head != NULL); 
   if (tasks_list_head->next == NULL) {
     assert(tasks_list_head == x);
@@ -55,22 +55,22 @@ void tasks_push_back(task_t *x) {
  * pushcli(), popcli(), holding()
  */
 
- volatile int ncli[MAX_CPU] = {} , intena[MAX_CPU] = {};
+volatile int ncli[MAX_CPU] = {} , intena[MAX_CPU] = {};
 
- void pushcli() {
+void pushcli() {
   cli();
   if (ncli[_cpu()] == 0)
     intena[_cpu()] = get_efl() & FL_IF;
   ncli[_cpu()] ++;
 }
 
- void popcli() {
+void popcli() {
   ncli[_cpu()] --;
   if (ncli[_cpu()] == 0 && intena[_cpu()])
     sti();
 }
 
- int holding(spinlock_t *lk) {
+int holding(spinlock_t *lk) {
   return lk->locked && lk->cpu == _cpu();
 }
 
@@ -78,8 +78,8 @@ void tasks_push_back(task_t *x) {
  * null()
  */
 
- task_t task_null;
+task_t task_null;
 
- void null(void *arg) {while(1);}
+void null(void *arg) {while(1);}
 
 #endif
