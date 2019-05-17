@@ -66,7 +66,7 @@ static _Context *os_trap(_Event ev, _Context *context) {
       if (next) ret = next;
     }
   }
-  //kmt_spin_unlock(&current_tasks_mutex);
+  kmt_spin_unlock(&current_tasks_mutex);
   return ret;
 }
 
