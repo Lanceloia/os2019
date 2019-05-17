@@ -66,8 +66,10 @@ static void kmt_init() {
   os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_switch);
   kmt_spin_init(&tasks_list_mutex, "tasks-list-mutex");
   kmt_spin_init(&current_tasks_mutex, "current-tasks-mutex");
+  /*
   for(int i = 0; i < _ncpu(); i++)
     kmt_create(&wait[i], "wait", task_wait, NULL);
+  */
 }
 
 /* tasks
@@ -121,6 +123,7 @@ static void kmt_spin_unlock(spinlock_t *lk) {
   if (!holding(lk)) {
     printf("\nERROR: spin_unlock error! lk->name: %s\n", 
       lk->name);
+
     _halt(1);
   }
 
