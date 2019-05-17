@@ -45,12 +45,6 @@ struct lock{
   int cpu;
 };
 
-typedef struct lock lock_t;
-
-void mutex_lock(lock_t *lk);
-
-void mutex_unlock(lock_t *lk);
-
 #define TRACEME
 
 #ifdef TRACEME
