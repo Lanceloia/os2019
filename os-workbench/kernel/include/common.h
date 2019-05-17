@@ -15,8 +15,11 @@ enum {
   UNLOCKED = 0, LOCKED = 1
 };
 
-#define STACK_SIZE 4096
+typedef intptr_t naivelock_t; 
+#define naivelock_lock(locked) { while(_atomic_xchg((&locked), LOCKED)); }
+#define naivelock_unlock(locked) { _atomic_xchg((&locked), UNLOCKED); }
 
+#define STACK_SIZE 4096
 struct task {
   int idx;
   char name[32];
@@ -31,9 +34,6 @@ struct spinlock {
   volatile int locked;
   int cpu;
 };
-
-#define spinlock_lock(locked) { while(_atomic_xchg((&locked), LOCKED)); }
-#define spinlock_unlock(locked) { _atomic_xchg((&locked), UNLOCKED); }
 
 struct semaphore {
   char name[32];
