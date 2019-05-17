@@ -43,7 +43,7 @@ int holding(spinlock_t *lk) {
 
 task_t wait[MAX_CPU] = {};
 void task_wait(void *arg) {
-  while (true) {
+  while (1) {
     for(volatile int i = 0; i < 100000; i++);
     _yield();
   }
