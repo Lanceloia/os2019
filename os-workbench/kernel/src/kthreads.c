@@ -48,8 +48,7 @@ static void tasks_remove(task_t *x) {
   }
 }
 
-
-static void kmt_init() {
+void kmt_init() {
   os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_switch);
   kmt_spin_init(&tasks_list_mutex, "tasks-list-mutex");
