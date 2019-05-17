@@ -14,7 +14,7 @@ struct {
  struct item items[MAX_HANDLER];
 }ITEM;
 
-static void ITEM_push_back(int seq, int event, handler_t handler)) {
+static void ITEM_push_back(int seq, int event, handler_t handler) {
   ITEM.items[ITEM.size].seq = seq;
   ITEM.items[ITEM.size].event = event;
   ITEM.items[ITEM.size].handler = handler;
