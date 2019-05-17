@@ -1,5 +1,6 @@
 #include <common.h>
 #include <klib.h>
+#include <kthreads.h>
 
 //#define DEBUG
 
