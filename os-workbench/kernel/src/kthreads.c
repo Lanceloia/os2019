@@ -41,18 +41,23 @@ static void kmt_teardown(task_t *task) {
 static void kmt_spin_init(spinlock_t *lk, const char *name) {
   strcpy(lk->name, name);
   lk->locked = UNLOCKED;
+  lk->cpu = -1;
   printf("[log] created spinlock [%s]\n", lk->name);
 }
 
 static void kmt_spin_lock(spinlock_t *lk) {
   __sync_synchronize();
   pushcli();
+  if (holding(lk)) panic("locked");
   while(_atomic_xchg(&lk->locked, LOCKED));
+  lk->cpu = _cpu();
   __sync_synchronize();
 }
 
 static void kmt_spin_unlock(spinlock_t *lk) {
   __sync_synchronize();
+  if (!holding(lk)) panic("unlocked");
+  lk->cpu = -1;
   _atomic_xchg(&lk->locked, UNLOCKED);
   popcli();
   __sync_synchronize();
@@ -71,7 +76,7 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
 }
 
 static void sleep (sem_t *sem) {
-  kmt->spin_lock(&tasks_mutex);
+  kmt_spin_lock(&tasks_mutex);
   current->state = YIELD;
   tasks_remove(current);
 
@@ -86,13 +91,13 @@ static void sleep (sem_t *sem) {
 static void wakeup (sem_t *sem) {
   // assert(sem->slptsk_head != NULL);
   if (sem->slptsk_head == NULL) {printf("WARNING: wakeup error! sem->value: %d\n", sem->value); return;}
-  kmt->spin_lock(&tasks_mutex);
+  kmt_spin_lock(&tasks_mutex);
   task_t *task = sem->slptsk_head;
   sem->slptsk_head = sem->slptsk_head->next;
   // task->next_slp = NULL;
   task->state = RUNNABLE;
   tasks_push_back(task);
-  kmt->spin_unlock(&tasks_mutex);
+  kmt_spin_unlock(&tasks_mutex);
 }
 
 static void kmt_sem_wait(sem_t *sem) {

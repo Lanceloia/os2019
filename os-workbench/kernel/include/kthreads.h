@@ -78,7 +78,7 @@ static void tasks_remove(task_t *x) {
 }
 
 /* spinlock-manage
- * pushcli(), popcli()
+ * pushcli(), popcli(), holding()
  */
 
 static volatile int ncli[MAX_CPU] = {} , intena[MAX_CPU] = {};
@@ -94,6 +94,10 @@ static void popcli() {
   ncli[_cpu()] --;
   if (ncli[_cpu()] == 0 && intena[_cpu()])
     sti();
+}
+
+static int holding(spinlock_t *lk) {
+  return lk->locked && lk->cpu == _cpu();
 }
 
 /* task-null

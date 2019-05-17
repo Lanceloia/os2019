@@ -29,6 +29,7 @@ struct task {
 struct spinlock {
   char name[32];
   volatile int locked;
+  int cpu;
 };
 
 struct semaphore {
