@@ -2,6 +2,27 @@
 #include <klib.h>
 #include <kthreads.h>
 
+static _Context *kmt_context_save(_Event ev, _Context *ctx) {
+  if (current)
+    current->ctx = *ctx;
+  return NULL;
+}
+
+static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
+  current->state = RUNNABLE;
+
+  do {
+    // for(volatile int i = 0; i < 10000; i ++);
+    if (!current || current->next == NULL)
+      current = tasks_list_head;
+    else
+      current = current->next;
+  } while (!(current->state == STARTED || current->state == RUNNABLE));
+ 
+  current->state = RUNNING;
+  return &current->ctx;
+}
+
  void kmt_init() {
   os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_switch);

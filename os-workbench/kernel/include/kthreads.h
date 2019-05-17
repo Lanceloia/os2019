@@ -22,31 +22,6 @@
  task_t *current_tasks[MAX_CPU];
 #define current (current_tasks[_cpu()])
 
-/* callback-functions
- * context_save(), context_switch()
- */
-
-_Context *kmt_context_save(_Event ev, _Context *ctx) {
-  if (current)
-    current->ctx = *ctx;
-  return NULL;
-}
-
-_Context *kmt_context_switch(_Event ev, _Context *ctx) {
-  current->state = RUNNABLE;
-
-  do {
-    // for(volatile int i = 0; i < 10000; i ++);
-    if (!current || current->next == NULL)
-      current = tasks_list_head;
-    else
-      current = current->next;
-  } while (!(current->state == STARTED || current->state == RUNNABLE));
- 
-  current->state = RUNNING;
-  return &current->ctx;
-}
-
 /* tasks-manage
  * push_back(), remove()
  */
