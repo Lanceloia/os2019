@@ -9,7 +9,7 @@ static _Context *kmt_context_save(_Event ev, _Context *ctx) {
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
-  if(current->state == RUNNING)
+  if(current && current->state == RUNNING)
     current->state = RUNNABLE;
 
   do {
