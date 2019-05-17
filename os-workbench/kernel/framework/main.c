@@ -4,15 +4,14 @@
 
 sem_t empty, full, mutex;
 const int maxk = 9;
-int cnt = 0, tot = 0;
+int cnt = 0;
 
 static void producer(void *arg) {
   while(1) {
     kmt->sem_wait(&empty);
     kmt->sem_wait(&mutex);
     cnt ++;
-    tot ++;
-    printf("%d ", cnt);
+    printf("cpu%d: %d ", _cpu(), cnt);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&full);
   }
@@ -23,7 +22,7 @@ static void consumer(void *arg) {
     kmt->sem_wait(&full);
     kmt->sem_wait(&mutex);
     cnt --;
-    printf("%d ", cnt);
+    printf("cpu%d: %d ", _cpu(), cnt);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&empty);
   }
