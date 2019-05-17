@@ -83,6 +83,7 @@ static void sleep (sem_t *sem) {
   current->next = sem->head;
   sem->head = current;
   kmt_spin_unlock(&tasks_mutex);
+  assert(tasks_mutex.locked == UNLOCKED);
   kmt_spin_unlock(&sem->lk);
   _yield();
 }
