@@ -101,7 +101,7 @@ static void wakeup (sem_t *sem) {
 static void kmt_sem_wait(sem_t *sem) {
   kmt_spin_lock(&sem->lk);
   sem->value--;
-  for(volatile int i = 0; i < 5000; i++);
+  //for(volatile int i = 0; i < 5000; i++);
   if (sem->value < 0)
     sleep(sem);
   else
@@ -111,7 +111,7 @@ static void kmt_sem_wait(sem_t *sem) {
 static void kmt_sem_signal(sem_t *sem) {
   kmt_spin_lock(&sem->lk);
   sem->value++;
-  for(volatile int i = 0; i < 5000; i++);
+  //for(volatile int i = 0; i < 5000; i++);
   if (sem->value <= 0)
     wakeup(sem);
   kmt_spin_unlock(&sem->lk);
