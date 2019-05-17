@@ -6,7 +6,7 @@
 #include <x86.h>
 #include <../src/x86/x86-qemu.h>
 
-#define STACK_SIZE 4096
+
 
 enum {
   NIL = 0, STARTED = 1, RUNNABLE = 2,
