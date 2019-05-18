@@ -59,13 +59,18 @@ static void kmt_teardown(task_t *task) {
   TRACE_EXIT;
 }
 
+static void kmt_create_wait() {
+  for(int i = 0; i < _ncpu(); i++) {
+    kmt_create(&wait[i], "wait", task_wait, NULL);
+  }
+}
+
 static void kmt_init() {
   os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_save_switch);
   kmt_spin_init(&tasks_mutex, "tasks-mutex");
   kmt_spin_init(&current_tasks_mutex, "current-tasks-mutex");
-  for(int i = 0; i < _ncpu(); i++) {
-    kmt_create(&wait[i], "wait", task_wait, NULL);
-  }
+  kmt_create_wait();
+  kmt_create(&tty, "tty-task", tty_task, NULL);
 }
 
 /* spin */

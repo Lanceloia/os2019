@@ -51,4 +51,6 @@ void task_wait(void *arg) {
   while (1) ;
 }
 
+task_t tty;
+
 #endif
