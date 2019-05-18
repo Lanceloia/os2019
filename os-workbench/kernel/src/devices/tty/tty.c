@@ -209,6 +209,7 @@ ssize_t tty_read(device_t *dev, off_t offset, void *buf, size_t count) {
 ssize_t tty_write(device_t *dev, off_t offset, const void *buf, size_t count) {
   tty_t *tty = dev->ptr;
   kmt->sem_wait(&tty->lock);
+   assert(0); 
   for (size_t i = 0; i < count; i++) {
     tty_putc(tty, ((const char *)buf)[i]);
   }
@@ -272,7 +273,7 @@ void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
   while (1) {
     char line[128], text[128];
-    sprintf(text, "(%s) $ ", name); tty_write(tty, 0, text, sizeof(text)); assert(0); 
+    sprintf(text, "(%s) $ ", name); tty_write(tty, 0, text, sizeof(text));
     int nread = tty->ops->read(tty, 0, line, sizeof(line));
     line[nread - 1] = '\0';
     sprintf(text, "Echo: %s.\n", line); tty_write(tty, 0, text, sizeof(text));
