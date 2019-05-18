@@ -3,7 +3,7 @@
 #include "../include/common.h"
 
 sem_t empty, full, mutex;
-const int maxk = 8;
+const int maxk = 4;
 int cnt = 0;
 
 static void producer(void *arg) {
@@ -12,7 +12,6 @@ static void producer(void *arg) {
     kmt->sem_wait(&mutex);
     cnt ++;
     printf("%d%c ", cnt, _cpu()+'a');
-    // printf("cpu%d: %d ", _cpu(), cnt);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&full);
   }
@@ -23,8 +22,6 @@ static void consumer(void *arg) {
     kmt->sem_wait(&full);
     kmt->sem_wait(&mutex);
     cnt --;
-    // printf("%d ", cnt);
-    // printf("cpu%d: %d ", _cpu(), cnt);
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&empty);
   }
