@@ -9,16 +9,12 @@ static task_t *current_tasks[MAX_CPU];
 #define current (current_tasks[_cpu()])
 
 static _Context *kmt_context_save(_Event ev, _Context *ctx) {
-/*  if (current)
+  if (current)
     current->ctx = *ctx;
-*/
   return NULL;
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
-  if (current)
-    current->ctx = *ctx;
-
   if(current && current->state == RUNNING)
     current->state = RUNNABLE;
 
@@ -89,7 +85,7 @@ static void kmt_spin_lock(spinlock_t *lk) {
   if (holding(lk)) panic("locked");
 
   pushcli();
-  while(_atomic_xchg(&lk->locked, LOCKED)) SLEEP(32);
+  while(_atomic_xchg(&lk->locked, LOCKED)) SLEEP(1024);
   lk->cpu = _cpu();
   __sync_synchronize();
 }
