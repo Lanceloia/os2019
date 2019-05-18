@@ -167,7 +167,7 @@ static void wakeup (sem_t *sem) {
     _halt(1);
   }
   kmt_spin_lock(&current_tasks_mutex);
-  task_t *task = sem_pop();
+  task_t *task = sem_pop(sem);
   task->state = RUNNABLE;
   kmt_spin_unlock(&current_tasks_mutex);
   kmt_spin_unlock(&sem->lk);
