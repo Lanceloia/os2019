@@ -58,6 +58,14 @@ static void mogician(void *arg) {
 
     if (producer_task || consumer_task)
       _yield();
+    else if (rand() % 2){
+      producer_task = pmm->alloc(sizeof(task_t));
+      kmt->create(producer_task, "producer", producer, NULL);
+    }
+    else {
+      consumer_task = pmm->alloc(sizeof(task_t));
+      kmt->create(consumer_task, "consumer", consumer, NULL);
+    }
   }
 }
 
