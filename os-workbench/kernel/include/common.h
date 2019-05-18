@@ -30,6 +30,7 @@ struct task {
   _Context ctx;
   _Area stk;
   struct task *next;
+  struct task *next2;
 }__attribute__((aligned(32)));
 
 struct spinlock {
