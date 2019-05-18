@@ -35,8 +35,8 @@ static void consumer(void *arg) {
 static void mogician(void *arg) {
   task_t *producer_task = NULL, *consumer_task = NULL;
   while (1) {
-    for(volatile int i = 0; i < 10000; i++);
-    
+    for(volatile int i = 0; i < 1000000; i++);
+
     if (!producer_task && rand() % 10 == 0) {
       producer_task = pmm->alloc(sizeof(task_t));
       kmt->create(producer_task, "producer", producer, NULL);
