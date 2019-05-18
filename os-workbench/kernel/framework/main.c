@@ -56,7 +56,8 @@ static void mogician(void *arg) {
       consumer_task = NULL;
     }
 
-    _yield();
+    if (producer_task || consumer_task)
+      _yield();
   }
 }
 
