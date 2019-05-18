@@ -8,11 +8,7 @@ static task_t *current_tasks[MAX_CPU];
 
 #define current (current_tasks[_cpu()])
 
-static _Context *kmt_context_save(_Event ev, _Context *ctx) {
-  return NULL;
-}
-
-static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
+static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
   if (current)
     current->ctx = *ctx;
 
@@ -64,8 +60,7 @@ static void kmt_teardown(task_t *task) {
 }
 
 static void kmt_init() {
-  os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
-  os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_switch);
+  os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_save_switch);
   kmt_spin_init(&tasks_mutex, "tasks-mutex");
   kmt_spin_init(&current_tasks_mutex, "current-tasks-mutex");
   for(int i = 0; i < _ncpu(); i++) {
