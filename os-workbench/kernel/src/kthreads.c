@@ -32,7 +32,7 @@ static _Context *kmt_context_save(_Event ev, _Context *ctx) {
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
   if (current)
     current->ctx = *ctx;
-    
+
   if(current && current->state == RUNNING)
     current->state = RUNNABLE;
   //current = NULL;
@@ -131,6 +131,7 @@ static void kmt_spin_unlock(spinlock_t *lk) {
 
   lk->cpu = NONE_CPU;
   _atomic_xchg(&(lk->locked), UNLOCKED);
+  for(volatile int i = 0; i < 15000; i++);
   popcli();
   __sync_synchronize();
 }
