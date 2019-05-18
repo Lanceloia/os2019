@@ -13,8 +13,6 @@ static void kmt_create_wait() {
   }
 }
 */
-
-#define SLEEP 
 #define MAX_TASK 32
 
 static int tasks_size = 0;
