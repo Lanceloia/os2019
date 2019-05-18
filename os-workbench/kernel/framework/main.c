@@ -1,4 +1,4 @@
-// #define _LANCELOIA_DEBUG_
+#define _LANCELOIA_DEBUG_
 
 #ifdef _LANCELOIA_DEBUG_
 
