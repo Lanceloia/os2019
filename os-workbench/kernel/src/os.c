@@ -1,7 +1,7 @@
 #include <common.h>
 #include <os.h>
 
-//#define __TTY__
+#define __TTY__
 
 extern void echo_task(void *name);
 
