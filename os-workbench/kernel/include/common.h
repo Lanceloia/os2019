@@ -19,10 +19,10 @@ enum {
   NONE_CPU = -1
 };
 
-#define SLEEP(time) for(volatile int __itr__ = 0; __itr__ < time; __itr__++)
+#define SLEEP(time) for(volatile int __itr__ = 0; __itr__ < (time); __itr__++)
 
 typedef intptr_t naivelock_t; 
-#define naivelock_lock(locked) { while(_atomic_xchg((&locked), LOCKED)) ; }
+#define naivelock_lock(locked) { while(_atomic_xchg((&locked), LOCKED)); }
 #define naivelock_unlock(locked) { _atomic_xchg((&locked), UNLOCKED); }
 
 struct task {
