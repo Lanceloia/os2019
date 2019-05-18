@@ -9,12 +9,13 @@ static task_t *current_tasks[MAX_CPU];
 #define current (current_tasks[_cpu()])
 
 static _Context *kmt_context_save(_Event ev, _Context *ctx) {
-  if (current)
-    current->ctx = *ctx;
   return NULL;
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
+  if (current)
+    current->ctx = *ctx;
+
   if(current && current->state == RUNNING)
     current->state = RUNNABLE;
 
