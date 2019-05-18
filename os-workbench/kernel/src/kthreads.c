@@ -85,7 +85,7 @@ static void kmt_spin_lock(spinlock_t *lk) {
   if (holding(lk)) panic("locked");
 
   pushcli();
-  while(_atomic_xchg(&lk->locked, LOCKED)) SLEEP(1024);
+  while(_atomic_xchg(&lk->locked, LOCKED)) SLEEP(32);
   lk->cpu = _cpu();
   __sync_synchronize();
 }
