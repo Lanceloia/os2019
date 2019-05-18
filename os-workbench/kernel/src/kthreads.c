@@ -134,6 +134,7 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
 }
 
 static void kmt_sem_wait(sem_t *sem) {
+  printf("sem->%s\n", sem->name);
   kmt_spin_lock(&sem->lk);
   sem->value--;
   if (sem->value < 0)
