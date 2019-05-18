@@ -20,7 +20,7 @@ static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
     idx = (idx + 1) % tasks_size;
     if (!tasks[idx])
       continue;
-    if (tasks[idx]->state != STARTED && tasks[idx]->state != RUNNABLE)
+    if (tasks[idx]->state == STARTED || tasks[idx]->state == RUNNABLE)
       break;
   }
   current = tasks[idx];
