@@ -48,7 +48,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   task->stk.end = task->stk.start + STK_SIZE;
   task->ctx = *(_kcontext(task->stk, entry, arg));
   tasks_insert(task);
-  printf("[task] created [%s]\n", task->name);
+  printf("[task] created [%s], [%d], [%d]\n", task->name, task->idx, tasks_size);
   return 0; 
 }
 
@@ -130,7 +130,7 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
   sem->value = value;
   sem->top = 0;
   kmt_spin_init(&sem->lk, name);
-  printf("[sem] created [%s] [%d]\n", sem->name, value);
+  printf("[sem] created [%s] [%d]\n", sem->name, sem->value);
 }
 
 static void kmt_sem_wait(sem_t *sem) {
