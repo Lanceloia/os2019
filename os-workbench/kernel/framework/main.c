@@ -65,6 +65,7 @@ static void create_threads() {
   kmt->create(pmm->alloc(sizeof(task_t)), "mogician", mogician, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "mogician", mogician, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "mogician", mogician, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "mogician", mogician, NULL);
   kmt->sem_init(&empty, "buffer-empty", maxk);
   kmt->sem_init(&full, "buffer-full", 0);
   kmt->sem_init(&mutex, "mutex", 1);
