@@ -86,7 +86,7 @@ static void kmt_spin_lock(spinlock_t *lk) {
   pushcli();
   while (1) {
     if (lk->locked)
-      SLEEP(1024);
+      SLEEP(128);
     else if (!_atomic_xchg(&lk->locked, LOCKED))
       break;
   }
