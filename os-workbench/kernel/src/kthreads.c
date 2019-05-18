@@ -78,7 +78,7 @@ static void kmt_spin_init(spinlock_t *lk, const char *name) {
   strcpy(lk->name, name);
   lk->locked = UNLOCKED;
   lk->cpu = NONE_CPU;
-  printf("[spinlock] created [%s]\n", lk->name);
+  //printf("[spinlock] created [%s]\n", lk->name);
 }
 
 static void kmt_spin_lock(spinlock_t *lk) {
@@ -130,7 +130,7 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
   sem->value = value;
   sem->top = 0;
   kmt_spin_init(&sem->lk, name);
-  printf("[log] created semaphore [%s]\n", sem->name);
+  //printf("[log] created semaphore [%s]\n", sem->name);
 }
 
 static void kmt_sem_wait(sem_t *sem) {
