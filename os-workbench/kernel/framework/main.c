@@ -1,3 +1,7 @@
+// #define _LANCELOIA_DEBUG_
+
+#ifdef _LANCELOIA_DEBUG_
+
 #include <kernel.h>
 #include <klib.h>
 #include "../include/common.h"
@@ -48,8 +52,8 @@ int main() {
   return 1;
 }
 
+#else
 
-/*
 #include <kernel.h>
 #include <klib.h>
 
@@ -62,4 +66,5 @@ int main() {
   _mpe_init(os->run); // all cores call os->run()
   return 1;
 }
-*/
+
+#endif
