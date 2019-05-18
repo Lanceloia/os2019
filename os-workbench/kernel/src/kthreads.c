@@ -64,7 +64,7 @@ static void kmt_init() {
   for(int i = 0; i < _ncpu(); i++) {
     kmt_create(&wait[i], "wait", task_wait, NULL);
   }
-  
+
   // kmt_create_wait();
 }
 
@@ -111,7 +111,7 @@ static void kmt_spin_lock(spinlock_t *lk) {
 
   pushcli();
   while(_atomic_xchg(&lk->locked, LOCKED)) 
-    for(volatile int i = 0; i < 1000; i++);
+    for(volatile int i = 0; i < 2500; i++);
   lk->cpu = _cpu();
   __sync_synchronize();
   //for(volatile int i = 0; i < 15000; i++);
