@@ -31,7 +31,7 @@ static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
 static int get_tasks_idx() {
   int ret = tasks_size;
   for(int idx = 0; idx < tasks_size; idx++)
-    if (tasks[i] == NULL) ret = idx;
+    if (tasks[idx] == NULL) ret = idx;
   return ret;
 }
 
