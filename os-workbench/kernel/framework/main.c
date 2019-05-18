@@ -1,4 +1,4 @@
-// #define _LANCELOIA_DEBUG_
+#define _LANCELOIA_DEBUG_
 
 #ifdef _LANCELOIA_DEBUG_
 
@@ -36,7 +36,10 @@ static void create_threads() {
   kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-1: producer", producer, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-2: producer", producer, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-3: consumer", consumer, NULL);
-  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-4: consumer", consumer, NULL);
+  // kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-4: consumer", consumer, NULL);
+  task_t *temp = pmm->alloc(sizeof(task_t));
+  kmt->create(temp, "test-thread-4: consumer", consumer, NULL);
+  kmt->teardown(temp);
   kmt->sem_init(&empty, "buffer-empty", maxk);
   kmt->sem_init(&full, "buffer-full", 0);
   kmt->sem_init(&mutex, "mutex", 1);
