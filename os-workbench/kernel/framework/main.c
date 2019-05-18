@@ -33,7 +33,7 @@ static void consumer(void *arg) {
 }
 
 static void motherfucker(void *arg) {
-  task_t *producer_task, *consumer_task;
+  task_t *producer_task = NULL, *consumer_task = NULL;
   while (1) {
     if (!producer_task && cnt < maxk / 2) {
       producer_task = pmm->alloc(sizeof(task_t));
