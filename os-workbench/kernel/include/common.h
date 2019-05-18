@@ -6,8 +6,6 @@
 #include <x86.h>
 #include <../src/x86/x86-qemu.h>
 
-#define _LANCELOIA_DEBUG_
-
 enum {
   NIL = 0, STARTED = 1, RUNNABLE = 2,
   RUNNING = 3, YIELD = 4, KILLED = 5
