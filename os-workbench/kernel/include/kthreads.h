@@ -52,5 +52,6 @@ void task_wait(void *arg) {
 }
 
 task_t tty;
+void tty_task(void *arg);
 
 #endif
