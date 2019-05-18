@@ -16,7 +16,7 @@ static void kmt_create_wait() {
 }
 */
 
-#define MAX_TASK = 32;
+#define MAX_TASK 32;
 
 static int tasks_size = 0;
 static task_t *tasks[MAX_TASK];
@@ -35,7 +35,7 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
     current->state = RUNNABLE;
   //current = NULL;
   do {
-    if (!current || current + 1 == tasks_size)
+    if (!current || current + 1 == &tasks[tasks_size])
       current = &tasks[0];
     else
       current++;
