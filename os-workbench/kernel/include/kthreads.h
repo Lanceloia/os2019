@@ -40,7 +40,6 @@ void popcli() {
   naivelock_unlock(cli_mutex);
   if (ncli[_cpu()] == 0 && intena[_cpu()])
     sti();
-
 }
 
 int holding(spinlock_t *lk) {
