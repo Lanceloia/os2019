@@ -38,11 +38,13 @@ static void mogician(void *arg) {
     if (!producer_task && cnt <  maxk / 2 && rand() % 4 == 0) {
       producer_task = pmm->alloc(sizeof(task_t));
       kmt->create(producer_task, "producer", producer, NULL);
+      _yield();
     }
     
     if (!consumer_task && cnt >= maxk / 2 && rand() % 4 == 0) {
       consumer_task = pmm->alloc(sizeof(task_t));
       kmt->create(consumer_task, "consumer", consumer, NULL);
+      _yield();
     }
 
     for (volatile int i = 0; i < 100000; i++)
