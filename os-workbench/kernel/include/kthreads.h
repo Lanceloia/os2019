@@ -57,7 +57,7 @@ static void kmt_create_wait() {
     wait[i].stk.start = pmm->alloc(STACK_SIZE);
     wait[i].stk.end = wait[i].stk.start + STACK_SIZE;
     wait[i].ctx = *(_kcontext(wait[i].stk, entry, arg));
-    wait[i].tate = STARTED;
+    wait[i].state = STARTED;
   }
 }
 
