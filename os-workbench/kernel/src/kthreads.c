@@ -1,8 +1,8 @@
+// #define _LANCELOIA_DEBUG_
+
 #include <common.h>
 #include <klib.h>
 #include <kthreads.h>
-
-#define _LANCELOIA_DEBUG_
 
 static int tasks_size = 0;
 static task_t *tasks[MAX_TASK];
