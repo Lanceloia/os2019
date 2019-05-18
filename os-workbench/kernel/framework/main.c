@@ -15,7 +15,7 @@ static void producer(void *arg) {
     kmt->sem_wait(&empty);
     kmt->sem_wait(&mutex);
     cnt ++;
-    //printf("%d+%c\t", cnt, _cpu()+'a');
+    printf("%d+%c\t", cnt, _cpu()+'a');
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&full);
   }
@@ -26,7 +26,7 @@ static void consumer(void *arg) {
     kmt->sem_wait(&full);
     kmt->sem_wait(&mutex);
     cnt --;
-    //printf("%d-%c\t", cnt, _cpu()+'a');
+    printf("%d-%c\t", cnt, _cpu()+'a');
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&empty);
   }
