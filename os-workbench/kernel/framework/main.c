@@ -42,7 +42,7 @@ static void motherfucker(void *arg) {
     
     if (!consumer_task && rand() % 2) {
       consumer_task = pmm->alloc(sizeof(task_t));
-      kmt->create(consumer_task, "test-thread-3: producer", producer, NULL);
+      kmt->create(consumer_task, "test-thread-4: consumer", consumer, NULL);
     }
 
     if (producer_task && rand() % 2) {
@@ -60,9 +60,9 @@ static void motherfucker(void *arg) {
 }
 
 static void create_threads() {
+  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-0: motherfucker", motherfucker, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-1: producer", producer, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-2: consumer", consumer, NULL);
-  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-0: motherfucker", motherfucker, NULL);
   kmt->sem_init(&empty, "buffer-empty", maxk);
   kmt->sem_init(&full, "buffer-full", 0);
   kmt->sem_init(&mutex, "mutex", 1);
