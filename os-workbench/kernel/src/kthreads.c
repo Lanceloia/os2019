@@ -47,15 +47,15 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
 }
 
 static void tasks_insert(task_t *x) {
-  kmt_spin_lock(&tasks_list_mutex);
+  kmt_spin_lock(&tasks_mutex);
   tasks[tasks_size++] = x;
-  kmt_spin_unlock(&tasks_list_mutex);
+  kmt_spin_unlock(&tasks_mutex);
 }
 
 static void tasks_remove(task_t *x) {
-  kmt_spin_lock(&tasks_list_mutex);
+  kmt_spin_lock(&tasks_mutex);
   assert(0);
-  kmt_spin_unlock(&tasks_list_mutex);
+  kmt_spin_unlock(&tasks_mutex);
 }
 
 static void kmt_init() {
