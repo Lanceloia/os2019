@@ -25,10 +25,11 @@ typedef intptr_t naivelock_t;
 
 struct task {
   int idx;
-  char name[32];
   int state;
   _Context ctx;
   _Area stk;
+  char name[32];
+  char stack[4096];
 }__attribute__((aligned(32)));
 
 struct spinlock {

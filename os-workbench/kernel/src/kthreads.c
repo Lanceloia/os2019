@@ -2,8 +2,6 @@
 #include <klib.h>
 #include <kthreads.h>
 
-#define STACK_SIZE 4096
-
 /*
 static void kmt_create_wait() {
   for(int i = 0; i < _ncpu(); i++) {
@@ -35,10 +33,10 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
     current->state = RUNNABLE;
   //current = NULL;
   do {
-    if (!current || current + 1 == &tasks[tasks_size])
-      current = &tasks[0];
+    if (!current || current->idx + 1 == tasks_size)
+      current = tasks[0];
     else
-      current++;
+      current = tasks[current->idx + 1];
     // printf("%d ", _cpu());
   } while (!(current->state == STARTED || current->state == RUNNABLE));
  
@@ -75,12 +73,12 @@ static void kmt_init() {
  */
 
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
-  strcpy(task->name, name);
   task->idx = tasks_size;
-  task->stk.start = pmm->alloc(STACK_SIZE);
-  task->stk.end = task->stk.start + STACK_SIZE;
-  task->ctx = *(_kcontext(task->stk, entry, arg));
   task->state = STARTED;
+  strcpy(task->name, name);
+  task->stk.start = task->stack;
+  task->stk.end = task->stk.start + 4096;
+  task->ctx = *(_kcontext(task->stk, entry, arg));
   tasks_insert(task);
   printf("[task] created [%s]\n", task->name);
   return 0; 
