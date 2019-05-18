@@ -23,7 +23,9 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
       current = tasks[0];
     else
       current = tasks[current->idx + 1];
-  } while (!(current->state == STARTED || current->state == RUNNABLE));
+  } while ((current->idx % _ncpu() != _cpu())
+            && (current->state != STARTED) 
+            && (current->state != RUNNABLE));
  
   current->state = RUNNING;
   return &current->ctx;
