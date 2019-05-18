@@ -37,7 +37,7 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
       current = tasks[0];
     else
       current = tasks[current->idx + 1];
-    printf("%c ", _cpu() + 'a');
+    // printf("%c ", _cpu() + 'a');
   } while (!(current->state == STARTED || current->state == RUNNABLE));
  
   current->state = RUNNING;
