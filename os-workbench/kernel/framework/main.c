@@ -45,6 +45,8 @@ static void motherfucker(void *arg) {
       kmt->create(consumer_task, "test-thread-4: consumer", consumer, NULL);
     }
 
+    for (volatile int i = 0; i < 100000; i++)
+
     if (producer_task && rand() % 4 == 0) {
       kmt->teardown(producer_task);
       pmm->free(producer_task);
