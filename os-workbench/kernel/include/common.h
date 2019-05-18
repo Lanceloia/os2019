@@ -47,8 +47,8 @@ struct semaphore {
   volatile int value;
   struct spinlock lk;
 
-  struct task *stack[MAX_TASK];
-  int top;
+  struct task *que[MAX_TASK];
+  int head, tail;
 };
 
 #define TRACEME

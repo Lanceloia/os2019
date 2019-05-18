@@ -101,12 +101,15 @@ static void kmt_spin_unlock(spinlock_t *lk) {
 
 static void sem_push(sem_t *sem, task_t *task) {
   assert(sem->lk.locked);
-  sem->stack[(sem->top)++] = task;
+  sem->que[sem->tail] = task;
+  sem->tail = (sem->tail + 1) % MAX_TASK;
 }
 
 static task_t *sem_pop(sem_t *sem) {
   assert(sem->lk.locked);
-  return sem->stack[--(sem->top)];
+  int _head = sem->head;
+  sem->head = (sem->head + 1) % MAX_TASK;
+  return sem->que[_head];
 }
 
 static void sleep (sem_t *sem) {
@@ -128,7 +131,7 @@ static void wakeup (sem_t *sem) {
 static void kmt_sem_init(sem_t *sem, const char *name, int value) {
   strcpy(sem->name, name);
   sem->value = value;
-  sem->top = 0;
+  sem->head = sem->tail = 0;
   kmt_spin_init(&sem->lk, name);
   printf("[sem] created [%s] [%d]\n", sem->name, sem->value);
 }
