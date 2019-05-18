@@ -181,6 +181,7 @@ static void wakeup (sem_t *sem) {
   task_t *task = sem->head;
   sem->head = sem->head->next2;
   task->state = RUNNABLE;
+  task->next2 = NULL;
   // tasks_insert(task);
   kmt_spin_unlock(&current_tasks_mutex);
   kmt_spin_unlock(&sem->lk);
