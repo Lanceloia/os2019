@@ -120,7 +120,7 @@ static void sleep (sem_t *sem) {
 }
 
 static void wakeup (sem_t *sem) {
-  if (sem->top == 0) {
+  if (sem->head == sem->tail) {
     _halt(1);
   }
   task_t *task = sem_pop(sem);
