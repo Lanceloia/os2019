@@ -15,7 +15,7 @@
  * tasks_list_head, current_tasks
  */
 
-spinlock_t tasks_list_mutex;
+spinlock_t tasks_mutex;
 spinlock_t current_tasks_mutex;
 
 /* spinlock-manage

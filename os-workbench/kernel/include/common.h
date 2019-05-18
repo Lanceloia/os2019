@@ -29,8 +29,6 @@ struct task {
   int state;
   _Context ctx;
   _Area stk;
-  struct task *next;
-  struct task *next2;
 }__attribute__((aligned(32)));
 
 struct spinlock {
@@ -43,7 +41,9 @@ struct semaphore {
   char name[32];
   volatile int value;
   struct spinlock lk;
-  struct task *head;
+
+  struct task *stack[32];
+  int top;
 };
 
 #define TRACEME

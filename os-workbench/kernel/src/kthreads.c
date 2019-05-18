@@ -16,8 +16,10 @@ static void kmt_create_wait() {
 }
 */
 
-static int tasks_list_size = 0;
-static task_t *tasks_list_head = NULL;
+#define MAX_TASK = 32;
+
+static int tasks_size = 0;
+static task_t *tasks[MAX_TASK];
 static task_t *current_tasks[MAX_CPU];
 
 #define current (current_tasks[_cpu()])
@@ -33,10 +35,10 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
     current->state = RUNNABLE;
   //current = NULL;
   do {
-    if (!current || current->next == NULL)
-      current = tasks_list_head;
+    if (!current || current + 1 == tasks_size)
+      current = &tasks[0];
     else
-      current = current->next;
+      current++;
     // printf("%d ", _cpu());
   } while (!(current->state == STARTED || current->state == RUNNABLE));
  
@@ -46,46 +48,25 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
 
 static void tasks_insert(task_t *x) {
   kmt_spin_lock(&tasks_list_mutex);
-  x->next = tasks_list_head;
-  tasks_list_head = x;
-  tasks_list_size ++;
+  tasks[tasks_size++] = x;
   kmt_spin_unlock(&tasks_list_mutex);
 }
 
 static void tasks_remove(task_t *x) {
   kmt_spin_lock(&tasks_list_mutex);
-  if (tasks_list_head == NULL)
-    panic("\nERROR: tasks_remove error 0!\n");
-
-  if (tasks_list_head->next == NULL) {
-    if (tasks_list_head != x)
-      panic("\nERROR: tasks_remove error 1!\n");
-    tasks_list_head = NULL;
-  }
-  else {
-    if (tasks_list_head == x)
-      tasks_list_head = tasks_list_head->next;
-    else{
-      task_t *p = tasks_list_head;
-      while(p->next != NULL && p->next != x) {p = p->next;}
-      if(p->next == NULL)
-        panic("\nERROR: tasks_remove error 2!\n");
-      else
-        p->next = p->next->next;
-    }
-  }
-  tasks_list_size --;
+  assert(0);
   kmt_spin_unlock(&tasks_list_mutex);
 }
 
 static void kmt_init() {
   os->on_irq(INT32_MIN, _EVENT_NULL, kmt_context_save);
   os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_switch);
-  kmt_spin_init(&tasks_list_mutex, "tasks-list-mutex");
+  kmt_spin_init(&tasks_mutex, "tasks-mutex");
   kmt_spin_init(&current_tasks_mutex, "current-tasks-mutex");
+  /*
   for(int i = 0; i < _ncpu(); i++) {
     kmt_create(&wait[i], "wait", task_wait, NULL);
-  }
+  }*/
   // kmt_create_wait();
 }
 
@@ -95,12 +76,11 @@ static void kmt_init() {
 
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
   strcpy(task->name, name);
+  task->idx = tasks_size;
   task->stk.start = pmm->alloc(STACK_SIZE);
   task->stk.end = task->stk.start + STACK_SIZE;
   task->ctx = *(_kcontext(task->stk, entry, arg));
   task->state = STARTED;
-  task->next = NULL;
-  task->next2 = NULL;
   tasks_insert(task);
   printf("[task] created [%s]\n", task->name);
   return 0; 
@@ -157,20 +137,26 @@ static void kmt_spin_unlock(spinlock_t *lk) {
  * sem_init(), sem_wait(), sem_signal()
  */
 
+static void sem_push(sem_t *sem, task_t *task) {
+  sem->stack[top++] = task;
+}
+
+static task_t *sem_pop(sem_t *sem) {
+  return sem->stack[--top];
+}
+
 static void kmt_sem_init(sem_t *sem, const char *name, int value) {
   strcpy(sem->name, name);
   sem->value = value;
+  sem->top = 0;
   kmt_spin_init(&sem->lk, name);
-  sem->head = NULL;
   printf("[log] created semaphore [%s]\n", sem->name);
 }
 
 static void sleep (sem_t *sem) {
   kmt_spin_lock(&current_tasks_mutex);
   current->state = YIELD;
-  // tasks_remove(current);
-  current->next2 = sem->head;
-  sem->head = current;
+  sem_push(sem, current);
   kmt_spin_unlock(&current_tasks_mutex);
   kmt_spin_unlock(&sem->lk);
   _yield();
@@ -183,10 +169,8 @@ static void wakeup (sem_t *sem) {
     _halt(1);
   }
   kmt_spin_lock(&current_tasks_mutex);
-  assert(sem->head->state == YIELD);
-  sem->head->state = RUNNABLE;
-  sem->head = sem->head->next2;
-  // tasks_insert(task);
+  task_t *task = sem_pop();
+  task->state = RUNNABLE;
   kmt_spin_unlock(&current_tasks_mutex);
   kmt_spin_unlock(&sem->lk);
 }
