@@ -20,7 +20,7 @@ enum {
 };
 
 typedef intptr_t naivelock_t; 
-#define naivelock_lock(locked) { while(_atomic_xchg((&locked), LOCKED)) for(int volitile i = 0; i < 1000; i++); }
+#define naivelock_lock(locked) { while(_atomic_xchg((&locked), LOCKED)) for(volitile int _i_ = 0; _i_ < 1000; _i_++); }
 #define naivelock_unlock(locked) { _atomic_xchg((&locked), UNLOCKED); }
 
 struct task {
