@@ -1,5 +1,3 @@
-// #define _LANCELOIA_DEBUG_
-
 #include <common.h>
 #include <klib.h>
 #include <kthreads.h>
