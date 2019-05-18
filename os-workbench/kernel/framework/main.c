@@ -69,3 +69,7 @@ int main() {
 }
 
 #endif
+
+#ifdef _LANCELOIA_DEBUG_
+#undef _LANCELOIA_DEBUG_
+#endif

@@ -2,6 +2,9 @@
 #include <klib.h>
 #include <kthreads.h>
 
+#define _LANCELOIA_DEBUG_
+#ifdef _LANCELOIA_DEBUG_
+
 static int tasks_size = 0;
 static task_t *tasks[MAX_TASK];
 static task_t *current_tasks[MAX_CPU];
@@ -34,7 +37,6 @@ static int get_tasks_idx() {
   int ret = tasks_size;
   for(int idx = 0; idx < tasks_size; idx++)
     if (tasks[idx] == NULL) ret = idx;
-  // printf("get idx: %d\n", ret);
   return ret;
 }
 
@@ -59,13 +61,17 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   task->stk.end = task->stk.start + STK_SIZE;
   task->ctx = *(_kcontext(task->stk, entry, arg));
   tasks_insert(task);
-  // printf("[task] created [%s] [%d]\n", task->name, task->idx);
+#ifdef _LANCELOIA_DEBUG_
+  printf("[task] created [%s] [%d]\n", task->name, task->idx);
+#endif
   return 0; 
 }
 
 static void kmt_teardown(task_t *task) {
   tasks_remove(task);
-  // printf("[task] removed [%s] [%d]\n", task->name, task->idx);
+#ifdef _LANCELOIA_DEBUG_
+  printf("[task] removed [%s] [%d]\n", task->name, task->idx);
+#endif
 }
 
 static void kmt_create_wait() {
@@ -87,11 +93,15 @@ static void kmt_spin_init(spinlock_t *lk, const char *name) {
   strcpy(lk->name, name);
   lk->locked = UNLOCKED;
   lk->cpu = NONE_CPU;
-  //printf("[spinlock] created [%s]\n", lk->name);
+#ifdef _LANCELOIA_DEBUG_
+  printf("[spinlock] created [%s]\n", lk->name);
+#endif
 }
 
 static void kmt_spin_lock(spinlock_t *lk) {
-  // if (holding(lk)) panic("locked");
+#ifdef
+  if (holding(lk)) panic("locked");
+#endif
   pushcli();
   while(_atomic_xchg(&lk->locked, LOCKED)) SLEEP(256);
   lk->cpu = _cpu();
@@ -99,7 +109,9 @@ static void kmt_spin_lock(spinlock_t *lk) {
 }
 
 static void kmt_spin_unlock(spinlock_t *lk) {
-  // if (!holding(lk)) panic("unlocked");
+#ifdef _LANCELOIA_DEBUG_
+  if (!holding(lk)) panic("unlocked");
+#endif
   lk->cpu = NONE_CPU;
   _atomic_xchg(&(lk->locked), UNLOCKED);
   popcli();
@@ -142,7 +154,9 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
   sem->value = value;
   sem->head = sem->tail = 0;
   kmt_spin_init(&sem->lk, name);
+#ifdef _LANCELOIA_DEBUG_
   printf("[sem] created [%s] [%d]\n", sem->name, sem->value);
+#endif
 }
 
 static void kmt_sem_wait(sem_t *sem) {
@@ -175,4 +189,6 @@ MODULE_DEF(kmt) {
     .sem_signal = kmt_sem_signal,
 };
 
-
+#ifdef _LANCELOIA_DEBUG_
+#undef _LANCELOIA_DEBUG_
+#endif
