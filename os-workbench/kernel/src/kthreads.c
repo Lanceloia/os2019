@@ -14,7 +14,10 @@ static void kmt_create_wait() {
   }
 }
 
-static task_t *tasks_list_head = NULL,*current_tasks[MAX_CPU];
+static int tasks_list_size = 0;
+static task_t *tasks_list_head = NULL;
+static task_t *current_tasks[MAX_CPU];
+
 #define current (current_tasks[_cpu()])
 
 static _Context *kmt_context_save(_Event ev, _Context *ctx) {
@@ -24,6 +27,10 @@ static _Context *kmt_context_save(_Event ev, _Context *ctx) {
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
+  if (tasks_list_size < _ncpu() && tasks_list_size < _cpu()) {
+    return wait[_cpu()].ctx;
+  }
+
   if(current && current->state == RUNNING)
     current->state = RUNNABLE;
   //current = NULL;
@@ -43,6 +50,7 @@ static void tasks_insert(task_t *x) {
   kmt_spin_lock(&tasks_list_mutex);
   x->next = tasks_list_head;
   tasks_list_head = x;
+  tasks_list_size ++;
   kmt_spin_unlock(&tasks_list_mutex);
 }
 
@@ -68,6 +76,7 @@ static void tasks_remove(task_t *x) {
         p->next = p->next->next;
     }
   }
+  tasks_list_size --;
   kmt_spin_unlock(&tasks_list_mutex);
 }
 
