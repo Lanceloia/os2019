@@ -37,12 +37,12 @@ static void mogician(void *arg) {
   while (1) {
     if (!producer_task && cnt <  maxk / 2 && rand() % 4 == 0) {
       producer_task = pmm->alloc(sizeof(task_t));
-      kmt->create(producer_task, "test-thread-3: producer", producer, NULL);
+      kmt->create(producer_task, "producer", producer, NULL);
     }
     
     if (!consumer_task && cnt >= maxk / 2 && rand() % 4 == 0) {
       consumer_task = pmm->alloc(sizeof(task_t));
-      kmt->create(consumer_task, "test-thread-4: consumer", consumer, NULL);
+      kmt->create(consumer_task, "consumer", consumer, NULL);
     }
 
     for (volatile int i = 0; i < 100000; i++)
@@ -62,9 +62,9 @@ static void mogician(void *arg) {
 }
 
 static void create_threads() {
-  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-0: mogician", mogician, NULL);
-  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-1: producer", producer, NULL);
-  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-2: consumer", consumer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "mogician", mogician, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "mogician", mogician, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "mogician", mogician, NULL);
   kmt->sem_init(&empty, "buffer-empty", maxk);
   kmt->sem_init(&full, "buffer-full", 0);
   kmt->sem_init(&mutex, "mutex", 1);
