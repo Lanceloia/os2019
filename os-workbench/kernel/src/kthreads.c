@@ -163,9 +163,9 @@ static void sleep (sem_t *sem) {
 }
 
 static void wakeup (sem_t *sem) {
-  if (sem->head == NULL) {
-    printf("\nERROR: wakeup error! sem->name: %s, sem->value: %d\n", 
-      sem->name, sem->value);
+  if (sem->top == 0) {
+  //  printf("\nERROR: wakeup error! sem->name: %s, sem->value: %d\n", 
+  //    sem->name, sem->value);
     _halt(1);
   }
   kmt_spin_lock(&current_tasks_mutex);
