@@ -39,7 +39,7 @@ static void create_threads() {
   // kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-4: consumer", consumer, NULL);
   task_t *temp = pmm->alloc(sizeof(task_t));
   kmt->create(temp, "test-thread-4: consumer", consumer, NULL);
-  kmt->teardown(temp);
+  //kmt->teardown(temp);
   kmt->sem_init(&empty, "buffer-empty", maxk);
   kmt->sem_init(&full, "buffer-full", 0);
   kmt->sem_init(&mutex, "mutex", 1);
