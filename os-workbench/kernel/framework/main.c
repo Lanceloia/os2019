@@ -26,54 +26,17 @@ static void consumer(void *arg) {
     kmt->sem_wait(&full);
     kmt->sem_wait(&mutex);
     cnt --;
-    // printf("%d-%c\t", cnt, _cpu()+'a');
+    printf("%d-%c\t", cnt, _cpu()+'a');
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&empty);
   }
 }
 
-static void mogician(void *arg) {
-  task_t *producer_task = NULL, *consumer_task = NULL;
-  while (1) {
-    for(volatile int i = 0; i < 100000; i++);
-
-    if (!producer_task && rand() % 10 == 0) {
-      producer_task = pmm->alloc(sizeof(task_t));
-      kmt->create(producer_task, "producer", producer, NULL);
-    }
-    if (!consumer_task && rand() % 10 == 0) {
-      consumer_task = pmm->alloc(sizeof(task_t));
-      kmt->create(consumer_task, "consumer", consumer, NULL);
-    }
-    if (producer_task && rand() % 20 == 0) {
-      kmt->teardown(producer_task);
-      pmm->free(producer_task);
-      producer_task = NULL;
-    }
-    if (consumer_task && rand() % 20 == 0) {
-      kmt->teardown(consumer_task);
-      pmm->free(consumer_task);
-      consumer_task = NULL;
-    }
-
-    if (producer_task || consumer_task)
-      _yield();
-    else if (rand() % 2){
-      producer_task = pmm->alloc(sizeof(task_t));
-      kmt->create(producer_task, "producer", producer, NULL);
-    }
-    else {
-      consumer_task = pmm->alloc(sizeof(task_t));
-      kmt->create(consumer_task, "consumer", consumer, NULL);
-    }
-  }
-}
-
 static void create_threads() {
-  kmt->create(pmm->alloc(sizeof(task_t)), "mogician", mogician, NULL);
-  kmt->create(pmm->alloc(sizeof(task_t)), "mogician", mogician, NULL);
-  kmt->create(pmm->alloc(sizeof(task_t)), "mogician", mogician, NULL);
-  kmt->create(pmm->alloc(sizeof(task_t)), "mogician", mogician, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "0-producer", producer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "1-producer", producer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "2-consumer", consumer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "3-consumer", consumer, NULL);
   kmt->sem_init(&empty, "buffer-empty", maxk);
   kmt->sem_init(&full, "buffer-full", 0);
   kmt->sem_init(&mutex, "mutex", 1);
