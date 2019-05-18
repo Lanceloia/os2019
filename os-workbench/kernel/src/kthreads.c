@@ -14,6 +14,7 @@ static void kmt_create_wait() {
 }
 */
 
+#define SLEEP 
 #define MAX_TASK 32
 
 static int tasks_size = 0;
@@ -30,18 +31,19 @@ static _Context *kmt_context_save(_Event ev, _Context *ctx) {
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
+  SLEEP(256);
   if (current)
     current->ctx = *ctx;
 
   if(current && current->state == RUNNING)
     current->state = RUNNABLE;
-  //current = NULL;
+
   do {
     if (!current || current->idx + 1 == tasks_size)
       current = tasks[0];
     else
       current = tasks[current->idx + 1];
-    // printf("%c ", _cpu() + 'a');
+    SLEEP(256);
   } while (!(current->state == STARTED || current->state == RUNNABLE));
  
   current->state = RUNNING;
@@ -174,6 +176,7 @@ static void wakeup (sem_t *sem) {
 }
 
 static void kmt_sem_wait(sem_t *sem) {
+  
   kmt_spin_lock(&sem->lk);
   sem->value--;
   if (sem->value < 0)
