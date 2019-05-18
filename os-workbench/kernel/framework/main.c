@@ -32,6 +32,7 @@ static void consumer(void *arg) {
   }
 }
 
+/*
 static void motherfucker(void *arg) {
   task_t *producer_task = NULL, *consumer_task = NULL;
   while (1) {
@@ -56,6 +57,7 @@ static void motherfucker(void *arg) {
     }
   }
 }
+*/
 
 static void create_threads() {
   kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-1: producer", producer, NULL);
