@@ -39,7 +39,7 @@ static int get_tasks_idx() {
 static void tasks_insert(task_t *x) {
   kmt_spin_lock(&tasks_mutex);
   x->idx = get_tasks_idx();
-  if (x->idx > tasks_size) tasks_size = x->idx;
+  if (x->idx == tasks_size) tasks_size++;
   tasks[x->idx] = x;
   kmt_spin_unlock(&tasks_mutex);
 }
