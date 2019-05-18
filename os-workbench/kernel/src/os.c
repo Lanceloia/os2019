@@ -2,6 +2,7 @@
 #include <os.h>
 
 device_t *dev_lookup(const char *name);
+ssize_t tty_write(device_t *dev, off_t offset, const void *buf, size_t count);
 
 void echo_task(void *name) {
   device_t *tty = dev_lookup(name);
