@@ -70,7 +70,6 @@ static void kmt_init() {
   kmt_spin_init(&tasks_mutex, "tasks-mutex");
   kmt_spin_init(&current_tasks_mutex, "current-tasks-mutex");
   kmt_create_wait();
-  kmt_create(&tty, "tty-task", tty_task, NULL);
 }
 
 /* spin */
