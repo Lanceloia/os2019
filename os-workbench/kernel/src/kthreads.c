@@ -48,7 +48,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   task->stk.end = task->stk.start + STK_SIZE;
   task->ctx = *(_kcontext(task->stk, entry, arg));
   tasks_insert(task);
-  printf("[task] created [%s], [%d], [%d]\n", task->name, task->idx, tasks_size);
+  printf("[task] created [%s] [%d]\n", task->name, task->idx);
   return 0; 
 }
 
