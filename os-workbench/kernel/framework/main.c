@@ -45,13 +45,13 @@ static void motherfucker(void *arg) {
       kmt->create(consumer_task, "test-thread-4: consumer", consumer, NULL);
     }
 
-    if (producer_task && cnt >= maxk / 2) {
+    if (producer_task && rand() % 4 == 0) {
       kmt->teardown(producer_task);
       pmm->free(producer_task);
       producer_task = NULL;
     }
 
-    if (consumer_task && cnt < maxk / 2) {
+    if (consumer_task && rand() % 4 == 0) {
       kmt->teardown(consumer_task);
       pmm->free(consumer_task);
       consumer_task = NULL;
