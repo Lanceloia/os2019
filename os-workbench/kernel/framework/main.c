@@ -32,15 +32,15 @@ static void consumer(void *arg) {
   }
 }
 
-static void motherfucker(void *arg) {
+static void mogician(void *arg) {
   task_t *producer_task = NULL, *consumer_task = NULL;
   while (1) {
-    if (!producer_task && cnt < maxk / 2) {
+    if (!producer_task && cnt <  maxk / 2 && rand() % 4 == 0) {
       producer_task = pmm->alloc(sizeof(task_t));
       kmt->create(producer_task, "test-thread-3: producer", producer, NULL);
     }
     
-    if (!consumer_task && cnt >= maxk / 2) {
+    if (!consumer_task && cnt >= maxk / 2 && rand() % 4 == 0) {
       consumer_task = pmm->alloc(sizeof(task_t));
       kmt->create(consumer_task, "test-thread-4: consumer", consumer, NULL);
     }
@@ -62,7 +62,7 @@ static void motherfucker(void *arg) {
 }
 
 static void create_threads() {
-  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-0: motherfucker", motherfucker, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-0: mogician", mogician, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-1: producer", producer, NULL);
   kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-2: consumer", consumer, NULL);
   kmt->sem_init(&empty, "buffer-empty", maxk);
