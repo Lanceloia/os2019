@@ -35,31 +35,29 @@ static void consumer(void *arg) {
 static void mogician(void *arg) {
   task_t *producer_task = NULL, *consumer_task = NULL;
   while (1) {
-    if (!producer_task && cnt <  maxk / 2 && rand() % 4 == 0) {
+    if (!producer_task && cnt <  maxk / 2 && rand() % 100 == 0) {
       producer_task = pmm->alloc(sizeof(task_t));
       kmt->create(producer_task, "producer", producer, NULL);
-      _yield();
     }
     
-    if (!consumer_task && cnt >= maxk / 2 && rand() % 4 == 0) {
+    if (!consumer_task && cnt >= maxk / 2 && rand() % 100 == 0) {
       consumer_task = pmm->alloc(sizeof(task_t));
       kmt->create(consumer_task, "consumer", consumer, NULL);
-      _yield();
     }
 
-    for (volatile int i = 0; i < 100000; i++)
-
-    if (producer_task && rand() % 4 == 0) {
+    if (producer_task && rand() % 50 == 0) {
       kmt->teardown(producer_task);
       pmm->free(producer_task);
       producer_task = NULL;
     }
 
-    if (consumer_task && rand() % 4 == 0) {
+    if (consumer_task && rand() % 50 == 0) {
       kmt->teardown(consumer_task);
       pmm->free(consumer_task);
       consumer_task = NULL;
     }
+
+    _yield();
   }
 }
 
