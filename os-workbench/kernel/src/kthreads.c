@@ -32,6 +32,7 @@ static int get_tasks_idx() {
   int ret = tasks_size;
   for(int idx = 0; idx < tasks_size; idx++)
     if (tasks[idx] == NULL) ret = idx;
+  printf("get idx: %d\n", ret);
   return ret;
 }
 
