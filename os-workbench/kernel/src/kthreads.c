@@ -110,8 +110,8 @@ static void kmt_spin_lock(spinlock_t *lk) {
   }
 
   pushcli();
-  while(_atomic_xchg(&lk->locked, LOCKED)) 
-    for(volatile int i = 0; i < 2500; i++);
+  while(_atomic_xchg(&lk->locked, LOCKED));
+  //  for(volatile int i = 0; i < 2500; i++);
   lk->cpu = _cpu();
   __sync_synchronize();
   //for(volatile int i = 0; i < 15000; i++);
