@@ -28,20 +28,28 @@ static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
 
 /* tasks */
 
+static int get_tasks_idx() {
+  int ret = tasks_size;
+  for(int idx = 0; idx < tasks_size; idx++)
+    if (tasks[i] == NULL) ret = idx;
+  return ret;
+}
+
 static void tasks_insert(task_t *x) {
   kmt_spin_lock(&tasks_mutex);
-  tasks[tasks_size++] = x;
+  x->idx = get_tasks_idx();
+  if (x->idx > tasks_size) tasks_size = x->idx;
+  tasks[x->idx] = x;
   kmt_spin_unlock(&tasks_mutex);
 }
 
 static void tasks_remove(task_t *x) {
   kmt_spin_lock(&tasks_mutex);
-  assert(0);
+  tasks[x->idx] = NULL;
   kmt_spin_unlock(&tasks_mutex);
 }
 
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
-  task->idx = tasks_size;
   task->state = STARTED;
   strcpy(task->name, name);
   task->stk.start = task->stack;
@@ -53,10 +61,9 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
 }
 
 static void kmt_teardown(task_t *task) {
-  TRACE_ENTRY;
-  assert(0);
-  tasks_remove(current);
-  TRACE_EXIT;
+  tasks_remove(task);
+  printf("[task] removed [%s] [%d]\n", task->name, task->idx);
+  pmm->free(task);
 }
 
 static void kmt_create_wait() {
