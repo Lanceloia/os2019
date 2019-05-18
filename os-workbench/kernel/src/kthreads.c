@@ -84,7 +84,12 @@ static void kmt_spin_init(spinlock_t *lk, const char *name) {
 static void kmt_spin_lock(spinlock_t *lk) {
   // if (holding(lk)) panic("locked");
   pushcli();
-  while(lk->locked && _atomic_xchg(&lk->locked, LOCKED)) SLEEP(128);
+  while (1) {
+    if (lk->locked)
+      SLEEP(128);
+    else if (!_atomic_xchg(&lk->locked, LOCKED))
+      break;
+  }
   lk->cpu = _cpu();
   __sync_synchronize();
 }
