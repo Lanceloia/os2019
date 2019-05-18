@@ -78,8 +78,7 @@ static void kmt_spin_init(spinlock_t *lk, const char *name) {
 }
 
 static void kmt_spin_lock(spinlock_t *lk) {
-  if (holding(lk)) panic("locked");
-
+ // if (holding(lk)) panic("locked");
   pushcli();
   while(_atomic_xchg(&lk->locked, LOCKED)) SLEEP(256);
   lk->cpu = _cpu();
@@ -87,8 +86,7 @@ static void kmt_spin_lock(spinlock_t *lk) {
 }
 
 static void kmt_spin_unlock(spinlock_t *lk) {
-  if (!holding(lk)) panic("unlocked");
-
+//  if (!holding(lk)) panic("unlocked");
   lk->cpu = NONE_CPU;
   _atomic_xchg(&(lk->locked), UNLOCKED);
   popcli();
