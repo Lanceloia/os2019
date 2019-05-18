@@ -99,7 +99,7 @@ static void kmt_spin_init(spinlock_t *lk, const char *name) {
 }
 
 static void kmt_spin_lock(spinlock_t *lk) {
-#ifdef
+#ifdef _LANCELOIA_DEBUG_
   if (holding(lk)) panic("locked");
 #endif
   pushcli();
