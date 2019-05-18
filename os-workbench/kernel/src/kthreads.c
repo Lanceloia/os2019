@@ -63,7 +63,6 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
 static void kmt_teardown(task_t *task) {
   tasks_remove(task);
   printf("[task] removed [%s] [%d]\n", task->name, task->idx);
-  pmm->free(task);
 }
 
 static void kmt_create_wait() {
