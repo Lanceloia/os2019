@@ -52,8 +52,8 @@ void task_wait(void *arg) {
   while (1) {
     //for(volatile int i = 0; i < 1000; i++);
     //printf("\nnmsl %d", _cpu());
-    // for(volatile int i = 0; i < 100000; i++);
-    _yield();
+    for(volatile int i = 0; i < 1024; i++);
+    // _yield();
   }
 }
 
