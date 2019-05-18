@@ -35,12 +35,12 @@ static void consumer(void *arg) {
 static void mogician(void *arg) {
   task_t *producer_task = NULL, *consumer_task = NULL;
   while (1) {
-    if (!producer_task && cnt <  maxk / 2 && rand() % 10 == 0) {
+    if (!producer_task && rand() % 10 == 0) {
       producer_task = pmm->alloc(sizeof(task_t));
       kmt->create(producer_task, "producer", producer, NULL);
     }
     
-    if (!consumer_task && cnt >= maxk / 2 && rand() % 10 == 0) {
+    if (!consumer_task && rand() % 10 == 0) {
       consumer_task = pmm->alloc(sizeof(task_t));
       kmt->create(consumer_task, "consumer", consumer, NULL);
     }
