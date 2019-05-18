@@ -138,11 +138,11 @@ static void kmt_spin_unlock(spinlock_t *lk) {
  */
 
 static void sem_push(sem_t *sem, task_t *task) {
-  sem->stack[top++] = task;
+  sem->stack[(sem->top)++] = task;
 }
 
 static task_t *sem_pop(sem_t *sem) {
-  return sem->stack[--top];
+  return sem->stack[--(sem->top)];
 }
 
 static void kmt_sem_init(sem_t *sem, const char *name, int value) {
