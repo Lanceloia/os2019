@@ -28,7 +28,7 @@ static _Context *kmt_context_save(_Event ev, _Context *ctx) {
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
   if (tasks_list_size < _ncpu() && tasks_list_size < _cpu()) {
-    return wait[_cpu()].ctx;
+    return &wait[_cpu()].ctx;
   }
 
   if(current && current->state == RUNNING)
