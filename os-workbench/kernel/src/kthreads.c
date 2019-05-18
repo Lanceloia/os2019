@@ -3,7 +3,6 @@
 #include <kthreads.h>
 
 #define _LANCELOIA_DEBUG_
-#ifdef _LANCELOIA_DEBUG_
 
 static int tasks_size = 0;
 static task_t *tasks[MAX_TASK];
