@@ -149,7 +149,7 @@ static void kmt_spin_unlock(spinlock_t *lk) {
   lk->cpu = NONE_CPU;
   _atomic_xchg(&(lk->locked), UNLOCKED);
   popcli();
-  for(volatile int i = 0; i < 100000; i++);
+  for(volatile int i = 0; i < 10000; i++);
   __sync_synchronize();
 }
 
