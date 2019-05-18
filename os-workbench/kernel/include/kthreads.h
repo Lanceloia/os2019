@@ -22,19 +22,24 @@ spinlock_t current_tasks_mutex;
  * pushcli(), popcli(), holding()
  */
 
+naivelock_t cli_mutex = UNLOCKED;
 volatile int ncli[MAX_CPU] = {} , intena[MAX_CPU] = {};
 
 void pushcli() {
+  naivelock_lock(cli_mutex);
   cli();
   if (ncli[_cpu()] == 0)
     intena[_cpu()] = get_efl() & FL_IF;
   ncli[_cpu()] ++;
+  naivelock_unlock(cli_mutex);
 }
 
 void popcli() {
+  naivelock_lock(cli_mutex);
   ncli[_cpu()] --;
   if (ncli[_cpu()] == 0 && intena[_cpu()])
     sti();
+  naivelock_unlock(cli_mutex);
 }
 
 int holding(spinlock_t *lk) {
