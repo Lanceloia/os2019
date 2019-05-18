@@ -275,7 +275,7 @@ void echo_task(void *name) {
     sprintf(text, "(%s) $ ", name); tty->ops->write(tty, 0, text, strlen(text));
     int nread = tty->ops->read(tty, 0, line, sizeof(line));
     line[nread - 1] = '\0';
-    if (strcmp(line, "SWITCH") == 0) _halt(1);
+    if (strcmp(line, "SWITCH") == 0) kmt->sem_signal(&tty_lock);
     sprintf(text, "Echo: %s.\n", line); tty->ops->write(tty, 0, text, strlen(text));
   }
 }
