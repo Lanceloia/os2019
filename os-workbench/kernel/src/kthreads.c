@@ -140,10 +140,12 @@ static void kmt_spin_unlock(spinlock_t *lk) {
  */
 
 static void sem_push(sem_t *sem, task_t *task) {
+  assert(sem->lk.locked);
   sem->stack[(sem->top)++] = task;
 }
 
 static task_t *sem_pop(sem_t *sem) {
+  assert(sem->lk.locked);
   return sem->stack[--(sem->top)];
 }
 
