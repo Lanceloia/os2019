@@ -47,11 +47,13 @@ static void motherfucker(void *arg) {
 
     if (producer_task && rand() % 2) {
       kmt->teardown(producer_task);
+      pmm->free(producer_task);
       producer_task = NULL;
     }
 
     if (consumer_task && rand() % 2) {
       kmt->teardown(consumer_task);
+      pmm->free(consumer_task);
       consumer_task = NULL;
     }
   }
