@@ -130,7 +130,7 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
   sem->value = value;
   sem->top = 0;
   kmt_spin_init(&sem->lk, name);
-  printf("[sem] created [%s] [%d]\n", sem->name, sem->value);
+  printf("[sem] created [%s] [%d]\n", sem->name, value);
 }
 
 static void kmt_sem_wait(sem_t *sem) {
