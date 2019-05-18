@@ -29,7 +29,6 @@ static _Context *kmt_context_save(_Event ev, _Context *ctx) {
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
-  SLEEP(256);
   if (current)
     current->ctx = *ctx;
 
@@ -41,7 +40,6 @@ static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
       current = tasks[0];
     else
       current = tasks[current->idx + 1];
-    SLEEP(256);
   } while (!(current->state == STARTED || current->state == RUNNABLE));
  
   current->state = RUNNING;
@@ -114,14 +112,13 @@ static void kmt_spin_lock(spinlock_t *lk) {
   }
   pushcli();
   while(_atomic_xchg(&lk->locked, LOCKED))
-    for(volatile int i = 0; i < 2048; i++);
+    SLEEP(512);
   lk->cpu = _cpu();
   __sync_synchronize();
   //for(volatile int i = 0; i < 15000; i++);
 }
 
 static void kmt_spin_unlock(spinlock_t *lk) {
-  for(volatile int i = 0; i < 15000; i++);
   if (!holding(lk)) {
     printf("\nERROR: spin_unlock error! lk->name: %s\n", 
       lk->name);
