@@ -21,7 +21,8 @@ static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
       idx = 0;
     else
       idx ++;
-  } while ((!tasks[idx]) || (tasks[idx]->state != STARTED && tasks[idx]->state != RUNNABLE);
+  } while ((!tasks[idx]) || 
+  (tasks[idx]->state != STARTED && tasks[idx]->state != RUNNABLE));
   current = tasks[idx];
   current->state = RUNNING;
   return &current->ctx;
