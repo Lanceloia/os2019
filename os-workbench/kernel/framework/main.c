@@ -35,23 +35,23 @@ static void consumer(void *arg) {
 static void motherfucker(void *arg) {
   task_t *producer_task = NULL, *consumer_task = NULL;
   while (1) {
-    if (!producer_task && rand() % 2) {
+    if (!producer_task && cnt < maxk / 2) {
       producer_task = pmm->alloc(sizeof(task_t));
       kmt->create(producer_task, "test-thread-3: producer", producer, NULL);
     }
     
-    if (!consumer_task && rand() % 2) {
+    if (!consumer_task && cnt >= maxk / 2) {
       consumer_task = pmm->alloc(sizeof(task_t));
       kmt->create(consumer_task, "test-thread-4: consumer", consumer, NULL);
     }
 
-    if (producer_task && rand() % 2) {
+    if (producer_task && cnt >= maxk / 2) {
       kmt->teardown(producer_task);
       pmm->free(producer_task);
       producer_task = NULL;
     }
 
-    if (consumer_task && rand() % 2) {
+    if (consumer_task && cnt < maxk / 2) {
       kmt->teardown(consumer_task);
       pmm->free(consumer_task);
       consumer_task = NULL;
