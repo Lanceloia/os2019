@@ -27,27 +27,20 @@ static _Context *kmt_context_save(_Event ev, _Context *ctx) {
 }
 
 static _Context *kmt_context_switch(_Event ev, _Context *ctx) {
-  if (tasks_list_size < _ncpu() && tasks_list_size < _cpu()) {
-    current->state = YIELD;
-    wait[_cpu()].next = current;
-    current = wait[_cpu()].next;
-    return &current->ctx;
-  }
-  if (tasks_list_size >= _ncpu() && current == &wait[_cpu()]) {
-    current = wait[_cpu()].next;
-    wait[_cpu()].next = NULL;
-    current->state = RUNNING;
-    return &current->ctx;
-  }
-
   if(current && current->state == RUNNING)
     current->state = RUNNABLE;
-  //current = NULL;
+
+  task_t *m_current = NULL;
   do {
     if (!current || current->next == NULL)
       current = tasks_list_head;
     else
       current = current->next;
+
+    if (!m_current)
+      m_current = current;
+    else if (m_current == current)
+      return &wait[_cpu()].ctx;
     // printf("%d ", _cpu());
   } while (!(current->state == STARTED || current->state == RUNNABLE));
  
