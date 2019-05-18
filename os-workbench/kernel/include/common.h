@@ -20,6 +20,8 @@ enum {
 };
 
 #define SLEEP(time) for(volatile int __itr__ = 0; __itr__ < (time); __itr__++)
+#define MAX_TASK 32
+#define STK_SIZE 4096
 
 typedef intptr_t naivelock_t; 
 #define naivelock_lock(locked) { while(_atomic_xchg((&locked), LOCKED)) SLEEP(256); }
@@ -31,7 +33,7 @@ struct task {
   _Context ctx;
   _Area stk;
   char name[32];
-  char stack[4096];
+  char stack[STK_SIZE];
 }__attribute__((aligned(32)));
 
 struct spinlock {
@@ -45,7 +47,7 @@ struct semaphore {
   volatile int value;
   struct spinlock lk;
 
-  struct task *stack[32];
+  struct task *stack[MAX_TASK];
   int top;
 };
 
