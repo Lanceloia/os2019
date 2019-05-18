@@ -107,13 +107,11 @@ static void kmt_spin_init(spinlock_t *lk, const char *name) {
 }
 
 static void kmt_spin_lock(spinlock_t *lk) {
-  /*
   if (holding(lk)) {
     printf("\nERROR: spin_lock error! lk->name: %s\n", 
       lk->name);
     _halt(1);
   }
-  */
   pushcli();
   while(_atomic_xchg(&lk->locked, LOCKED))
     for(volatile int i = 0; i < 2500; i++);
@@ -124,14 +122,12 @@ static void kmt_spin_lock(spinlock_t *lk) {
 
 static void kmt_spin_unlock(spinlock_t *lk) {
   for(volatile int i = 0; i < 15000; i++);
-/*
   if (!holding(lk)) {
     printf("\nERROR: spin_unlock error! lk->name: %s\n", 
       lk->name);
 
     _halt(1);
   }
-*/
   lk->cpu = NONE_CPU;
   _atomic_xchg(&(lk->locked), UNLOCKED);
 
