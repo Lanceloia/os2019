@@ -59,13 +59,13 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   task->stk.end = task->stk.start + STK_SIZE;
   task->ctx = *(_kcontext(task->stk, entry, arg));
   tasks_insert(task);
-  // printf("[task] created [%s] [%d]\n", task->name, task->idx);
+  printf("[task] created [%s] [%d]\n", task->name, task->idx);
   return 0; 
 }
 
 static void kmt_teardown(task_t *task) {
   tasks_remove(task);
-  // printf("[task] removed [%s] [%d]\n", task->name, task->idx);
+  printf("[task] removed [%s] [%d]\n", task->name, task->idx);
 }
 
 static void kmt_create_wait() {
