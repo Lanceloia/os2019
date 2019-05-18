@@ -41,7 +41,6 @@ int holding(spinlock_t *lk) {
   return lk->locked && lk->cpu == _cpu();
 }
 
-/*
 task_t wait[MAX_CPU] = {};
 void task_wait(void *arg) {
   while (1) {
@@ -51,6 +50,5 @@ void task_wait(void *arg) {
     _yield();
   }
 }
-*/
 
 #endif
