@@ -161,12 +161,12 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
 }
 
 static void sleep (sem_t *sem) {
-  // kmt_spin_lock(&current_tasks_mutex);
+  kmt_spin_lock(&current_tasks_mutex);
   current->state = YIELD;
   // tasks_remove(current);
   current->next2 = sem->head;
   sem->head = current;
-  // kmt_spin_unlock(&current_tasks_mutex);
+  kmt_spin_unlock(&current_tasks_mutex);
   kmt_spin_unlock(&sem->lk);
   _yield();
 }
@@ -177,10 +177,12 @@ static void wakeup (sem_t *sem) {
       sem->name, sem->value);
     _halt(1);
   }
+  kmt_spin_lock(&current_tasks_mutex);
   task_t *task = sem->head;
   sem->head = sem->head->next2;
   task->state = RUNNABLE;
   // tasks_insert(task);
+  kmt_spin_unlock(&current_tasks_mutex);
   kmt_spin_unlock(&sem->lk);
 }
 
