@@ -134,8 +134,8 @@ static void kmt_spin_lock(spinlock_t *lk) {
   pushcli();
   while(_atomic_xchg(&lk->locked, LOCKED));
   lk->cpu = _cpu();
-
   __sync_synchronize();
+  for(volatile int i = 0; i < 15000; i++);
 }
 
 static void kmt_spin_unlock(spinlock_t *lk) {
@@ -149,8 +149,8 @@ static void kmt_spin_unlock(spinlock_t *lk) {
   lk->cpu = NONE_CPU;
   _atomic_xchg(&(lk->locked), UNLOCKED);
   popcli();
-  for(volatile int i = 0; i < 10000; i++);
   __sync_synchronize();
+  for(volatile int i = 0; i < 15000; i++);
 }
 
 /* semaphore
