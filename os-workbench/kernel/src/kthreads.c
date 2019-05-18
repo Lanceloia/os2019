@@ -4,6 +4,7 @@
 
 #define STACK_SIZE 4096
 
+/*
 static void kmt_create_wait() {
   for(int i = 0; i < _ncpu(); i++) {
   strcpy(wait[i].name, "wait");
@@ -13,6 +14,7 @@ static void kmt_create_wait() {
     wait[i].state = STARTED;
   }
 }
+*/
 
 static int tasks_list_size = 0;
 static task_t *tasks_list_head = NULL;
