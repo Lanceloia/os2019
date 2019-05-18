@@ -32,15 +32,35 @@ static void consumer(void *arg) {
   }
 }
 
+static void motherfucker(void *arg) {
+  task_t *producer_task, *consumer_task;
+  while (1) {
+    if (!producer_task && cnt < maxk / 2) {
+      producer_task = pmm->alloc(sizeof(task_t));
+      kmt->create(producer_task, "test-thread-3: producer", producer, NULL);
+    }
+    
+    if (!consumer_task && cnt >= maxk / 2) {
+      consumer_task = pmm->alloc(sizeof(task_t));
+      kmt->create(consumer_task, "test-thread-3: producer", producer, NULL);
+    }
+
+    if (producer_task && cnt >= maxk / 2) {
+      kmt->teardown(producer_task);
+      producer_task = NULL;
+    }
+
+    if (consumer_task && cnt < maxk / 2) {
+      kmt->teardown(consumer_task);
+      consumer_task = NULL;
+    }
+  }
+}
+
 static void create_threads() {
   kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-1: producer", producer, NULL);
-  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-2: producer", producer, NULL);
-  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-3: consumer", consumer, NULL);
-  // kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-4: consumer", consumer, NULL);
-  task_t *temp = pmm->alloc(sizeof(task_t));
-  kmt->create(temp, "test-thread-4: consumer", consumer, NULL);
-  kmt->teardown(temp);
-  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-3: consumer", consumer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-2: consumer", consumer, NULL);
+  kmt->create(pmm->alloc(sizeof(task_t)), "test-thread-0: motherfucker", motherfucker, NULL);
   kmt->sem_init(&empty, "buffer-empty", maxk);
   kmt->sem_init(&full, "buffer-full", 0);
   kmt->sem_init(&mutex, "mutex", 1);
