@@ -16,7 +16,7 @@ static void kmt_create_wait() {
 }
 */
 
-#define MAX_TASK 32;
+#define MAX_TASK 32
 
 static int tasks_size = 0;
 static task_t *tasks[MAX_TASK];
