@@ -81,13 +81,12 @@ void* memset(void* v,int c,size_t n) {
   return v;
 }
 
-void* memcpy(void* out, const void* in, size_t n) {
-  void *out_copy = out;
-  while(n > 0){
-    *(char *)out = *(char *)in;
-    out++, in++, n--;
-  }
-  return out_copy;
+void* memcpy(void* dest, const void* src, size_t n) {
+  char *_dest = (char *)dest;
+  const char* _src = (const char *)src;
+  while(n--)
+    *_dest++ = *_src++;
+  return dest;
 }
 
 int memcmp(const void* s1, const void* s2, size_t n){
@@ -106,9 +105,22 @@ int memcmp(const void* s1, const void* s2, size_t n){
   return ret;
 }
 
-void *memmove(void *dest, const void *src, size_t count){
-  assert(0);
-  return NULL;
+void *memmove(void *dest, const void *src, size_t n){
+  char *_dest = (char *)dest;
+  const char *_src = (const char*)src;
+  
+  if (_src > _dest) {
+    while (n--)
+      *_dest++ = *_src++;
+  }
+  else if (_src < _dest) {
+    _dest = _dest + n - 1;
+    _src = _src + n - 1;
+  
+    while (n--)
+      *_dest-- = *_src--;
+  }
+  return dest;
 }
 
 #endif
