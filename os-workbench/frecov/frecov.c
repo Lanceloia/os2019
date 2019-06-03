@@ -183,6 +183,7 @@ int main(int argc, char *argv[]) {
     }
 */
   }
+  show_fn();
   show_yello_bmp();
 
   return 0;
