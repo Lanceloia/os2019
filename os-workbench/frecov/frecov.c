@@ -84,20 +84,27 @@ int read_unicode(char dest[], char src[], int len) {
   return 1;
 }
 
+int is_valid(char ch) {
+  if('a' <= ch && ch <= 'z') return 1;
+  if('A' <= ch && ch <= 'Z') return 1;
+  if('0' <= ch && ch <= '9') return 1;
+  if(ch == '.' || ch == '_' || ch == '\0') return 1;
+  return 0;
+}
+
 char filename[256][256]= {};
 char buf[256] = {};
 int tot_fn;
 
 void read_name(char *data, int offset) {
-  if((*(data + offset + 0x00) == (char)0x01 ||
-  *(data + offset + 0x00) == (char)0x41) &&
-  *(data + offset + 0x0b) == (char)0x0f) {
+  if((data + offset + 0x0b) == (char)0x0f) {
   //if(*(data + offset + 0x0b) == (char)0x0f) {
     if(read_unicode(buf, data + offset + 0x01, 5))
       if(read_unicode(buf + 5, data + offset + 0x0e, 6))
         read_unicode(buf + 11, data + offset + 0x1c, 2);
 
-    strcpy(filename[tot_fn ++ ], buf);
+    if(us_valid(buf[0]))
+      strcpy(filename[tot_fn ++ ], buf);
   }
   /*
   else {
