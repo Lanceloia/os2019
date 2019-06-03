@@ -185,7 +185,7 @@ int judge_attribution(void *data, int offset) {
     read_num(data + offset + 0x9, 3) &&
     read_num(data + offset, 3) != 0x0
   )
-    {printf("color = %x\n", read_num(data + offset, 3)); return 1; }
+    return 1;//{printf("color = %x\n", read_num(data + offset, 3)); return 1; }
   else
     return 0;
 }
