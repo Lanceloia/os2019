@@ -89,7 +89,7 @@ char buf[256] = {};
 int tot_fn;
 
 void read_name(char *data, int offset) {
-  if(((*(data + offset + 0x00) & 0x0f) == (char)0x01 ||
+  if((*(data + offset + 0x00) == (char)0x01 ||
   *(data + offset + 0x00) == (char)0x41) &&
   *(data + offset + 0x0b) == (char)0x0f) {
   //if(*(data + offset + 0x0b) == (char)0x0f) {
