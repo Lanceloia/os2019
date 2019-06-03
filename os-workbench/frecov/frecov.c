@@ -97,7 +97,7 @@ char buf[256] = {};
 int tot_fn;
 
 void read_name(char *data, int offset) {
-  if((data + offset + 0x0b) == (char)0x0f) {
+  if(*(data + offset + 0x0b) == (char)0x0f) {
   //if(*(data + offset + 0x0b) == (char)0x0f) {
     if(read_unicode(buf, data + offset + 0x01, 5))
       if(read_unicode(buf + 5, data + offset + 0x0e, 6))
