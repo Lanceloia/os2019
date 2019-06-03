@@ -191,7 +191,7 @@ int judge_attribution(void *data, int offset) {
 }
 
 void output_bmp(char *data, struct YELLO_BMP *yb){
-  FILE *fp = fopen(yb->filename, "w+");
+  FILE *fp = fopen(yb->filename, "wb+");
   if(!fp) return;
   for(int i = 0; i < yb->clusters_size; i ++) {
     fwrite(data + yb->clusters[i], sizeof(char), fat32.sector_size, fp);
@@ -225,6 +225,6 @@ int main(int argc, char *argv[]) {
   show_file();
   show_yello_bmp();
 
-  output_bmp(imgmap, &yello_bmp[0]);
+  output_bmp(imgmap, &yello_bmp[2]);
   return 0;
 }
