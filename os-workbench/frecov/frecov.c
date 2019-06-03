@@ -168,8 +168,8 @@ int main(int argc, char *argv[]) {
         }
         else if (ret == 13)
           len += ret;
-        else
-          len = 0;
+        //else
+        //  len = 0;
       }
     }
   }
