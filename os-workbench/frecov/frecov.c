@@ -12,7 +12,7 @@
 #define debug(name, val) fprintf(stderr, "%-32s %d\n", name, val)
 #define debug2(str) fprintf(stderr, "%s\n", str)
 #define debug3(name, str) fprintf(stderr, "%-32s %s\n", name, str)
-#define debugx(name, val) fprintf(stderr, "%-32s %x\n", name, val)
+#define debugx(name, val) fprintf(stderr, "%-32s 0x%x\n", name, val)
 
 void *imgmap;
 
