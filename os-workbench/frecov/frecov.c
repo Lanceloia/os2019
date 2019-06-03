@@ -106,8 +106,10 @@ void init_yello_bmp(void *data, int offset){
 int search_yello_bmp(void *data, int offset){
   if(((char *)data)[offset] == 'B' && ((char *)data)[offset + 1] == 'M') {
     init_yello_bmp(data, offset);
+    return 1;
   }
-  return 0;
+  else
+    return 0;
 }
 
 void show_yello_bmp(){
@@ -128,14 +130,13 @@ int main(int argc, char *argv[]) {
   if (imgmap == (void *)-1) {debug2("mmap failed."); return 1;} 
   close(fd);
 
+  char buf[1024] = {};
   read_fat32_info(&fat32, imgmap);
   for(int i = 0; i < 32 MB; i += 0x200) {
-    search_yello_bmp(imgmap, i);
+    if(search_yello_bmp(imgmap, i))
+      read_name(imgmap, 0x82260, buf);
   }
   show_yello_bmp();
-
-  char buf[1024] = {};
-  read_name(imgmap, 0x82260, buf);
 
   return 0;
 }
