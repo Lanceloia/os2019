@@ -204,6 +204,8 @@ void output_bmp(char *data, struct YELLO_BMP *yb){
   for(int i = 0; i < (yb->width + 7) / 8 * 8; i ++)
     for(int j = 0; j < yb->height; j ++)
       fwrite(color, sizeof(char), 3, fp);
+  color[0] = '\0';
+  fwrite(color, sizeof(char), 1, fp);
   fclose(fp);
 }
 
