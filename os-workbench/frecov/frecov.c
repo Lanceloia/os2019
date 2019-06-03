@@ -119,7 +119,11 @@ int search_yello_bmp(void *data, int offset){
   read_num(data + offset + 0x3, 3) ==
   read_num(data + offset + 0x6, 3) &&
   read_num(data + offset + 0x6, 3) ==
-  read_num(data + offset + 0x9, 3) 
+  read_num(data + offset + 0x9, 3) &&
+  read_num(data + offset + 0x9, 3) ==
+  read_num(data + offset + 0xc, 3) &&
+  read_num(data + offset + 0xc, 3) ==
+  read_num(data + offset + 0xe, 3)  
   )
     return 1;
   else
