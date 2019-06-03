@@ -9,10 +9,10 @@
 #define KB *1024
 #define MB *1024*1024
 
-#define debug(name, val) fprintf(stderr, "%-16s %d\n", name, val)
+#define debug(name, val) fprintf(stderr, "%-32s %d\n", name, val)
 #define debug2(str) fprintf(stderr, "%s\n", str)
-#define debug3(name, str) fprintf(stderr, "%-16s %s\n", name, str)
-#define debugx(name, val) fprintf(stderr, "%-16s %x\n", name, val)
+#define debug3(name, str) fprintf(stderr, "%-32s %s\n", name, str)
+#define debugx(name, val) fprintf(stderr, "%-32s %x\n", name, val)
 
 void *imgmap;
 
