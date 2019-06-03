@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
   close(fd);
 
   read_fat32_info(&fat32, imgmap);
-  for(int i = 0; i < 64 MB; i += 0x200) {
+  for(int i = 0; i < 12 MB; i += 0x200) {
     search_yello_bmp(imgmap, i);
   }
   show_yello_bmp();
