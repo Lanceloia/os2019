@@ -91,7 +91,7 @@ void read_name(void *data, int offset, char dest[]) {
     read_unicode(dest, data + offset + 0x01, 5);
     read_unicode(dest + 5, data + offset + 0x0e, 6);
     read_unicode(dest + 11, data + offset + 0x1c, 2);
-    dest[13] = '\0';
+    dest[14] = '\0';
     printf("%s\n", dest);
   }
   /*
