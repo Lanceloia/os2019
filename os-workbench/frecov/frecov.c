@@ -94,7 +94,7 @@ void read_name(void *data, int offset, char dest[]) {
     // short filename
     strncpy(dest, (char *)(data + offset), 8);
   }
-  printf("%d  %s\n", read_num(data + offset + 0x0b, 1), dest);
+  printf("%s\n", dest);
 }
 
 void init_yello_bmp(void *data, int offset){
