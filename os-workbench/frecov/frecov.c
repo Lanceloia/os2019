@@ -28,18 +28,18 @@ struct FAT32 {
   char fat_type[9]; // the type of FAT system,               0x52, 8
 } fat32;
 
-void print_FAT32_info(struct FAT32 *f) {
-  debug("sector size", f->sector_size);
-  debug("cluster size", f->cluster_size);
-  debug("DOS sector amount", f->DOS_sec_amount);
-  debug("fat amount", f->fat_amount);
-  debugx("fat size(sectors)", f->fat_size);
-  debugx("fat total_size(bytes)", f->fat_size * f->sector_size);
-  debug("sector amount", f->sector_amount);
+void print_FAT32_info() {
+  debug("sector size", fat32.sector_size);
+  debug("cluster size", fat32.cluster_size);
+  debug("DOS sector amount", fat32.DOS_sec_amount);
+  debug("fat amount", fat32.fat_amount);
+  debugx("fat size(sectors)", fat32.fat_size);
+  debugx("fat total_size(bytes)", fat32.fat_size * fat32.sector_size);
+  debug("sector amount", fat32.sector_amount);
 
-  debug("DBR sec index", f->DBR_sec_index);
-  debug3("volume lable", f->volume_label);
-  debug3("fat type", f->fat_type);
+  debug("DBR sec index", fat32.DBR_sec_index);
+  debug3("volume lable", fat32.volume_label);
+  debug3("fat type", fat32.fat_type);
 }
 
 int read_num(void *p, int len) {
@@ -50,17 +50,17 @@ int read_num(void *p, int len) {
   return ret;
 }
 
-void read_fat32_info(struct FAT32 *f, void *data) {
-  f->sector_size = read_num(data + 0x0b, 2);
-  f->cluster_size = read_num(data + 0x0d, 1);
-  f->DOS_sec_amount = read_num(data + 0x0e, 2);
-  f->fat_amount = read_num(data + 0x10, 1);
-  f->sector_amount = read_num(data + 0x13, 2);
-  f->fat_size = read_num(data + 0x24, 4);
-  f->DBR_sec_index = read_num(data + 0x32, 2);
-  strncpy(f->volume_label, data + 0x47, 11);
-  strncpy(f->fat_type, data + 0x52, 8);
-  print_FAT32_info(f);
+void read_fat32_info(char *data) {
+  fat32.sector_size = read_num(data + 0x0b, 2);
+  fat32.cluster_size = read_num(data + 0x0d, 1);
+  fat32.DOS_sec_amount = read_num(data + 0x0e, 2);
+  fat32.fat_amount = read_num(data + 0x10, 1);
+  fat32.sector_amount = read_num(data + 0x13, 2);
+  fat32.fat_size = read_num(data + 0x24, 4);
+  fat32.DBR_sec_index = read_num(data + 0x32, 2);
+  strncpy(fat32.volume_label, data + 0x47, 11);
+  strncpy(fat32.fat_type, data + 0x52, 8);
+  print_FAT32_info();
 } 
 
 struct YELLO_BMP {
@@ -84,21 +84,20 @@ int read_unicode(char dest[], char src[], int len) {
   return 1;
 }
 
-int read_name(void *data, int offset, char dest[]) {
-  if(*(char *)(data + offset + 0x00) == (char)0x01 &&
-  *(char *)(data + offset + 0x0b) == (char)0x0f) {
-    // if(*(char *)(data + offset) == 'B')
-    //  return;
-    // long filename
-    if(read_unicode(dest, data + offset + 0x01, 5))
-      if(read_unicode(dest + 5, data + offset + 0x0e, 6))
-        read_unicode(dest + 11, data + offset + 0x1c, 2);
-    return strlen(dest);
+char fn[256][256]= {};
+
+void read_name(char *data, int offset) {
+  if((*(data + offset + 0x00) == (char)0x01 ||
+  *(data + offset + 0x00) == (char)0x42) &&
+  *(data + offset + 0x0b) == (char)0x0f) {
+    char buf[256] = {};
+    int inode = read_num(data + offset + 0x0c, 2);
+    if(read_unicode(buf, data + offset + 0x01, 5))
+      if(read_unicode(buf + 5, data + offset + 0x0e, 6))
+        read_unicode(buf + 11, data + offset + 0x1c, 2);
+
+    strcat(fn[inode], buf);
   }
-  else {
-    return 0;
-  }
-  
   /*
   else {
     // short filename
@@ -107,31 +106,17 @@ int read_name(void *data, int offset, char dest[]) {
   */
 }
 
-void init_yello_bmp(void *data, int offset){
-  yello_bmp[tot_bmp].color = read_num(data + offset + 0x54, 3);
-  push_cluster(&yello_bmp[tot_bmp], offset);
-  tot_bmp ++;
+int search_bmp_namp(char *data, int offset) {
+
 }
 
-int search_yello_bmp(void *data, int offset){
-  if(((char *)data)[offset] == 'B' && ((char *)data)[offset + 1] == 'M') {
-    init_yello_bmp(data, offset);
-    return 1;
+int search_bmp_head(char *data, int offset) {
+  if(data[offset] == 'B' && data[offset + 1] == 'M') {
+    // init_yello_bmp
+    yello_bmp[tot_bmp].color = read_num(data + offset + 0x54, 3);
+    push_cluster(&yello_bmp[tot_bmp], offset);
+    tot_bmp ++;
   }
-  else if(read_num(data + offset, 3) == 
-    read_num(data + offset + 0x3, 3) &&
-    read_num(data + offset + 0x3, 3) ==
-    read_num(data + offset + 0x6, 3) &&
-    read_num(data + offset + 0x6, 3) ==
-    read_num(data + offset + 0x9, 3) &&
-    read_num(data + offset + 0x9, 3) ==
-    read_num(data + offset + 0xc, 3) &&
-    read_num(data + offset + 0xc, 3) ==
-    read_num(data + offset + 0xe, 3)  
-  )
-    return 1;
-  else
-    return 0;
 }
 
 void show_yello_bmp(){
@@ -145,6 +130,10 @@ void show_yello_bmp(){
 }
 
 
+int judge_attribution(void *data, int offset) {
+
+}
+
 int main(int argc, char *argv[]) {
   int fd = open(argv[1], O_RDWR);
   if (fd == -1) {debug2("open failed."); return 1;}
@@ -153,10 +142,22 @@ int main(int argc, char *argv[]) {
   close(fd);
 
   char buf[1024] = {};
-  read_fat32_info(&fat32, imgmap);
+  read_fat32_info(imgmap);
   
   for(int i = 0; i < 32 MB; i += fat32.sector_size) {
-    if(search_yello_bmp(imgmap, i))
+    switch (judge_attribution(imgmap, i)) {
+    case 0: // ctrl-sector
+      search_bmp_name(imgmap, i);
+      break;
+    case 1: // data-sector
+      search_bmp_head(imgmap, i);
+      break;
+    default:
+      break;
+    }
+
+/*
+    if(search_bmp_head(imgmap, i))
       ;
     else {
       int len = 0;
@@ -172,6 +173,7 @@ int main(int argc, char *argv[]) {
         //  len = 0;
       }
     }
+*/
   }
   show_yello_bmp();
 
