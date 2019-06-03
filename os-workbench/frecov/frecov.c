@@ -166,8 +166,10 @@ int main(int argc, char *argv[]) {
           printf("%s\n", buf);
           len = 0;
         }
-        else
+        else if (ret == 13)
           len += ret;
+        else
+          len = 0;
       }
     }
   }
