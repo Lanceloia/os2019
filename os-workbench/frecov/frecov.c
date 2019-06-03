@@ -40,8 +40,6 @@ void print_FAT32_info(struct FAT32 *f) {
   debug("DBR sec index", f->DBR_sec_index);
   debug3("volume lable", f->volume_label);
   debug3("fat type", f->fat_type);
-
-
 }
 
 int read_num(void *p, int len) {
