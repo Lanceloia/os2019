@@ -92,10 +92,13 @@ int is_valid(char ch) {
   return 0;
 }
 
-char filename[256][256]= {};
+struct FILE {
+  char filename[256];
+  int offset;
+} file[256];
 int tot_fn;
 
-void read_name(char *data, int offset) {
+void read_name_offset(char *data, int offset) {
   if(*(data + offset + 0x0b) == (char)0x0f) {
   //if(*(data + offset + 0x0b) == (char)0x0f) {
     char buf[256] = {0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
@@ -103,8 +106,11 @@ void read_name(char *data, int offset) {
       if(read_unicode(buf + 5, data + offset + 0x0e, 6))
         read_unicode(buf + 11, data + offset + 0x1c, 2);
 
-    if(is_valid(buf[0]) && is_valid(buf[1]) && is_valid(buf[2]))
-      strcpy(filename[tot_fn ++ ], buf);
+    if(is_valid(buf[0]) && is_valid(buf[1]) && is_valid(buf[2])) {
+      strcpy(file[tot_fn].filename, buf);
+      file[tot_fn].offset = read_num(data + offset + 0x34, 2) << 16;
+      file[tot_fn ++].offset += read_num(data + offset + 0x3a, 2);
+    }
   }
   /*
   else {
@@ -116,7 +122,7 @@ void read_name(char *data, int offset) {
 
 int search_bmp_name(char *data, int offset) {
   for(int i = 0; i < fat32.sector_size; i += 0x20){
-    read_name(data, offset + i);
+    read_name_offset(data, offset + i);
   }
   return 0;
 }
@@ -130,9 +136,9 @@ void search_bmp_head(char *data, int offset) {
   }
 }
 
-void show_filename(){
+void show_file(){
   for(int i = 0; i < 256; i ++){
-    printf("%d: %s\n", i, filename[i]);
+    printf("%d: %s, 0x%x\n", i, file[i].filename, file[i].offset);
   }
 }
 
@@ -177,7 +183,7 @@ int main(int argc, char *argv[]) {
     else {
       int len = 0;
       for(int j = 0; j < fat32.sector_size; j += 0x20) {
-        int ret = read_name(imgmap, i + j, buf + len);
+        int ret = read_name_offset(imgmap, i + j, buf + len);
         if(0 < ret && ret < 13){
           printf("%s\n", buf);
           len = 0;
