@@ -95,7 +95,6 @@ int read_name(void *data, int offset, char dest[]) {
     if(read_unicode(dest, data + offset + 0x01, 5))
       if(read_unicode(dest + 5, data + offset + 0x0e, 6))
         read_unicode(dest + 11, data + offset + 0x1c, 2);
-    printf("%s\n", dest);
   }
   return strlen(dest);
   /*
@@ -154,15 +153,17 @@ int main(int argc, char *argv[]) {
   char buf[1024] = {};
   read_fat32_info(&fat32, imgmap);
   
-  for(int i = 0; i < 32 MB; i += 0x200) {
+  for(int i = 0; i < 32 MB; i += fat32.sector_size) {
     if(search_yello_bmp(imgmap, i))
       ;
     else {
       int len = 0;
       for(int j = 0; j < fat32.sector_size; j += 0x20) {
         int ret = read_name(imgmap, i + j, buf + len);
-        if(ret < 13)
+        if(ret < 13){
+          printf("%s\n", buf);
           len = 0;
+        }
         else
           len += ret;
       }
