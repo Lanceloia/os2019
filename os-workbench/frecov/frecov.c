@@ -129,11 +129,11 @@ int search_bmp_name(char *data, int offset) {
 }
 
 void search_bmp_head(char *data, int offset) {
-  for(int i = 0; i < fat32.sector_size; i += 0x20) {
-    if(data[offset + i] == 'B' && data[offset + i + 1] == 'M') {
+  for(int j = 0; j < fat32.sector_size; j += 0x20) {
+    if(data[offset + j] == 'B' && data[offset + j + 1] == 'M') {
       // init_yello_bmp
-      yello_bmp[tot_bmp].color = read_num(data + offset + i + 0x54, 3);
-      yello_bmp[tot_bmp].offset = offset + i;
+      yello_bmp[tot_bmp].color = read_num(data + offset + j + 0x54, 3);
+      yello_bmp[tot_bmp].offset = offset + j;
       for(int i = 0; i < tot_file; i ++)
         if (file[i].offset == ((yello_bmp[tot_bmp].offset - 0x81c00) / 0x200))
           strcpy(yello_bmp[tot_bmp].filename, file[i].filename);
