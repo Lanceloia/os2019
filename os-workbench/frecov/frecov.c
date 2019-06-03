@@ -93,17 +93,17 @@ int is_valid(char ch) {
 }
 
 char filename[256][256]= {};
-char buf[256] = {};
 int tot_fn;
 
 void read_name(char *data, int offset) {
   if(*(data + offset + 0x0b) == (char)0x0f) {
   //if(*(data + offset + 0x0b) == (char)0x0f) {
+    char buf[256] = {};
     if(read_unicode(buf, data + offset + 0x01, 5))
       if(read_unicode(buf + 5, data + offset + 0x0e, 6))
         read_unicode(buf + 11, data + offset + 0x1c, 2);
 
-    if(is_valid(buf[0]))
+    if(is_valid(buf[0]) && is_valid(buf[1]))
       strcpy(filename[tot_fn ++ ], buf);
   }
   /*
