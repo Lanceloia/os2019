@@ -92,7 +92,7 @@ void read_name(char *data, int offset) {
   *(data + offset + 0x00) == (char)0x42) &&
   *(data + offset + 0x0b) == (char)0x0f) {
 
-    int inode = read_num(data + offset + 0x0c, 2);
+    int inode = read_num(data + offset + 0x0d, 1);
     if(read_unicode(buf, data + offset + 0x01, 5))
       if(read_unicode(buf + 5, data + offset + 0x0e, 6))
         read_unicode(buf + 11, data + offset + 0x1c, 2);
