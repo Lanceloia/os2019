@@ -190,7 +190,8 @@ int judge_attribution(void *data, int offset) {
 void output_bmp(char *data, struct YELLO_BMP *yb){
   FILE *fp = fopen(yb->filename, "wb+");
   if(!fp) return;
-  fwrite(data + yb->clusters[0], sizeof(char), 54, fp);
+  printf("%x", data + yb->clusters[0]);
+  fwrite((data + yb->clusters[0]), sizeof(char), 54, fp);
   char buf[3];
   buf[0] = (yb->color) & 0xff;
   buf[1] = (yb->color >> 8) & 0xff;
