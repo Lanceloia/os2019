@@ -232,8 +232,8 @@ int main(int argc, char *argv[]) {
   show_file();
   show_yello_bmp();
 
-  output_bmp(imgmap, &yello_bmp[2]);
-  output_bmp(imgmap, &yello_bmp[4]);
+  output_bmp(imgmap, &yello_bmp[0]);
+  output_bmp(imgmap, &yello_bmp[1]);
   output_bmp(imgmap, &yello_bmp[6]);
   return 0;
 }
