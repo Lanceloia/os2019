@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
   show_file();
   show_yello_bmp();
 
-  for(int i = 0; i < 16; i ++)
+  for(int i = 0; i < tot_bmp; i ++)
     output_bmp(imgmap, &yello_bmp[i]);
   return 0;
 }
