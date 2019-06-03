@@ -77,8 +77,10 @@ void init_yello_bmp(void *data, int offset){
 }
 
 int search_yello_bmp(void *data, int offset){
-  if(((char *)data)[offset] == 'B' && ((char *)data)[offset + 1] == 'M')
+  if(((char *)data)[offset] == 'B' && ((char *)data)[offset + 1] == 'M') {
     init_yello_bmp(data, offset);
+  }
+  return 0;
 }
 
 void show_yello_bmp(){
