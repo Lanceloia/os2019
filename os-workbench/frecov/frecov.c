@@ -29,17 +29,17 @@ struct FAT32 {
 } fat32;
 
 void print_FAT32_info(struct FAT32 *f) {
-  debug("sector_size", f->sector_size);
-  debug("cluster_size", f->cluster_size);
-  debug("DOS_sec_amount", f->DOS_sec_amount);
-  debug("fat_amount", f->fat_amount);
-  debugx("fat_size(sectors)", f->fat_size);
-  debugx("fat_total_size(bytes)", f->fat_size * f->sector_size);
-  debug("sector_amount", f->sector_amount);
+  debug("sector size", f->sector_size);
+  debug("cluster size", f->cluster_size);
+  debug("DOS sector amount", f->DOS_sec_amount);
+  debug("fat amount", f->fat_amount);
+  debugx("fat size(sectors)", f->fat_size);
+  debugx("fat total_size(bytes)", f->fat_size * f->sector_size);
+  debug("sector amount", f->sector_amount);
 
-  debug("DBR_sec_index", f->DBR_sec_index);
-  debug3("volume_lable", f->volume_label);
-  debug3("fat_type", f->fat_type);
+  debug("DBR sec index", f->DBR_sec_index);
+  debug3("volume lable", f->volume_label);
+  debug3("fat type", f->fat_type);
 
 
 }
