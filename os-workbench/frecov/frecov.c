@@ -186,36 +186,17 @@ int main(int argc, char *argv[]) {
   read_fat32_info(imgmap);
   
   for(int i = 0; i < 32 MB; i += fat32.sector_size) {
-    switch (judge_attribution(imgmap, i)) {
-    case 0: // ctrl-sector
+    if(!judge_attribution(imgmap, i))
       search_bmp_name(imgmap, i);
-      break;
-    case 1: // data-sector
-      search_bmp_head(imgmap, i);
-      break;
-    default:
-      break;
-    }
-
-/*
-    if(search_bmp_head(imgmap, i))
-      ;
-    else {
-      int len = 0;
-      for(int j = 0; j < fat32.sector_size; j += 0x20) {
-        int ret = read_name_offset(imgmap, i + j, buf + len);
-        if(0 < ret && ret < 13){
-          printf("%s\n", buf);
-          len = 0;
-        }
-        else if (ret == 13)
-          len += ret;
-        //else
-        //  len = 0;
-      }
-    }
-*/
   }
+
+  for(int i = 0; i < 32 MB; i += fat32.sector_size) {
+    if(judge_attribution(imgmap, i))
+      search_bmp_head(imgmap, i);
+  }
+
+
+
   show_file();
   show_yello_bmp();
 
