@@ -84,7 +84,7 @@ void read_unicode(char dest[], char src[], int len) {
 }
 
 void read_name(void *data, int offset, char dest[]) {
-  if(*(char *)(data + offset + 0x0c) == (char)0x0f) {
+  if(*(char *)(data + offset + 0x0b) == (char)0x0f) {
     // long filename
     read_unicode(dest, data + offset + 0x01, 5);
     read_unicode(dest + 5, data + offset + 0x0e, 6);
@@ -94,7 +94,7 @@ void read_name(void *data, int offset, char dest[]) {
     // short filename
     strncpy(dest, (char *)(data + offset), 8);
   }
-  printf("%d  %s\n", read_num(data + offset + 0x0c, 1), dest);
+  printf("%d  %s\n", read_num(data + offset + 0x0b, 1), dest);
 }
 
 void init_yello_bmp(void *data, int offset){
