@@ -202,12 +202,12 @@ int main(int argc, char *argv[]) {
   read_fat32_info(imgmap);
   
   for(int i = 0; i < 32 MB; i += fat32.sector_size) {
-    if(judge_attribution(imgmap, i) == 0)
+    if(judge_attribution(imgmap, i) == 2)
       search_bmp_name(imgmap, i);
   }
 
   for(int i = 0; i < 32 MB; i += fat32.sector_size) {
-    if(judge_attribution(imgmap, i) == 2)
+    if(judge_attribution(imgmap, i) == 0)
       search_bmp_head(imgmap, i);
   }
 
