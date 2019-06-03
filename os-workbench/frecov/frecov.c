@@ -64,8 +64,9 @@ void read_fat32_info(char *data) {
 } 
 
 struct YELLO_BMP {
-  int offset, color;
+  int offset;
   int clusters_size;
+  int color, width, height;
   char filename[256];
   int clusters[1024];
 } yello_bmp[128];
@@ -135,6 +136,8 @@ void search_bmp_head(char *data, int offset) {
     if(data[offset + j] == 'B' && data[offset + j + 1] == 'M') {
       // init_yello_bmp
       yello_bmp[tot_bmp].color = read_num(data + offset + j + 0x54, 3);
+      yello_bmp[tot_bmp].width = read_num(data + offset + 0x13, 4);
+      yello_bmp[tot_bmp].height = read_num(data + offset + 0x17, 4);
       yello_bmp[tot_bmp].offset = offset + j;
       for(int i = 0; i < tot_file; i ++)
         if (file[i].offset == ((yello_bmp[tot_bmp].offset - 0x81c00) / 0x200))
@@ -158,6 +161,7 @@ void show_yello_bmp(){
       break;
     printf("bmp_index: %d, ", i);
     printf("color: 0x%x, ", yello_bmp[i].color);
+    printf("w: %d, h: %d, ", yello_bmp[i].width, yello_bmp[i].height);
     printf("offset: %x, ", (yello_bmp[i].offset - 0x81c00) / 0x200);
     printf("filename: %s, ", yello_bmp[i].filename);
     printf("clusters_size: %d\n", yello_bmp[i].clusters_size);
