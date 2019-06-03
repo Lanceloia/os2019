@@ -129,15 +129,17 @@ int search_bmp_name(char *data, int offset) {
 }
 
 void search_bmp_head(char *data, int offset) {
-  if(data[offset] == 'B' && data[offset + 1] == 'M') {
-    // init_yello_bmp
-    yello_bmp[tot_bmp].color = read_num(data + offset + 0x54, 3);
-    yello_bmp[tot_bmp].offset = offset;
-    for(int i = 0; i < tot_file; i ++)
-      if (file[i].offset == ((yello_bmp[tot_bmp].offset - 0x81c00) / 0x200))
-        strcpy(yello_bmp[tot_bmp].filename, file[i].filename);
-    push_cluster(&yello_bmp[tot_bmp], offset);
-    tot_bmp ++;
+  for(int i = 0; i < fat32.sector_size; i += 0x20) {
+    if(data[offset + i] == 'B' && data[offset + i + 1] == 'M') {
+      // init_yello_bmp
+      yello_bmp[tot_bmp].color = read_num(data + offset + i + 0x54, 3);
+      yello_bmp[tot_bmp].offset = offset + i;
+      for(int i = 0; i < tot_file; i ++)
+        if (file[i].offset == ((yello_bmp[tot_bmp].offset - 0x81c00) / 0x200))
+          strcpy(yello_bmp[tot_bmp].filename, file[i].filename);
+      push_cluster(&yello_bmp[tot_bmp], offset);
+      tot_bmp ++;
+    }
   }
 }
 
