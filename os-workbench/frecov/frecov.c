@@ -112,8 +112,9 @@ void read_name_offset(char *data, int offset) {
       file[tot_file].offset = read_num(data + offset + 0x34, 2) << 16;
       file[tot_file ++].offset += read_num(data + offset + 0x3a, 2);
     
-    if(strncmp(data + offset + 0x20, buf, 3) != 0) {
-      printf("%s\n", buf);
+      if(strncmp(data + offset + 0x20, buf, 3) != 0) {
+        printf("%s\n", buf);
+      }
     }
   }
   /*
