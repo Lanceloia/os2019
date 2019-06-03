@@ -96,7 +96,7 @@ struct FILE {
   char filename[256];
   int offset;
 } file[256];
-int tot_fn;
+int tot_file;
 
 void read_name_offset(char *data, int offset) {
   if(*(data + offset + 0x0b) == (char)0x0f) {
@@ -107,9 +107,9 @@ void read_name_offset(char *data, int offset) {
         read_unicode(buf + 11, data + offset + 0x1c, 2);
 
     if(is_valid(buf[0]) && is_valid(buf[1]) && is_valid(buf[2])) {
-      strcpy(file[tot_fn].filename, buf);
-      file[tot_fn].offset = read_num(data + offset + 0x34, 2) << 16;
-      file[tot_fn ++].offset += read_num(data + offset + 0x3a, 2);
+      strcpy(file[tot_file].filename, buf);
+      file[tot_file].offset = read_num(data + offset + 0x34, 2) << 16;
+      file[tot_file ++].offset += read_num(data + offset + 0x3a, 2);
     }
   }
   /*
@@ -138,13 +138,13 @@ void search_bmp_head(char *data, int offset) {
 }
 
 void show_file(){
-  for(int i = 0; i < 256; i ++){
+  for(int i = 0; i < tot_file; i ++){
     printf("%d: %s, 0x%08x\n", i, file[i].filename, file[i].offset);
   }
 }
 
 void show_yello_bmp(){
-  for(int i = 0; i < 128; i ++) {
+  for(int i = 0; i < tot_bmp; i ++) {
     if(yello_bmp[i].clusters_size == 0)
       break;
     printf("bmp_index: %d,", i);
