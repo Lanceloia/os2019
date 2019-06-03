@@ -138,7 +138,7 @@ void search_bmp_head(char *data, int offset) {
 
 void show_file(){
   for(int i = 0; i < 256; i ++){
-    printf("%d: %s, 0x%-8x\n", i, file[i].filename, file[i].offset);
+    printf("%d: %s, 0x%08x\n", i, file[i].filename, file[i].offset);
   }
 }
 
