@@ -111,7 +111,7 @@ int search_bmp_name(char *data, int offset) {
   return 0;
 }
 
-int search_bmp_head(char *data, int offset) {
+void search_bmp_head(char *data, int offset) {
   if(data[offset] == 'B' && data[offset + 1] == 'M') {
     // init_yello_bmp
     yello_bmp[tot_bmp].color = read_num(data + offset + 0x54, 3);
