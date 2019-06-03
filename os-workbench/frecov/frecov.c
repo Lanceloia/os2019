@@ -85,6 +85,8 @@ void read_unicode(char dest[], char src[], int len) {
 
 void read_name(void *data, int offset, char dest[]) {
   if(*(char *)(data + offset + 0x0b) == (char)0x0f) {
+    if(*(char *)(data + offset) == 'B')
+      return;
     // long filename
     read_unicode(dest, data + offset + 0x01, 5);
     read_unicode(dest + 5, data + offset + 0x0e, 6);
