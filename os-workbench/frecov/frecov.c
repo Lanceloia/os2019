@@ -190,10 +190,14 @@ int judge_attribution(void *data, int offset) {
 void output_bmp(char *data, struct YELLO_BMP *yb){
   FILE *fp = fopen(yb->filename, "wb+");
   if(!fp) return;
-  for(int i = 0; i < yb->clusters_size; i ++) {
-    printf("offset[%d]: 0x%x\n", i, yb->clusters[i]);
-    fwrite(data + yb->clusters[i], sizeof(char), fat32.sector_size, fp);
-  }
+  fwrite(data + yb->clusters[0], sizeof(char), 54, fp);
+  char buf[3];
+  buf[0] = (yb->color) & 0xff;
+  buf[1] = (yb->color >> 8) & 0xff;
+  buf[2] = (yb->color >> 16) & 0xff; 
+  for(int i = 0; i < yb->width; i ++)
+    for(int j = 0; j < yb->height; j ++)
+      fwrite(buf, sizeof(char), sizeof(buf)/sizeof(char), fp);
   fclose(fp);
 }
 
