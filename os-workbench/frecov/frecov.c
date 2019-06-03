@@ -64,7 +64,7 @@ void read_fat32_info(char *data) {
 } 
 
 struct YELLO_BMP {
-  int color, clusters_size;
+  int color, offset, clusters_size;
   char filename[256];
   int clusters[1024];
 } yello_bmp[128];
@@ -131,6 +131,7 @@ void search_bmp_head(char *data, int offset) {
   if(data[offset] == 'B' && data[offset + 1] == 'M') {
     // init_yello_bmp
     yello_bmp[tot_bmp].color = read_num(data + offset + 0x54, 3);
+    yello_bmp[tot_bmp].offset = offset;
     push_cluster(&yello_bmp[tot_bmp], offset);
     tot_bmp ++;
   }
@@ -148,13 +149,31 @@ void show_yello_bmp(){
       break;
     printf("bmp_index: %d,", i);
     printf("color: %x,", yello_bmp[i].color);
+    printf("offset: %x,", yello_bmp[i].offset);
     printf("clusters_size: %d\n", yello_bmp[i].clusters_size);
   }
 }
 
 
 int judge_attribution(void *data, int offset) {
-  return 0;
+  if(((char *)data)[offset] == 'B' && ((char *)data)[offset + 1] == 'M') {
+    init_yello_bmp(data, offset);
+    return 1;
+  }
+  else if(read_num(data + offset, 3) == 
+    read_num(data + offset + 0x3, 3) &&
+    read_num(data + offset + 0x3, 3) ==
+    read_num(data + offset + 0x6, 3) &&
+    read_num(data + offset + 0x6, 3) ==
+    read_num(data + offset + 0x9, 3) &&
+    read_num(data + offset + 0x9, 3) ==
+    read_num(data + offset + 0xc, 3) &&
+    read_num(data + offset + 0xc, 3) ==
+    read_num(data + offset + 0xe, 3)  
+  )
+    return 1;
+  else
+    return 0;
 }
 
 int main(int argc, char *argv[]) {
