@@ -157,7 +157,6 @@ void show_yello_bmp(){
 
 int judge_attribution(void *data, int offset) {
   if(((char *)data)[offset] == 'B' && ((char *)data)[offset + 1] == 'M') {
-    init_yello_bmp(data, offset);
     return 1;
   }
   else if(read_num(data + offset, 3) == 
