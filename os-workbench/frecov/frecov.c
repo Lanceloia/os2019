@@ -88,6 +88,7 @@ int is_valid(char ch) {
 struct myFILE {
   char filename[256];
   int position, filesize;
+  int next_sector;
 } file[256];
 int tot_file;
 
@@ -108,8 +109,8 @@ int read_name_position_do(char *data, int offset, struct myFILE *file) {
 
   file->position = read_num(data + offset + 0x14, 2) << 16;
   file->position += read_num(data + offset + 0x1a, 2);
-
   file->filesize = read_num(data + offset + 0x1c, 4);
+  file->next_sector = file->position + file->filesize / fat32.sector_size; 
   return ret;
 }
 
@@ -148,8 +149,8 @@ void search_bmp_head_structure(char *data, int offset) {
 
 void show_file(){
   for(int i = 0; i < tot_file; i ++){
-    printf("%d: filename: %s, position: 0x%08x, filesize: 0x%08x\n",
-    i, file[i].filename, file[i].position, file[i].filesize);
+    printf("%d: filename: %s, position: 0x%08x, filesize: 0x%08x, next_sector: 0x%08x\n",
+    i, file[i].filename, file[i].position, file[i].filesize, file[i].next_sector);
   }
 }
 
