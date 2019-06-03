@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
       int len = 0;
       for(int j = 0; j < fat32.sector_size; j += 0x20) {
         int ret = read_name(imgmap, i + j, buf + len);
-        if(ret < 13){
+        if(0 < ret && ret < 13){
           printf("%s\n", buf);
           len = 0;
         }
