@@ -149,7 +149,7 @@ void show_yello_bmp(){
       break;
     printf("bmp_index: %d,", i);
     printf("color: %x,", yello_bmp[i].color);
-    printf("offset: %x,", yello_bmp[i].offset);
+    printf("offset: %x,", (yello_bmp[i].offset - 0x82200) / 0x200);
     printf("clusters_size: %d\n", yello_bmp[i].clusters_size);
   }
 }
