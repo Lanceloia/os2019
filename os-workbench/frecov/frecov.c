@@ -103,7 +103,7 @@ void read_name(char *data, int offset) {
       if(read_unicode(buf + 5, data + offset + 0x0e, 6))
         read_unicode(buf + 11, data + offset + 0x1c, 2);
 
-    if(us_valid(buf[0]))
+    if(is_valid(buf[0]))
       strcpy(filename[tot_fn ++ ], buf);
   }
   /*
