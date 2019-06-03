@@ -196,7 +196,7 @@ void output_bmp(char *data, struct YELLO_BMP *yb){
   FILE *fp = fopen(yb->filename, "wb+");
   if(!fp) return;
   for(int i = 0; i < yb->clusters_size; i ++) {
-    printf("offset[%d]: 0x%x", i, yb->clusters[i]);
+    printf("offset[%d]: 0x%x\n", i, yb->clusters[i]);
     fwrite(data + yb->clusters[i], sizeof(char), fat32.sector_size, fp);
   }
   fclose(fp);
