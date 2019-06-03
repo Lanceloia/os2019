@@ -136,8 +136,8 @@ void search_bmp_head(char *data, int offset) {
     if(data[offset + j] == 'B' && data[offset + j + 1] == 'M') {
       // init_yello_bmp
       yello_bmp[tot_bmp].color = read_num(data + offset + j + 0x54, 3);
-      yello_bmp[tot_bmp].width = read_num(data + offset + 0x13, 4);
-      yello_bmp[tot_bmp].height = read_num(data + offset + 0x17, 4);
+      yello_bmp[tot_bmp].width = read_num(data + offset + 0x12, 4);
+      yello_bmp[tot_bmp].height = read_num(data + offset + 0x16, 4);
       yello_bmp[tot_bmp].offset = offset + j;
       for(int i = 0; i < tot_file; i ++)
         if (file[i].offset == ((yello_bmp[tot_bmp].offset - 0x81c00) / 0x200))
