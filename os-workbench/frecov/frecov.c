@@ -85,12 +85,13 @@ int read_unicode(char dest[], char src[], int len) {
 }
 
 char fn[256][256]= {};
+char buf[256] = {};
 
 void read_name(char *data, int offset) {
   if((*(data + offset + 0x00) == (char)0x01 ||
   *(data + offset + 0x00) == (char)0x42) &&
   *(data + offset + 0x0b) == (char)0x0f) {
-    char buf[256] = {};
+
     int inode = read_num(data + offset + 0x0c, 2);
     if(read_unicode(buf, data + offset + 0x01, 5))
       if(read_unicode(buf + 5, data + offset + 0x0e, 6))
@@ -106,8 +107,8 @@ void read_name(char *data, int offset) {
   */
 }
 
-int search_bmp_namp(char *data, int offset) {
-
+int search_bmp_name(char *data, int offset) {
+  return 0;
 }
 
 int search_bmp_head(char *data, int offset) {
@@ -131,7 +132,7 @@ void show_yello_bmp(){
 
 
 int judge_attribution(void *data, int offset) {
-
+  return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -140,8 +141,6 @@ int main(int argc, char *argv[]) {
   imgmap = mmap(NULL, 64 MB, PROT_READ, MAP_SHARED, fd, 0);
   if (imgmap == (void *)-1) {debug2("mmap failed."); return 1;} 
   close(fd);
-
-  char buf[1024] = {};
   read_fat32_info(imgmap);
   
   for(int i = 0; i < 32 MB; i += fat32.sector_size) {
