@@ -147,7 +147,7 @@ void search_bmp_head(char *data, int offset) {
 
 void add_bmp_head(char *data, int offset) {
   int color = read_num(data + offset, 3);
-  printf("%d\n", color);
+  // printf("%d\n", color);
   for(int i = 0; i < tot_bmp; i ++) {
     if (yello_bmp[i].color == color)
       push_cluster(&yello_bmp[i], offset);
