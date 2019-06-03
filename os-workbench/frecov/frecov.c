@@ -71,7 +71,7 @@ void push_cluster(struct YELLO_BMP *yb, int offset) {
 }
 
 void init_yello_bmp(void *data, int offset){
-  yello_bmp[tot_bmp].color = *(int *)(data + offset + 0x54);
+  yello_bmp[tot_bmp].color = (*(int *)(data + offset + 0x54)) & 0xffffff;
   push_cluster(&yello_bmp[tot_bmp], offset);
   tot_bmp ++;
 }
