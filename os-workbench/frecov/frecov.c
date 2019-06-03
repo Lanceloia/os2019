@@ -146,10 +146,14 @@ void search_bmp_head(char *data, int offset) {
 }
 
 void add_bmp_head(char *data, int offset) {
-  int color = read_num(data + offset, 3);
+  int color0 = read_num(data + offset, 3);
+  int color1 = read_num(data + offset + 1, 3);
+  int color2 = read_num(data + offset + 2, 3);
   // printf("%d\n", color);
   for(int i = 0; i < tot_bmp; i ++) {
-    if (yello_bmp[i].color == color)
+    if (yello_bmp[i].color == color0 ||
+    yello_bmp[i].color == color1 ||
+    yello_bmp[i].color == color2)
       push_cluster(&yello_bmp[i], offset);
   }
 }
