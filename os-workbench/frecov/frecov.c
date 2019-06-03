@@ -87,9 +87,9 @@ void show_yello_bmp(){
   for(int i = 0; i < 128; i ++) {
     if(yello_bmp[i].clusters_size == 0)
       break;
-    printf("bmp_index: %d\n", i);
-    printf("color: %x", yello_bmp[i].color);
-    printf("clusters_size: %d", yello_bmp[i].clusters_size);
+    printf("bmp_index: %d,", i);
+    printf("color: %x,", yello_bmp[i].color);
+    printf("clusters_size: %d\n", yello_bmp[i].clusters_size);
   }
 }
 
