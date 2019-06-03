@@ -12,6 +12,7 @@
 #define debug(name, val) fprintf(stderr, "%-16s %d\n", name, val)
 #define debug2(str) fprintf(stderr, "%s\n", str)
 #define debug3(name, str) fprintf(stderr, "%-16s %s\n", name, str)
+#define debugx(name, val) fprintf(stderr, "%-16s %x\n", name, val)
 
 void *imgmap;
 
@@ -33,7 +34,7 @@ void print_FAT32_info(struct FAT32 *f) {
   debug("DOS_sec_amount", f->DOS_sec_amount);
   debug("fat_amount", f->fat_amount);
   debug("sector_amount", f->sector_amount);
-  debug("fat_size", f->fat_size);
+  debugx("fat_size", f->fat_size);
   debug("DBR_sec_index", f->DBR_sec_index);
   debug3("volume_lable", f->volume_label);
   debug3("fat_type", f->fat_type);
