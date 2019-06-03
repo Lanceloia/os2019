@@ -101,7 +101,6 @@ int tot_file;
 
 void read_name_offset(char *data, int offset) {
   if(*(data + offset + 0x0b) == (char)0x0f) {
-  //if(*(data + offset + 0x0b) == (char)0x0f) {
     char buf[256] = {0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
     if(read_unicode(buf, data + offset + 0x01, 5))
       if(read_unicode(buf + 5, data + offset + 0x0e, 6))
@@ -117,12 +116,11 @@ void read_name_offset(char *data, int offset) {
       }
     }
   }
-  /*
   else {
-    // short filename
-    strncpy(dest, (char *)(data + offset), 8);
+    if(*(data + offset + 0x06) == '~' && *(data + offset + 0x07) == '1') {
+      printf("%s\n", data + offset);
+    }
   }
-  */
 }
 
 int search_bmp_name(char *data, int offset) {
