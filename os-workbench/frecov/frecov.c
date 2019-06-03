@@ -188,7 +188,7 @@ int judge_attribution(void *data, int offset) {
     read_num(data + offset + 0xc, 3) ==
     read_num(data + offset + 0xe, 3)  
   )
-    return 1;
+    return 0;
   else
     return 0;
 }
