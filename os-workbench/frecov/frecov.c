@@ -33,13 +33,15 @@ void print_FAT32_info(struct FAT32 *f) {
   debug("cluster_size", f->cluster_size);
   debug("DOS_sec_amount", f->DOS_sec_amount);
   debug("fat_amount", f->fat_amount);
+  debugx("fat_size(sectors)", f->fat_size);
+  debugx("fat_total_size(bytes)", f->fat_size * f->sector_size);
   debug("sector_amount", f->sector_amount);
-  debugx("fat_size", f->fat_size);
+
   debug("DBR_sec_index", f->DBR_sec_index);
   debug3("volume_lable", f->volume_label);
   debug3("fat_type", f->fat_type);
 
-  debugx("fat_total_size", f->fat_size * f->sector_size);
+
 }
 
 int read_num(void *p, int len) {
