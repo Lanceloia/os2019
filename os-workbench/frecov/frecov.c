@@ -87,7 +87,7 @@ int read_unicode(char dest[], char src[], int len) {
 }
 
 int read_name(void *data, int offset, char dest[]) {
-  if(*(char *)(data + offset + 0x00) == (char)0x01) // &&
+  if(*(char *)(data + offset + 0x00) == (char)0x01) {// &&
     //*(char *)(data + offset + 0x0b) == (char)0x0f) {
     // if(*(char *)(data + offset) == 'B')
     //  return;
