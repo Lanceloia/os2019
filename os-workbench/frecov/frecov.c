@@ -80,6 +80,7 @@ void push_cluster(struct YELLO_BMP *yb, int offset) {
 void read_unicode(char dest[], char src[], int len) {
   for(int i = 0; i < len; i ++) {
     dest[i] = src[2 * i];
+    printf("%c", dest[i]);
   }
 }
 
