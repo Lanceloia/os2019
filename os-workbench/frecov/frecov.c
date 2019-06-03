@@ -63,8 +63,7 @@ void read_fat32_info(struct FAT32 *f, void *data) {
   strncpy(f->volume_label, data + 0x47, 11);
   strncpy(f->fat_type, data + 0x52, 8);
   print_FAT32_info(f);
-}
-
+} 
 
 struct YELLO_BMP {
   int color, clusters_size;
@@ -76,6 +75,26 @@ int tot_bmp = 0;
 
 void push_cluster(struct YELLO_BMP *yb, int offset) {
   yb->clusters[yb->clusters_size ++] = offset;
+}
+
+void read_unicode(char dest[], char src[], int len) {
+  for(int i = 0; i < len; i ++) {
+    dest[i] = src[2 * i];
+  }
+}
+
+void read_name(void *data, int offset, char dest[]) {
+  if(*(char *)(data + offset + 0x0c) == 0x0f) {
+    // long filename
+    read_unicode(dest, data + offset + 0x01, 5);
+    read_unicode(dest + 5, data + offset + 0x0e, 6);
+    read_unicode(dest + 11, data + offset + 0x1c, 2);
+  }
+  else {
+    // short filename
+    strncpy(dest, (char *)(data + offset), 8);
+  }
+  printf("%s\n", dest);
 }
 
 void init_yello_bmp(void *data, int offset){
@@ -114,6 +133,9 @@ int main(int argc, char *argv[]) {
     search_yello_bmp(imgmap, i);
   }
   show_yello_bmp();
+
+  char buf[1024] = {};
+  read_name(imgmap, 0x82260, buf);
 
   return 0;
 }
