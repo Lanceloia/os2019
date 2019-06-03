@@ -106,8 +106,8 @@ int read_name_position_do(char *data, int offset, char *name, int *position) {
     strcat(name, buf[top]);
   }
 
-  *position = read_num(data + offset + 0x34, 2) << 16;
-  *position += read_num(data + offset + 0x3a, 2);
+  *position = read_num(data + offset + 0x14, 2) << 16;
+  *position += read_num(data + offset + 0x1a, 2);
 
   return ret;
 }
