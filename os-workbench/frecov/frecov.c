@@ -84,20 +84,18 @@ int read_unicode(char dest[], char src[], int len) {
   return 1;
 }
 
-char fn[256][256]= {};
+char filename[256][256]= {};
 char buf[256] = {};
+int tot_fn;
 
 void read_name(char *data, int offset) {
-  if((*(data + offset + 0x00) == (char)0x01 ||
-  *(data + offset + 0x00) == (char)0x42) &&
+  if(*(data + offset + 0x00) == (char)0x01 &&
   *(data + offset + 0x0b) == (char)0x0f) {
-
-    int inode = read_num(data + offset + 0x0d, 1);
     if(read_unicode(buf, data + offset + 0x01, 5))
       if(read_unicode(buf + 5, data + offset + 0x0e, 6))
         read_unicode(buf + 11, data + offset + 0x1c, 2);
 
-    strcat(fn[inode], buf);
+    strcpy(filename[tot_fn ++ ], buf);
   }
   /*
   else {
@@ -123,9 +121,9 @@ void search_bmp_head(char *data, int offset) {
   }
 }
 
-void show_fn(){
+void show_filename(){
   for(int i = 0; i < 256; i ++){
-    printf("%d: %s\n", i, fn[i]);
+    printf("%d: %s\n", i, filename[i]);
   }
 }
 
