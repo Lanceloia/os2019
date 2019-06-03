@@ -85,16 +85,16 @@ int is_valid(char ch) {
   return 0;
 }
 
-struct FILE {
+struct myFILE {
   char filename[256];
-  int position;
+  int position, filesize;
 } file[256];
 int tot_file;
 
 char buf[64][256] = {};
 
-int read_name_position_do(char *data, int offset, char *name, int *position) {
-  int top = 0, ret = 0; name[0] = '\0';
+int read_name_position_do(char *data, int offset, struct myFILE *file) {
+  int top = 0, ret = 0; file->filename[0] = '\0';
   while(*(data + offset + 0x0b) == (char)0x0f) {
     read_unicode(buf[top], data + offset + 0x01, 5);
     read_unicode(buf[top] + 5, data + offset + 0x0e, 6);
@@ -103,28 +103,27 @@ int read_name_position_do(char *data, int offset, char *name, int *position) {
   }
 
   while(top --) {
-    strcat(name, buf[top]);
+    strcat(file->filename, buf[top]);
   }
 
-  *position = read_num(data + offset + 0x14, 2) << 16;
-  *position += read_num(data + offset + 0x1a, 2);
+  file->position = read_num(data + offset + 0x14, 2) << 16;
+  file->position += read_num(data + offset + 0x1a, 2);
 
+  file->filesize = read_num(data + offset + 0x1c, 4);
   return ret;
 }
 
 int read_name_position(char *data, int offset) {
   if(*(data + offset + 0x0b) == (char)0x0f) {
     tot_file ++;
-    return read_name_position_do(data, offset,
-      file[tot_file - 1].filename,
-      &file[tot_file - 1].position);
+    return read_name_position_do(data, offset, &file[tot_file - 1]);
   }
   return 0x20;
 }
 
 void search_bmp_name_position(char *data, int offset) {
   int step = 0;
-  for(int i = 0; i < fat32.sector_size; i += step){
+  for(int i = 0; i < fat32.sector_size; i += step) {
     step = read_name_position(data, offset + i);
   }
 }
@@ -149,8 +148,8 @@ void search_bmp_head_structure(char *data, int offset) {
 
 void show_file(){
   for(int i = 0; i < tot_file; i ++){
-    printf("%d: %s, 0x%08x\n",
-    i, file[i].filename, file[i].position);
+    printf("%d: filename: %s, position: 0x%08x, filesize: 0x%08x\n",
+    i, file[i].filename, file[i].position, file[i].filesize);
   }
 }
 
