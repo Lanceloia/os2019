@@ -64,7 +64,9 @@ void read_fat32_info(char *data) {
 } 
 
 struct YELLO_BMP {
-  int color, offset, clusters_size;
+  int color, offset;
+  int clusters_size;
+  int is_map, color;
   char filename[256];
   int clusters[1024];
 } yello_bmp[128];
@@ -139,7 +141,8 @@ void search_bmp_head(char *data, int offset) {
 
 void show_file(){
   for(int i = 0; i < tot_file; i ++){
-    printf("%d: %s, 0x%08x\n", i, file[i].filename, file[i].offset);
+    printf("%d: %s, 0x%08x\n",
+    i, file[i].filename, file[i].offset);
   }
 }
 
@@ -151,6 +154,8 @@ void show_yello_bmp(){
     printf("color: %x,", yello_bmp[i].color);
     printf("offset: %x,", (yello_bmp[i].offset - 0x81c00) / 0x200);
     printf("clusters_size: %d\n", yello_bmp[i].clusters_size);
+    printf("is_map: %d", yello_bmp[i].is_map);
+    printf("color: 0x%x", yello_bmp[i].color);
   }
 }
 
