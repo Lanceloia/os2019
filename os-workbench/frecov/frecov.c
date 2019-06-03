@@ -197,7 +197,7 @@ void output_bmp(char *data, struct YELLO_BMP *yb){
     // printf("%c", head[i]);
   }
   fwrite(head, sizeof(head), 1, fp);
-  char color[3] = {};
+  char color[3] = {0x00, 0xff, 0xff};
     /*
     color[0] = (yb->color) & 0xff;
     color[1] = (yb->color >> 8) & 0xff;
