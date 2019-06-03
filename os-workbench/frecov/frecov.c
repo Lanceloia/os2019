@@ -77,22 +77,24 @@ void push_cluster(struct YELLO_BMP *yb, int offset) {
   yb->clusters[yb->clusters_size ++] = offset;
 }
 
-void read_unicode(char dest[], char src[], int len) {
+int read_unicode(char dest[], char src[], int len) {
   for(int i = 0; i < len; i ++) {
     dest[i] = src[2 * i];
+    if(dest[i] == '\0')
+      return 0;
   }
+  return 1;
 }
 
-void read_name(void *data, int offset, char dest[]) {
+int read_name(void *data, int offset, char dest[]) {
   if(*(char *)(data + offset + 0x00) == (char)0x01 &&
-    *(char *)(data + offset + 0x0b) == (char)0x0f) {
+    //*(char *)(data + offset + 0x0b) == (char)0x0f) {
     // if(*(char *)(data + offset) == 'B')
     //  return;
     // long filename
-    read_unicode(dest, data + offset + 0x01, 5);
-    read_unicode(dest + 5, data + offset + 0x0e, 6);
-    read_unicode(dest + 11, data + offset + 0x1c, 2);
-    dest[14] = '\0';
+    if(read_unicode(dest, data + offset + 0x01, 5))
+      if(read_unicode(dest + 5, data + offset + 0x0e, 6))
+        read_unicode(dest + 11, data + offset + 0x1c, 2);
     printf("%s\n", dest);
   }
   /*
