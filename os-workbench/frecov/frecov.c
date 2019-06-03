@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
   char buf[1024] = {};
   read_fat32_info(&fat32, imgmap);
   
-  for(int i = 0; i < 33 MB; i += 0x200) {
+  for(int i = 0; i < 32 MB; i += 0x200) {
     if(search_yello_bmp(imgmap, i))
       ;
     else
