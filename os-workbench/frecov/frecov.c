@@ -181,7 +181,7 @@ int main(int argc, char *argv[]) {
     }
 */
   }
-  show_fn();
+  show_filename();
   show_yello_bmp();
 
   return 0;
