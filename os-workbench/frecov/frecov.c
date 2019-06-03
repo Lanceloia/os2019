@@ -204,7 +204,7 @@ int main(int argc, char *argv[]) {
   }
 
   show_file();
-  show_BMP_INFO();
+  //show_BMP_INFO();
 
   /*
   for(int i = 0; i < tot_bmp; i ++)
