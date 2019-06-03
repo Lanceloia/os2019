@@ -118,7 +118,7 @@ void read_name_offset(char *data, int offset) {
   }
   else {
     if(*(data + offset + 0x06) == '~' && *(data + offset + 0x07) == '1') {
-      printf("%s\n", data + offset);
+      //printf("%s\n", data + offset);
     }
   }
 }
