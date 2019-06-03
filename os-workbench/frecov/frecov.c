@@ -209,6 +209,14 @@ void output_bmp(char *data, struct YELLO_BMP *yb){
   fclose(fp);
 }
 
+void output2_bmp(char *data, struct YELLO_BMP *yb){
+  FILE *fp = fopen(yb->filename, "wb+");
+  if(!fp) return;
+  for(int i = 0; i < yb->clusters_size; i ++)
+    fwrite(data + yb->clusters[i], sizeof(char), fat32.sector_size, fp);
+  fclose(fp);
+}
+
 int main(int argc, char *argv[]) {
   int fd = open(argv[1], O_RDWR);
   if (fd == -1) {debug2("open failed."); return 1;}
@@ -231,6 +239,6 @@ int main(int argc, char *argv[]) {
   show_yello_bmp();
 
   for(int i = 0; i < tot_bmp; i ++)
-    output_bmp(imgmap, &yello_bmp[i]);
+    output2_bmp(imgmap, &yello_bmp[i]);
   return 0;
 }
