@@ -64,7 +64,7 @@ void read_fat32_info(char *data) {
 } 
 
 struct YELLO_BMP {
-  int color, offset;
+  int offset;
   int clusters_size;
   int is_map, color;
   char filename[256];
