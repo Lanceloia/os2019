@@ -194,7 +194,7 @@ void output_bmp(char *data, struct YELLO_BMP *yb){
   char head[54];
   for(int i = 0; i < 54; i ++) {
     head[i] = *(data + yb->clusters[0] + i);
-    // printf("%c", head[i]);
+    printf("%c", head[i]);
   }
   fwrite(head, sizeof(char), 54, fp);
   char color[3];
