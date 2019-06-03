@@ -95,8 +95,12 @@ int read_name(void *data, int offset, char dest[]) {
     if(read_unicode(dest, data + offset + 0x01, 5))
       if(read_unicode(dest + 5, data + offset + 0x0e, 6))
         read_unicode(dest + 11, data + offset + 0x1c, 2);
+    return strlen(dest);
   }
-  return strlen(dest);
+  else {
+    return 0;
+  }
+  
   /*
   else {
     // short filename
