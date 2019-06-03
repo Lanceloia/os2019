@@ -134,7 +134,7 @@ void search_bmp_head(char *data, int offset) {
     yello_bmp[tot_bmp].color = read_num(data + offset + 0x54, 3);
     yello_bmp[tot_bmp].offset = offset;
     for(int i = 0; i < tot_file; i ++)
-      if (file[i].offset == (yello_bmp[i].offset - 0x81c00) / 0x200)
+      if (file[i].offset == ((yello_bmp[i].offset - 0x81c00) / 0x200))
         strcpy(yello_bmp[tot_bmp].filename, file[i].filename);
     push_cluster(&yello_bmp[tot_bmp], offset);
     tot_bmp ++;
