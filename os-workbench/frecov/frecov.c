@@ -97,6 +97,7 @@ int read_name(void *data, int offset, char dest[]) {
         read_unicode(dest + 11, data + offset + 0x1c, 2);
     printf("%s\n", dest);
   }
+  return strlen(dest);
   /*
   else {
     // short filename
@@ -117,15 +118,15 @@ int search_yello_bmp(void *data, int offset){
     return 1;
   }
   else if(read_num(data + offset, 3) == 
-  read_num(data + offset + 0x3, 3) &&
-  read_num(data + offset + 0x3, 3) ==
-  read_num(data + offset + 0x6, 3) &&
-  read_num(data + offset + 0x6, 3) ==
-  read_num(data + offset + 0x9, 3) &&
-  read_num(data + offset + 0x9, 3) ==
-  read_num(data + offset + 0xc, 3) &&
-  read_num(data + offset + 0xc, 3) ==
-  read_num(data + offset + 0xe, 3)  
+    read_num(data + offset + 0x3, 3) &&
+    read_num(data + offset + 0x3, 3) ==
+    read_num(data + offset + 0x6, 3) &&
+    read_num(data + offset + 0x6, 3) ==
+    read_num(data + offset + 0x9, 3) &&
+    read_num(data + offset + 0x9, 3) ==
+    read_num(data + offset + 0xc, 3) &&
+    read_num(data + offset + 0xc, 3) ==
+    read_num(data + offset + 0xe, 3)  
   )
     return 1;
   else
@@ -156,9 +157,16 @@ int main(int argc, char *argv[]) {
   for(int i = 0; i < 32 MB; i += 0x200) {
     if(search_yello_bmp(imgmap, i))
       ;
-    else
-      for(int j = 0; j < fat32.sector_size; j += 0x20)
-        read_name(imgmap, i + j, buf);
+    else {
+      int len = 0;
+      for(int j = 0; j < fat32.sector_size; j += 0x20) {
+        int ret = read_name(imgmap, i + j, buf + len);
+        if(ret < 13)
+          len = 0;
+        else
+          len += ret;
+      }
+    }
   }
   show_yello_bmp();
 
