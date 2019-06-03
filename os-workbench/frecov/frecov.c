@@ -145,19 +145,6 @@ void search_bmp_head(char *data, int offset) {
   }
 }
 
-void add_bmp_head(char *data, int offset) {
-  int color0 = read_num(data + offset, 3);
-  int color1 = read_num(data + offset + 1, 3);
-  int color2 = read_num(data + offset + 2, 3);
-  // printf("%d\n", color);
-  for(int i = 0; i < tot_bmp; i ++) {
-    if (yello_bmp[i].color == color0 ||
-    yello_bmp[i].color == color1 ||
-    yello_bmp[i].color == color2)
-      push_cluster(&yello_bmp[i], offset);
-  }
-}
-
 void show_file(){
   for(int i = 0; i < tot_file; i ++){
     printf("%d: %s, 0x%08x\n",
@@ -179,7 +166,7 @@ void show_yello_bmp(){
 
 int judge_attribution(void *data, int offset) {
   if(((char *)data)[offset] == 'B' && ((char *)data)[offset + 1] == 'M') {
-    return 2;
+    return 0;
   }
   else if(read_num(data + offset, 3) == 
     read_num(data + offset + 0x3, 3) &&
@@ -191,9 +178,9 @@ int judge_attribution(void *data, int offset) {
     read_num(data + offset + 0xc, 3) &&
     read_num(data + offset, 3) != 0x0
   )
-    return 1;//{printf("color = %x\n", read_num(data + offset, 3)); return 1; }
+    return 1;
   else
-    return 0;
+    return 2;
 }
 
 void output_bmp(char *data, struct YELLO_BMP *yb){
@@ -222,11 +209,6 @@ int main(int argc, char *argv[]) {
   for(int i = 0; i < 32 MB; i += fat32.sector_size) {
     if(judge_attribution(imgmap, i) == 2)
       search_bmp_head(imgmap, i);
-  }
-
-  for(int i = 0; i < 32 MB; i += fat32.sector_size) {
-    if(judge_attribution(imgmap, i) == 1)
-      add_bmp_head(imgmap, i);
   }
 
   show_file();
