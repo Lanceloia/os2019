@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
       ;
     else
       for(int j = 0; j < fat32.sector_size; j += 0x20)
-      read_name(imgmap, 0x82260, buf);
+        read_name(imgmap, i + j, buf);
   }
   show_yello_bmp();
 
