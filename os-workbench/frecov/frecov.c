@@ -108,6 +108,9 @@ void read_name(char *data, int offset) {
 }
 
 int search_bmp_name(char *data, int offset) {
+  for(int i = 0; i < fat32.sector_size; i += 0x20){
+    read_name(data, offset + i);
+  }
   return 0;
 }
 
@@ -117,6 +120,12 @@ void search_bmp_head(char *data, int offset) {
     yello_bmp[tot_bmp].color = read_num(data + offset + 0x54, 3);
     push_cluster(&yello_bmp[tot_bmp], offset);
     tot_bmp ++;
+  }
+}
+
+void show_fn(){
+  for(int i = 0; i < 256; i ++){
+    printf("%d: %s\n", i, fn[i]);
   }
 }
 
