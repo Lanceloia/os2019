@@ -198,7 +198,7 @@ fclose(fp);
  */
 
 int deep_search_bmp_name_position(char *data, int offset) {
-  
+  return 0;
 }
 
 int main(int argc, char *argv[]) {
