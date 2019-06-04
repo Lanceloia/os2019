@@ -94,7 +94,7 @@ int tot_file;
 
 char buf[64][256] = {};
 
-int top, ctrl;
+int top, ctrl = 0;
 
 void read_name_position_do(char *data, int offset, struct myFILE *file) {
   switch(ctrl) {
