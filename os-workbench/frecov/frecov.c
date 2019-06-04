@@ -116,6 +116,9 @@ void read_name_position_do(char *data, int offset, struct myFILE *file) {
       file->position += read_num(data + offset + 0x1a, 2);
       file->filesize = read_num(data + offset + 0x1c, 4);
       file->next_sector = file->position + file->filesize / fat32.sector_size + 1;
+    }
+    else {
+      top --;
     } 
   }
 }
