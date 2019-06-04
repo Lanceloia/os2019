@@ -138,9 +138,14 @@ void read_name_position(char *data, int offset) {
   }
 }
 
-int search_bmp_name_position(char *data, int offset) {
+int sector_visit[(1 << 16) - 1];
+
+int search_bmp_name_position(char *data, int offset, int sector_idx) {
   if (tot_file >= 512)
     return 0;
+  if(sector_visit[sector_idx])
+    return 0;
+  sector_visit[sector_idx] = 1;
   
   int old_tot_file = tot_file;
   for(int i = 0; i < fat32.sector_size; i += 0x20) {
@@ -205,7 +210,8 @@ int deep_search_bmp_name_position(char *data, int offset) {
   if(file[actual_tot_file].visited == 0) {
     file[actual_tot_file].visited = 1;
     cnt += search_bmp_name_position(
-      data, offset + (file[actual_tot_file].next_sector - 0x2) * fat32.sector_size);
+      data, offset + (file[actual_tot_file].next_sector - 2) * fat32.sector_size,
+      file[actual_tot_file].next_sector);
   }
   return cnt;
 }
@@ -224,15 +230,13 @@ int main(int argc, char *argv[]) {
     fat_begin += fat32.sector_size;
   int fat_tot_size = fat32.fat_amount * fat32.fat_size * fat32.sector_size;
 
-  search_bmp_name_position(imgmap, fat_begin + fat_tot_size + fat32.sector_size);
+  search_bmp_name_position(imgmap, fat_begin + fat_tot_size + fat32.sector_size, 3);
   
   while(deep_search_bmp_name_position(imgmap, fat_begin + fat_tot_size));
 
-  /*
-  for(int i = fat_begin + fat_tot_size + 2 * fat32.sector_size; i < 32 MB; i += fat32.sector_size) {
-    search_bmp_name_position(imgmap, i);
-  }
-  */
+  for(int i = 4; i < 32 MB / fat32.sector_size; i ++) {
+    search_bmp_name_position(imgmap, fat_begin + fat_tot_size + (i - 2) * fat32.sector_size, i);
+  }  
 
   // show_file();
 
