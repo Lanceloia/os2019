@@ -226,6 +226,9 @@ int main(int argc, char *argv[]) {
   close(fd);
 
   read_fat32_info(imgmap);
+  if(fat32.cluster_size != 1) {
+    fprintf(stderr, "cluster_size is not equal to 1, this program maybe error!\n");
+  }
 
   int fat_begin = 0;
   while(strncmp(imgmap + fat_begin, "\xf8\xff\xff\x0f", 4) != 0)
