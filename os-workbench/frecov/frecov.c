@@ -220,7 +220,7 @@ void output_bmp2(char *data,  struct myFILE *f){
     close(in[1]);
 
     // catch the stderr
-    dup2(out[1], STDOUT_FILENO);
+    dup2(out[1], STDERR_FILENO);
     close(out[0]);
     execve(filename, newargv, newenvp);
   }
@@ -233,7 +233,7 @@ void output_bmp2(char *data,  struct myFILE *f){
     write(in[1], data + (f->position - 0x2) * fat32.sector_size, sizeof(char) * f->filesize);
 
     char buf[1024];
-    scanf("%s", buf);
+    read(out[0], buf, 1024);
     printf("%s\n", buf);
   }
 }
