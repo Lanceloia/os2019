@@ -31,7 +31,7 @@ struct FAT32 {
 } fat32;
 
 void print_FAT32_info() {
-  return;
+  //return;
 
   debug("sector size", fat32.sector_size);
   debug("cluster size", fat32.cluster_size);
