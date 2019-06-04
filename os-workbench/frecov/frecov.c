@@ -235,7 +235,7 @@ int main(int argc, char *argv[]) {
   
   while(deep_search_bmp_name_position(imgmap, fat_begin + fat_tot_size));
 
-  for(int i = 4; fat_begin + fat_tot_size + (i - 2) * fat32.sector_size < 65 MB; i ++) {
+  for(int i = 4; fat_begin + fat_tot_size + (i - 2) * fat32.sector_size < 64 MB; i ++) {
     search_bmp_name_position(imgmap, fat_begin + fat_tot_size + (i - 2) * fat32.sector_size, i);
   }  
 
