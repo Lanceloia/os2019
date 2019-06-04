@@ -204,19 +204,14 @@ fclose(fp);
 
 int deep_search_bmp_name_position(char *data, int offset) {
   int cnt = 0;
-  int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2; 
-  //for(int i = 0; i < tot_file; i ++) {
-  //  if(file[i].visited)
- //     continue;
-  //  file[i].visited = 1;
-  if(file[actual_tot_file].visited == 0) {
-    file[actual_tot_file].visited = 1;
-    printf("%x\n", file[actual_tot_file].next_sector - 0x2);
+  int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2;
+  for(int i = 0; i < actual_tot_file; i ++) 
+  if(file[i].visited == 0) {
+    file[i].visited = 1;
+    // the reason of [-0x2] is because the idx of clusters is begin with 0x2
     cnt += search_bmp_name_position(
-      data, offset + (file[actual_tot_file].next_sector - 0x2) * fat32.sector_size);
-      //data, offset + 0x956 * fat32.sector_size);
+      data, offset + (file[i].next_sector - 0x2) * fat32.sector_size);
   }
-  //}
   return cnt;
 }
 
