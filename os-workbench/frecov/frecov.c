@@ -238,7 +238,7 @@ int main(int argc, char *argv[]) {
   for(int i = 0; i <= actual_tot_file; i ++) {
     output_bmp(imgmap + fat_begin + fat_tot_size, &file[i]);
     sha1sum_bmp(imgmap + fat_begin + fat_tot_size, &file[i]);
-    //delete_bmp(&file[i]);
+    delete_bmp(&file[i]);
   }
    
   return 0;
