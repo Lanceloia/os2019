@@ -194,7 +194,7 @@ int deep_search_bmp_name_position(char *data, int offset) {
     file[actual_tot_file].visited = 1;
     // the reason of [-0x2] is because the idx of clusters is begin with 0x2
     cnt += search_bmp_name_position(
-      data, offset + (file[actual_tot_file].next_sector - 0x1) * fat32.sector_size);
+      data, offset + (file[actual_tot_file].next_sector - 0x2) * fat32.sector_size);
   }
   return cnt;
 }
