@@ -220,7 +220,7 @@ int deep_search_bmp_name_position(char *data, int offset) {
 int main(int argc, char *argv[]) {
   int fd = open(argv[1], O_RDWR);
   if (fd == -1) {debug2("open failed."); return 1;}
-  imgmap = mmap(NULL, 64 MB, PROT_READ, MAP_SHARED | MAP_GROWSDOWN, fd, 0);
+  imgmap = mmap(NULL, 64 MB, PROT_READ, MAP_SHARED, fd, 0);
   if (imgmap == (void *)-1) {debug2("mmap failed."); return 1;} 
   close(fd);
 
@@ -230,13 +230,14 @@ int main(int argc, char *argv[]) {
   while(strncmp(imgmap + fat_begin, "\xf8\xff\xff\x0f", 4) != 0)
     fat_begin += fat32.sector_size;
   int fat_tot_size = fat32.fat_amount * fat32.fat_size * fat32.sector_size;
+  int data_start_sector = (fat_begin + fat_tot_size) / fat32.fat_size;
 
-  search_bmp_name_position(imgmap, fat_begin + fat_tot_size + (3 - 2) * fat32.sector_size, 3);
+  search_bmp_name_position(imgmap, (data_start_sector + (3 - 2)) * fat32.sector_size, 3);
   
   while(deep_search_bmp_name_position(imgmap, fat_begin + fat_tot_size));
 
-  for(int i = 4; fat_begin + fat_tot_size + (i - 2) * fat32.sector_size < 64 MB; i ++) {
-    search_bmp_name_position(imgmap, fat_begin + fat_tot_size + (i - 2) * fat32.sector_size, i);
+  for(int i = 4; (data_start_sector + (i - 2)) < fat32.sector_amount; i ++) {
+    search_bmp_name_position(imgmap, (data_start_sector + (i - 2)) * fat32.sector_size, i);
   }  
 
   // show_file();
