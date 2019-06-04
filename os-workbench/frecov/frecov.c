@@ -233,7 +233,7 @@ int main(int argc, char *argv[]) {
   int fat_tot_size = fat32.fat_amount * fat32.fat_size * fat32.sector_size;
   int data_start_sector = (fat_begin + fat_tot_size) / fat32.fat_size;
 
-  search_bmp_name_position(imgmap, (data_start_sector + (3 - 2)) * fat32.sector_size, 3);
+  search_bmp_name_position(imgmap, (data_start_sector + (4 - 2)) * fat32.sector_size, 4);
   
   while(deep_search_bmp_name_position(imgmap, fat_begin + fat_tot_size));
 
