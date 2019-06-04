@@ -157,13 +157,8 @@ void show_file(){
 void output_bmp(char *data,  struct myFILE *f){
   FILE *fp = fopen(f->filename, "wb");
   if(!fp) return;
-  //for(int i = f->position; i < f->next_sector; i ++)
-  //int filesize = f->filesize;
-  //while(filesize % 0x200) filesize++;
   fwrite(data + (f->position - 0x2) * fat32.sector_size,
     sizeof(char), f->filesize, fp);
-  char end = '\0';
-  fwrite(&end, sizeof(char), 1,fp);
   fclose(fp);
 }
 
@@ -193,9 +188,7 @@ void sha1sum_bmp(char *data,  struct myFILE *f){
     // read data
     char buf[1024] = {};
     close(_files[1]);
-    //printf("fuck1\n");
     read(_files[0], buf, 1024);
-    //printf("fuck2\n");
     printf("%s", buf);
   }
 }
@@ -205,7 +198,6 @@ int deep_search_bmp_name_position(char *data, int offset) {
   int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2; 
   if(file[actual_tot_file].visited == 0) {
     file[actual_tot_file].visited = 1;
-    // the reason of [-0x2] is because the idx of clusters is begin with 0x2
     cnt += search_bmp_name_position(
       data, offset + (file[actual_tot_file].next_sector - 0x2) * fat32.sector_size);
   }
@@ -221,9 +213,6 @@ int main(int argc, char *argv[]) {
 
   read_fat32_info(imgmap);
 
-  //for(int i = 0; i < 32 MB; i += fat32.sector_size) {
-  //  search_bmp_name_position(imgmap, i);
-  //}
   int fat_begin = 0;
   while(strncmp(imgmap + fat_begin, "\xf8\xff\xff\x0f", 4) != 0)
     fat_begin += fat32.sector_size;
@@ -237,10 +226,7 @@ int main(int argc, char *argv[]) {
     search_bmp_name_position(imgmap, i);
   }
 
-  //while(1);
-
-  show_file();
-  //show_BMP_INFO();
+  // show_file();
 
   int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2;   
   for(int i = 0; i <= actual_tot_file; i ++) {
