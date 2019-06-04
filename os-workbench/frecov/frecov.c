@@ -178,29 +178,13 @@ void show_file(){
    }
  */
 
-/*
-   void output_bmp(char *data, struct BMP_INFO *yb){
-   FILE *fp = fopen(yb->filename, "wb+");
-   if(!fp) return;
-   printf("%x\n", *(int *)(data + yb->clusters[0]));
-   char head[54];
-   for(int i = 0; i < 54; i ++) {
-   head[i] = *(data + yb->clusters[0] + i);
-// printf("%c", head[i]);
+void output_bmp(char *data,  struct myFILE *f){
+  FILE *fp = fopen(f->filename, "wb+");
+  if(!fp) return;
+  for(int i = f->position; i < f->next_sector; i += fat32.sector_size)
+    fwrite(data + i, fat32.sector_size * sizeof(char), 1, fp);
+  fclose(fp);
 }
-fwrite(head, sizeof(head), 1, fp);
-char color[3];
-color[0] = (yb->color) & 0xff;
-color[1] = (yb->color >> 8) & 0xff;
-color[2] = (yb->color >> 16) & 0xff;
-int width = yb->width * 3;
-while(width % 4 != 0) width ++;
-for(int i = 0; i < yb->height; i ++)
-for(int j = 0; j < width; j ++)
-fwrite(color + (j % 3), sizeof(char), 1, fp);
-fclose(fp);
-}
- */
 
 int deep_search_bmp_name_position(char *data, int offset) {
   int cnt = 0;
@@ -238,9 +222,9 @@ int main(int argc, char *argv[]) {
   show_file();
   //show_BMP_INFO();
 
-  /*
-     for(int i = 0; i < tot_bmp; i ++)
-     output2_bmp(imgmap, &BMP_INFO[i]);
-   */
+  
+  for(int i = 0; i < tot_file; i ++)
+    output2_bmp(imgmap, &BMP_INFO[i]);
+   
   return 0;
 }
