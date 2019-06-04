@@ -210,6 +210,7 @@ int deep_search_bmp_name_position(char *data, int offset) {
   //  file[i].visited = 1;
   if(file[tot_file - 1].visited == 0) {
     file[tot_file - 1].visited = 1;
+    printf("%x\n", file[tot_file - 1].next_sector - 0x2);
     cnt += search_bmp_name_position(
       data, offset + (file[tot_file - 1].next_sector - 0x2) * fat32.sector_size);
       //data, offset + 0x956 * fat32.sector_size);
