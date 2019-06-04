@@ -230,6 +230,7 @@ void output_bmp2(char *data,  struct myFILE *f){
     close(out[1]);
 
     // send data
+    close(in[0]);
     write(in[1], data + (f->position - 0x2) * fat32.sector_size, sizeof(char) * f->filesize);
 
     char buf[1024];
