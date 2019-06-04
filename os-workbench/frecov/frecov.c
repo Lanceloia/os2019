@@ -92,7 +92,7 @@ struct myFILE {
   char filename[256];
   int position, filesize;
   int next_sector, visited;
-} file[256];
+} file[1024];
 int tot_file;
 
 char buf[64][256] = {};
