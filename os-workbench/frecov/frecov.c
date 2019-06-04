@@ -162,7 +162,7 @@ tot_bmp ++;
 void show_file(){
   for(int i = 0; i < tot_file; i ++){
     printf("%d: filename: %s, position: 0x%08x, filesize: 0x%08x, next_sector: 0x%08x\n",
-            i, file[i].filename, file[i].position, file[i].filesize, file[i].next_sector);
+      i, file[i].filename, file[i].position, file[i].filesize, file[i].next_sector);
   }
 }
 
@@ -181,7 +181,7 @@ void show_file(){
 void output_bmp(char *data,  struct myFILE *f){
   FILE *fp = fopen(f->filename, "wb+");
   if(!fp) return;
-  for(int i = f->position; i < f->next_sector; i += fat32.sector_size)
+  for(int i = f->position; i < f->next_sector; i ++)
     fwrite(data + (i - 0x2) * fat32.sector_size,
      fat32.sector_size * sizeof(char), 1, fp);
   fclose(fp);
