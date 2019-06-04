@@ -202,9 +202,10 @@ int main(int argc, char *argv[]) {
 
   read_fat32_info(imgmap);
 
-  for(int i = 0; i < 32 MB; i += fat32.sector_size) {
-    search_bmp_name_position(imgmap, i);
-  }
+  //for(int i = 0; i < 32 MB; i += fat32.sector_size) {
+  //  search_bmp_name_position(imgmap, i);
+  //}
+  search_bmp_name_position(imgmap, 0x100600);
 
   show_file();
   //show_BMP_INFO();
