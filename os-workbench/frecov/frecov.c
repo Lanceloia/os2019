@@ -110,7 +110,7 @@ int is_valid(int key){
 }
 
 void read_name_position_do(char *data, int offset, struct myFILE *file) {
-  if(*(data + offset + 0x0b) == (char)0x0f && is_valid(read_num(data + offset, 4))) {
+  if(*(data + offset + 0x0b) == (char)0x0f && is_valid(read_num(data + offset, 1))) {
     read_unicode(buf[top], data + offset + 0x01, 5);
     read_unicode(buf[top] + 5, data + offset + 0x0e, 6);
     read_unicode(buf[top] + 11, data + offset + 0x1c, 2);
