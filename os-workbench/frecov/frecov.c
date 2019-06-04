@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <sys/wait.h>
+#include <sys/types.h>
 
 #define KB *1024
 #define MB *1024*1024
