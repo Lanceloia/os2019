@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
     search_bmp_name_position(imgmap, (data_start_sector + (i - 2)) * fat32.sector_size, i);
   }  
 
-  //show_file();
+  show_file();
 
   int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2;   
   for(int i = 0; i <= actual_tot_file; i ++) {
