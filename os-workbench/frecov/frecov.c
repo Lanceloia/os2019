@@ -231,9 +231,9 @@ int main(int argc, char *argv[]) {
   while(strncmp(imgmap + fat_begin, "\xf8\xff\xff\x0f", 4) != 0)
     fat_begin += fat32.sector_size;
   int fat_tot_size = fat32.fat_amount * fat32.fat_size * fat32.sector_size;
-  int data_start_sector = (fat_begin + fat_tot_size) / fat32.fat_size;
+  int data_start_sector = (fat_begin + fat_tot_size) / fat32.sector_size;
 
-  search_bmp_name_position(imgmap, (data_start_sector + (4 - 2)) * fat32.sector_size, 4);
+  search_bmp_name_position(imgmap, (data_start_sector + (3 - 2)) * fat32.sector_size, 3);
   
   while(deep_search_bmp_name_position(imgmap, fat_begin + fat_tot_size));
 
