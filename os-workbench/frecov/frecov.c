@@ -194,6 +194,52 @@ void output_bmp(char *data,  struct myFILE *f){
   fclose(fp);
 }
 
+void output_bmp2(char *data,  struct myFILE *f){
+  //FILE *fp = fopen(f->filename, "wb");
+  //if(!fp) return;
+  //for(int i = f->position; i < f->next_sector; i ++)
+  //int filesize = f->filesize;
+  //while(filesize % 0x200) filesize++;
+  int in[2], out[2];
+
+
+
+  if(pipe(in) != 0 || pipe(out) != 0) {
+    fprintf(stderr, "Error: \n");
+    fprintf(stderr, "Can't create pipes. \n");
+    return 1;
+  }
+
+  int pid = fork();
+  if(pid == 0) {
+    char *filename = "/usr/bin/sha1num";
+    char **newargv = {NULL};
+    char **newenvp = {NULL};
+    
+    // wait data
+    dup2(in[0], STDIN_FILENO);
+    close(in[1]);
+
+    // catch the stderr
+    dup2(out[1], STDERR_FILENO);
+    close(out[0]);
+    execve(filename, newargv, newenvp);
+    assert(0);
+  }
+  else {
+     // change the stdin
+    dup2(out[0], STDIN_FILENO);
+    close(out[1]);
+
+    // send data
+    write(in[1], data + (f->position - 0x2) * fat32.sector_size, sizeof(char) * f->filesize);
+
+    char buf[1024];
+    scanf("%s", buf);
+    printf("%s\n", buf);
+  }
+}
+
 int deep_search_bmp_name_position(char *data, int offset) {
   int cnt = 0;
   int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2; 
@@ -238,7 +284,7 @@ int main(int argc, char *argv[]) {
 
   int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2;   
   for(int i = 0; i <= actual_tot_file; i ++)
-    output_bmp(imgmap + fat_begin + fat_tot_size, &file[i]);
+    output_bmp2(imgmap + fat_begin + fat_tot_size, &file[i]);
    
   return 0;
 }
