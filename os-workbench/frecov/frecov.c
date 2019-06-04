@@ -222,9 +222,9 @@ void sha1sum_bmp(char *data,  struct myFILE *f){
     // read data
     char buf[1024];
     close(_files[1]);
-    printf("fuck1\n");
+    //printf("fuck1\n");
     read(_files[0], buf, 1024);
-    printf("fuck2\n");
+    //printf("fuck2\n");
     printf("%s\n", buf);
   }
 }
