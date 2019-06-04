@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <sys/types.h>
+//#include <sys/types.h>
 
 #define KB *1024
 #define MB *1024*1024
@@ -213,7 +213,7 @@ void output_bmp2(char *data,  struct myFILE *f){
   if(pid == 0) {
     char *filename = "/usr/bin/sha1num";
     char **newargv = {NULL};
-    char **newenvp = {NULL};
+    // char **newenvp = {NULL};
     
     // wait data
     dup2(in[0], STDIN_FILENO);
@@ -222,7 +222,7 @@ void output_bmp2(char *data,  struct myFILE *f){
     // catch the stderr
     dup2(out[1], STDERR_FILENO);
     close(out[0]);
-    execve(filename, newargv, newenvp);
+    execve(filename, newargv);
   }
   else {
      // change the stdin
