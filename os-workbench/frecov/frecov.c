@@ -205,6 +205,7 @@ int main(int argc, char *argv[]) {
   //  search_bmp_name_position(imgmap, i);
   //}
   search_bmp_name_position(imgmap, 0x100600);
+  search_bmp_name_position(imgmap, 0x22b000);
 
   show_file();
   //show_BMP_INFO();
