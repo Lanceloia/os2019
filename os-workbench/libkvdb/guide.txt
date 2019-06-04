@@ -1,0 +1,20 @@
+The Guide of [M6] kvdb
+
+open: 
+  when open "*.db", create a copy "*.dbc", then create a log 
+  "*.log", all finished operations will leave a record at 
+  "*.log". 
+
+close:
+  copy "*.dbc" to "*.db", if success, remove "*.dbc" and "*.log".
+
+crash:
+  when open "*.db", but there exist "*.dbc" and "*.log", copy
+  "*.dbc" to "*.db", redo all operations at "*.db", if success,
+  show the log and reset "*.log".
+
+operations: 
+  easy
+
+  
+
