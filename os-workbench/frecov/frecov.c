@@ -162,6 +162,7 @@ int search_bmp_name_position(char *data, int offset, int sector_idx) {
 }
 
 void show_file(){
+  return;
   for(int i = 0; i < tot_file; i ++){
     fprintf(stderr, "%d: filename: %s, position: 0x%08x, filesize: 0x%08x, next_sector: 0x%08x\n",
       i, file[i].filename, file[i].position, file[i].filesize, file[i].next_sector);
