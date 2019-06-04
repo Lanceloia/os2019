@@ -208,8 +208,11 @@ int deep_search_bmp_name_position(char *data, int offset) {
   //  if(file[i].visited)
  //     continue;
   //  file[i].visited = 1;
+  if(file[4].visited == 0) {
     cnt += search_bmp_name_position(
       data, offset + 0x956 * fat32.sector_size);
+    file[4].visited = 1;
+  }
   //}
   return cnt;
 }
