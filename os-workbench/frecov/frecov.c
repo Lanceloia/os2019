@@ -123,8 +123,10 @@ void read_name_position_do(char *data, int offset, struct myFILE *file) {
       file->filesize = read_num(data + offset + 0x1c, 4);
       file->next_sector = file->position + file->filesize / fat32.sector_size + 1;
 
-      if((unsigned int)file->next_sector > (unsigned int)0xffff)
+      if((unsigned int)file->next_sector > (unsigned int)0xffff) {
+        file->filename[0] = '\0';
         tot_file --;
+      }
     }
     else {
       tot_file --;
