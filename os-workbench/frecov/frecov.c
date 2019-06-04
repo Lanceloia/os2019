@@ -97,7 +97,6 @@ char buf[64][256] = {};
 int top;
 
 void read_name_position_do(char *data, int offset, struct myFILE *file) {
-  file->filename[0] = '\0';
   if(*(data + offset + 0x0b) == (char)0x0f) {
     read_unicode(buf[top], data + offset + 0x01, 5);
     read_unicode(buf[top] + 5, data + offset + 0x0e, 6);
