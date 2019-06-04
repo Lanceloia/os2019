@@ -168,6 +168,8 @@ void output_bmp(char *data,  struct myFILE *f){
 }
 
 void sha1sum_bmp(char *data,  struct myFILE *f){
+  if(strcmp(f->filename, "") == 0)
+    return ;
 
   int _files[2];
 
