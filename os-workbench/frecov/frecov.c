@@ -166,23 +166,11 @@ void show_file(){
   }
 }
 
-/*
-   void show_BMP_INFO(){
-   for(int i = 0; i < tot_bmp; i ++) {
-   printf("bmp_index: %d, ", i);
-   printf("color: 0x%x, ", BMP_INFO[i].color);
-   printf("w: %d, h: %d, ", BMP_INFO[i].width, BMP_INFO[i].height);
-   printf("offset: 0x%x, ", BMP_INFO[i].offset);
-   printf("filename: %s, ", BMP_INFO[i].filename);
-   }
-   }
- */
-
 void output_bmp(char *data,  struct myFILE *f){
   FILE *fp = fopen(f->filename, "wb+");
   if(!fp) return;
   //for(int i = f->position; i < f->next_sector; i ++)
-    fwrite(data + (f->position - 0x2) * fat32.sector_size,
+    fwrite(data + (f->position - 0x1) * fat32.sector_size,
      f->filesize * sizeof(char), 1, fp);
   fclose(fp);
 }
