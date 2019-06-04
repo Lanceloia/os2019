@@ -204,13 +204,13 @@ fclose(fp);
 
 int deep_search_bmp_name_position(char *data, int offset) {
   int cnt = 0;
-  for(int i = 0; i < tot_file; i ++) {
-    if(file[i].visited)
-      continue;
-    file[i].visited = 1;
+  //for(int i = 0; i < tot_file; i ++) {
+  //  if(file[i].visited)
+ //     continue;
+  //  file[i].visited = 1;
     cnt += search_bmp_name_position(
       data, offset + 0x956 * fat32.sector_size);
-  }
+  //}
   return cnt;
 }
 
