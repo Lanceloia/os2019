@@ -167,7 +167,7 @@ void show_file(){
 }
 
 void output_bmp(char *data,  struct myFILE *f){
-  FILE *fp = fopen(f->filename, "wb+");
+  FILE *fp = fopen(f->filename, "wb");
   if(!fp) return;
   //for(int i = f->position; i < f->next_sector; i ++)
   //int filesize = f->filesize;
