@@ -105,7 +105,7 @@ void read_name_position_do(char *data, int offset, struct myFILE *file) {
     top ++;
   }
   else {
-    while(top --) {
+    while(top) {
         strcat(file->filename, buf[--top]);
     }
 
