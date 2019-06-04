@@ -211,7 +211,7 @@ int deep_search_bmp_name_position(char *data, int offset) {
   if(file[tot_file - 1].visited == 0) {
     file[tot_file - 1].visited = 1;
     cnt += search_bmp_name_position(
-      data, offset + (file[tot_file - 1].next_sector - 2)  * fat32.sector_size);
+      data, offset + (file[tot_file - 1].next_sector - 1)  * fat32.sector_size);
   }
   //}
   return cnt;
