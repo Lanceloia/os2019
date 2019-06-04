@@ -133,10 +133,12 @@ void read_name_position(char *data, int offset) {
   }
 }
 
-void search_bmp_name_position(char *data, int offset) {
+int search_bmp_name_position(char *data, int offset) {
+  int old_tot_file = tot_file;
   for(int i = 0; i < fat32.sector_size; i += 0x20) {
     read_name_position(data, offset + i);
   }
+  return tot_file - old_tot_file;
 }
 
 /*
@@ -201,7 +203,15 @@ fclose(fp);
  */
 
 int deep_search_bmp_name_position(char *data, int offset) {
-  return 0;
+  int cnt = 0;
+  for(int i = 0; i < tot_file; i ++) {
+    if(file[i].visited)
+      continue;
+    file[i].visited = 1;
+    cnt += search_bmp_name_position(
+      data, offset + file[i].next_sector * fat32.sector_size);
+  }
+  return cnt;
 }
 
 int main(int argc, char *argv[]) {
@@ -223,7 +233,7 @@ int main(int argc, char *argv[]) {
 
   search_bmp_name_position(imgmap, fat_begin + fat_tot_size + 0x1 * fat32.sector_size);
   
-  search_bmp_name_position(imgmap, 0x22b000);
+  while(deep_search_bmp_name_position(imgmap, fat_begin + fat_tot_size));
 
   show_file();
   //show_BMP_INFO();
