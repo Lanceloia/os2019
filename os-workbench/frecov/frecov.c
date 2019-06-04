@@ -91,7 +91,7 @@ int is_valid(char ch) {
 struct myFILE {
   char filename[256];
   int position, filesize;
-  int next_sector;
+  int next_sector, visited;
 } file[256];
 int tot_file;
 
@@ -107,14 +107,16 @@ void read_name_position_do(char *data, int offset, struct myFILE *file) {
     top ++;
   }
   else {
-    while(top) {
-        strcat(file->filename, buf[--top]);
-    }
+    if(top) {
+      while(top) {
+          strcat(file->filename, buf[--top]);
+      }
 
-    file->position = read_num(data + offset + 0x14, 2) << 16;
-    file->position += read_num(data + offset + 0x1a, 2);
-    file->filesize = read_num(data + offset + 0x1c, 4);
-    file->next_sector = file->position + file->filesize / fat32.sector_size + 1; 
+      file->position = read_num(data + offset + 0x14, 2) << 16;
+      file->position += read_num(data + offset + 0x1a, 2);
+      file->filesize = read_num(data + offset + 0x1c, 4);
+      file->next_sector = file->position + file->filesize / fat32.sector_size + 1;
+    } 
   }
 }
 
@@ -195,6 +197,10 @@ fclose(fp);
 }
  */
 
+int deep_search_bmp_name_position(char *data, int offset) {
+  
+}
+
 int main(int argc, char *argv[]) {
   int fd = open(argv[1], O_RDWR);
   if (fd == -1) {debug2("open failed."); return 1;}
@@ -212,7 +218,8 @@ int main(int argc, char *argv[]) {
     fat_begin += fat32.sector_size;
   int fat_tot_size = fat32.fat_amount * fat32.fat_size * fat32.sector_size;
 
-  search_bmp_name_position(imgmap, fat_begin + fat_tot_size + fat32.sector_size);
+  search_bmp_name_position(imgmap, fat_begin + fat_tot_size + 0x1 * fat32.sector_size);
+  
   search_bmp_name_position(imgmap, 0x22b000);
 
   show_file();
