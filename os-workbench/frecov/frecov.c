@@ -31,7 +31,7 @@ struct FAT32 {
 } fat32;
 
 void print_FAT32_info() {
-  //return;
+  return;
 
   debug("sector size", fat32.sector_size);
   debug("cluster size", fat32.cluster_size);
@@ -61,6 +61,7 @@ void read_fat32_info(char *data) {
   fat32.DOS_sec_amount = read_num(data + 0x0e, 2);
   fat32.fat_amount = read_num(data + 0x10, 1);
   fat32.sector_amount = read_num(data + 0x13, 2);
+  if(fat32.sector_amount == 0) fat32.sector_amount = read_num(data + 0x20, 4);
   fat32.hiden_amount = read_num(data + 0x1c, 4);
   fat32.fat_size = read_num(data + 0x24, 4);
   fat32.DBR_sec_index = read_num(data + 0x32, 2);
