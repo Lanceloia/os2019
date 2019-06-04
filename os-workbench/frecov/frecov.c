@@ -80,13 +80,15 @@ void read_unicode(char dest[], char src[], int len) {
   }
 }
 
+/*
 int is_valid(char ch) {
   if('a' <= ch && ch <= 'z') return 1;
   if('A' <= ch && ch <= 'Z') return 1;
   if('0' <= ch && ch <= '9') return 1;
-  if(ch == '.' || ch == '_' || ch == '\0') return 1;
+  if(ch == '.' || ch == '_' || ch == ' ' || ch == '\0') return 1;
   return 0;
 }
+*/
 
 struct myFILE {
   char filename[256];
@@ -99,8 +101,16 @@ char buf[64][256] = {};
 
 int top;
 
+int is_valid(int key){
+  if(0x01 <= key && key <= 0x1f)
+    return 1;
+  if(0x41 <= key && key <= 0x5f)
+    return 1;
+  return 0;
+}
+
 void read_name_position_do(char *data, int offset, struct myFILE *file) {
-  if(*(data + offset + 0x0b) == (char)0x0f) {
+  if(*(data + offset + 0x0b) == (char)0x0f && is_valid(read_num(data + offset, 4))) {
     read_unicode(buf[top], data + offset + 0x01, 5);
     read_unicode(buf[top] + 5, data + offset + 0x0e, 6);
     read_unicode(buf[top] + 11, data + offset + 0x1c, 2);
