@@ -170,8 +170,10 @@ void output_bmp(char *data,  struct myFILE *f){
   FILE *fp = fopen(f->filename, "wb+");
   if(!fp) return;
   //for(int i = f->position; i < f->next_sector; i ++)
-    fwrite(data + (f->position - 0x2) * fat32.sector_size,
-      sizeof(char), f->filesize, fp);
+  int filesize = f->filesize;
+  while(filesize % 0x200) filesize++;
+  fwrite(data + (f->position - 0x2) * fat32.sector_size,
+    sizeof(char), filesize, fp);
   fclose(fp);
 }
 
