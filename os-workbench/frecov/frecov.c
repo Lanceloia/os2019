@@ -138,16 +138,16 @@ void read_name_position(char *data, int offset) {
   }
 }
 
-// int sector_visit[(1 << 16) - 1];
+int sector_visit[(1 << 16) - 1];
 
 int search_bmp_name_position(char *data, int offset, int sector_idx) {
   if (tot_file >= 512)
     return 0;
-  /*
+  
   if(sector_visit[sector_idx & 0xffff])
     return 0;
   sector_visit[sector_idx & 0xffff] = 1;
-  */
+  
   int old_tot_file = tot_file;
   for(int i = 0; i < fat32.sector_size; i += 0x20) {
     read_name_position(data, offset + i);
