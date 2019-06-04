@@ -220,7 +220,7 @@ int deep_search_bmp_name_position(char *data, int offset) {
 int main(int argc, char *argv[]) {
   int fd = open(argv[1], O_RDWR);
   if (fd == -1) {debug2("open failed."); return 1;}
-  imgmap = mmap(NULL, 64 MB, PROT_READ, MAP_SHARED, fd, 0);
+  imgmap = mmap(NULL, 64 MB, PROT_READ, MAP_SHARED | MAP_GROWDOWN, fd, 0);
   if (imgmap == (void *)-1) {debug2("mmap failed."); return 1;} 
   close(fd);
 
