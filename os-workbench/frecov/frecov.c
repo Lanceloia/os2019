@@ -225,7 +225,7 @@ int main(int argc, char *argv[]) {
 
   int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2;   
   for(int i = 0; i <= actual_tot_file; i ++)
-    output_bmp(imgmap, &file[i]);
+    output_bmp(imgmap + fat_begin + fat_tot_size + 0x1 * fat32.sector_size, &file[i]);
    
   return 0;
 }
