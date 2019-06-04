@@ -94,13 +94,17 @@ int tot_file;
 
 char buf[64][256] = {};
 
+int top;
+
 int read_name_position_do(char *data, int offset, struct myFILE *file) {
-  int top = 0, ret = 0; file->filename[0] = '\0';
-  while(*(data + offset + 0x0b) == (char)0x0f) {
-    read_unicode(buf[top], data + offset + 0x01, 5);
-    read_unicode(buf[top] + 5, data + offset + 0x0e, 6);
-    read_unicode(buf[top] + 11, data + offset + 0x1c, 2);
-    top ++; offset += 0x20; ret += 0x20;
+  switch(top) {
+    ret = 0; file->filename[0] = '\0';
+    while(*(data + offset + 0x0b) == (char)0x0f) {
+      read_unicode(buf[top], data + offset + 0x01, 5);
+      read_unicode(buf[top] + 5, data + offset + 0x0e, 6);
+      read_unicode(buf[top] + 11, data + offset + 0x1c, 2);
+      top ++; offset += 0x20; ret += 0x20;
+    }
   }
 
   while(top --) {
@@ -116,7 +120,7 @@ int read_name_position_do(char *data, int offset, struct myFILE *file) {
 
 int read_name_position(char *data, int offset) {
   if(*(data + offset + 0x0b) == (char)0x0f) {
-    tot_file ++;
+    tot_file ++, top = 0;
     return read_name_position_do(data, offset, &file[tot_file - 1]);
   }
   return 0x20;
