@@ -121,7 +121,7 @@ void read_name_position(char *data, int offset) {
     read_name_position_do(data, offset, &file[tot_file - 1]);
   }
   else {
-    read_name_position_do(data, offset, &file[tot_file]);
+    read_name_position_do(data, offset, &file[tot_file - 1]);
   }
 }
 
