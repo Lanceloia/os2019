@@ -195,15 +195,11 @@ void output_bmp(char *data,  struct myFILE *f){
   fclose(fp);
 }
 
-void output_bmp2(char *data,  struct myFILE *f){
-  //FILE *fp = fopen(f->filename, "wb");
-  //if(!fp) return;
-  //for(int i = f->position; i < f->next_sector; i ++)
-  //int filesize = f->filesize;
-  //while(filesize % 0x200) filesize++;
-  int in[2], out[2];
+void sha1sum_bmp(char *data,  struct myFILE *f){
 
-  if(pipe(in) != 0 || pipe(out) != 0) {
+  int _files[2];
+
+  if(pipe(_files) != 0) {
     fprintf(stderr, "Error: \n");
     fprintf(stderr, "Can't create pipes. \n");
     return;
@@ -212,30 +208,22 @@ void output_bmp2(char *data,  struct myFILE *f){
   int pid = fork();
   if(pid == 0) {
     char *filename = "/usr/bin/sha1sum";
-    char *newargv[] = {"sha1sum", NULL};
+    char *newargv[] = {"sha1sum", NULL, NULL};
     char *newenvp[] = {NULL};
     
-    // wait data
-    dup2(in[0], STDIN_FILENO);
-    close(in[1]);
+    newargv[1] = f->filename;
 
     // catch the stderr
-    dup2(out[1], STDOUT_FILENO);
-    close(out[0]);
+    dup2(_files[1], STDERR_FILENO);
+    close(_files[0]);
     execve(filename, newargv, newenvp);
   }
   else {
-     // change the stdin
-    dup2(out[0], STDIN_FILENO);
-    close(out[1]);
-
-    // send data
-    close(in[0]);
-    write(in[1], data + (f->position - 0x2) * fat32.sector_size, sizeof(char) * f->filesize);
-
+    // read data
     char buf[1024];
+    close(_files[1]);
     printf("fuck1\n");
-    read(out[0], buf, 1024);
+    read(_files[0], buf, 1024);
     printf("fuck2\n");
     printf("%s\n", buf);
   }
@@ -284,8 +272,10 @@ int main(int argc, char *argv[]) {
   //show_BMP_INFO();
 
   int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2;   
-  for(int i = 0; i <= actual_tot_file; i ++)
-    output_bmp2(imgmap + fat_begin + fat_tot_size, &file[i]);
+  for(int i = 0; i <= actual_tot_file; i ++) {
+    output_bmp(imgmap + fat_begin + fat_tot_size, &file[i]);
+    sha1sum_bmp(imgmap + fat_begin + fat_tot_size, &file[i]);
+  }
    
   return 0;
 }
