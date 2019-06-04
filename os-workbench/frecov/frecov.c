@@ -202,12 +202,10 @@ void output_bmp2(char *data,  struct myFILE *f){
   //while(filesize % 0x200) filesize++;
   int in[2], out[2];
 
-
-
   if(pipe(in) != 0 || pipe(out) != 0) {
     fprintf(stderr, "Error: \n");
     fprintf(stderr, "Can't create pipes. \n");
-    return 1;
+    return;
   }
 
   int pid = fork();
@@ -224,7 +222,6 @@ void output_bmp2(char *data,  struct myFILE *f){
     dup2(out[1], STDERR_FILENO);
     close(out[0]);
     execve(filename, newargv, newenvp);
-    assert(0);
   }
   else {
      // change the stdin
