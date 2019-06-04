@@ -220,7 +220,7 @@ void output_bmp2(char *data,  struct myFILE *f){
     close(in[1]);
 
     // catch the stderr
-    dup2(out[1], STDERR_FILENO);
+    dup2(out[1], STDOUT_FILENO);
     close(out[0]);
     execve(filename, newargv, newenvp);
   }
