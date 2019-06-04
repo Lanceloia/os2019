@@ -138,7 +138,7 @@ void read_name_position(char *data, int offset) {
   }
 }
 
-int sector_visit[(1 << 16) - 1];
+// int sector_visit[(1 << 16) - 1];
 
 int search_bmp_name_position(char *data, int offset, int sector_idx) {
   if (tot_file >= 512)
