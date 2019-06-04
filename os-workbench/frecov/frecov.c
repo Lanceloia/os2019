@@ -237,11 +237,10 @@ int main(int argc, char *argv[]) {
   
   while(deep_search_bmp_name_position(imgmap, fat_begin + fat_tot_size));
 
-/*
   for(int i = 4; (data_start_sector + (i - 2)) < fat32.sector_amount; i ++) {
     search_bmp_name_position(imgmap, (data_start_sector + (i - 2)) * fat32.sector_size, i);
   }  
-*/
+
   show_file();
 
   int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2;   
