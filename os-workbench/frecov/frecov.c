@@ -22,6 +22,7 @@ struct FAT32 {
   int DOS_sec_amount; // the amount of DOS's sectors,        0x0e, 2
   int fat_amount;   // the amount of file allocation tables, 0x10, 1
   int sector_amount;// the amount of sectors,                0x13, 2
+  int hiden_amount;  // the amount of hiden sectors,          0x1c, 4
   int fat_size;     // the amount of sector per FAT,         0x24, 4
   int DBR_sec_index;// the index of DBR sector,              0x32, 2
   char volume_label[12]; // the label of volime,             0x47, 11
@@ -36,6 +37,7 @@ void print_FAT32_info() {
   debugx("fat size(sectors)", fat32.fat_size);
   debugx("fat total_size(bytes)", fat32.fat_size * fat32.sector_size);
   debug("sector amount", fat32.sector_amount);
+  debug("hiden_amount", fat32.hiden_amount);
 
   debug("DBR sec index", fat32.DBR_sec_index);
   debug3("volume lable", fat32.volume_label);
@@ -56,6 +58,7 @@ void read_fat32_info(char *data) {
   fat32.DOS_sec_amount = read_num(data + 0x0e, 2);
   fat32.fat_amount = read_num(data + 0x10, 1);
   fat32.sector_amount = read_num(data + 0x13, 2);
+  fat32.hiden_amount = read_num(data + 0x1c, 4);
   fat32.fat_size = read_num(data + 0x24, 4);
   fat32.DBR_sec_index = read_num(data + 0x32, 2);
   strncpy(fat32.volume_label, data + 0x47, 11);
