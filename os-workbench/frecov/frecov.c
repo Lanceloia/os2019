@@ -94,42 +94,45 @@ int tot_file;
 
 char buf[64][256] = {};
 
-int top;
+int top, ctrl;
 
-int read_name_position_do(char *data, int offset, struct myFILE *file) {
-  switch(top) {
-    ret = 0; file->filename[0] = '\0';
-    while(*(data + offset + 0x0b) == (char)0x0f) {
-      read_unicode(buf[top], data + offset + 0x01, 5);
-      read_unicode(buf[top] + 5, data + offset + 0x0e, 6);
-      read_unicode(buf[top] + 11, data + offset + 0x1c, 2);
-      top ++; offset += 0x20; ret += 0x20;
-    }
+void read_name_position_do(char *data, int offset, struct myFILE *file) {
+  switch(ctrl) {
+    case 0:
+      file->filename[0] = '\0';
+      if(*(data + offset + 0x0b) == (char)0x0f) {
+        read_unicode(buf[top], data + offset + 0x01, 5);
+        read_unicode(buf[top] + 5, data + offset + 0x0e, 6);
+        read_unicode(buf[top] + 11, data + offset + 0x1c, 2);
+        top ++;
+      }
+      else {
+        ctrl = 1;
+      }
+    break;
+
+    case 1:
+      while(top --) {
+        strcat(file->filename, buf[top]);
+      }
+
+      file->position = read_num(data + offset + 0x14, 2) << 16;
+      file->position += read_num(data + offset + 0x1a, 2);
+      file->filesize = read_num(data + offset + 0x1c, 4);
+      file->next_sector = file->position + file->filesize / fat32.sector_size + 1; 
+      ctrl = 0;
+    break;
   }
-
-  while(top --) {
-    strcat(file->filename, buf[top]);
-  }
-
-  file->position = read_num(data + offset + 0x14, 2) << 16;
-  file->position += read_num(data + offset + 0x1a, 2);
-  file->filesize = read_num(data + offset + 0x1c, 4);
-  file->next_sector = file->position + file->filesize / fat32.sector_size + 1; 
-  return ret;
 }
 
-int read_name_position(char *data, int offset) {
-  if(*(data + offset + 0x0b) == (char)0x0f) {
-    tot_file ++, top = 0;
-    return read_name_position_do(data, offset, &file[tot_file - 1]);
-  }
-  return 0x20;
+void read_name_position(char *data, int offset) {
+  tot_file ++, top = 0;
+  read_name_position_do(data, offset, &file[tot_file - 1]);
 }
 
 void search_bmp_name_position(char *data, int offset) {
-  int step = 0;
-  for(int i = 0; i < fat32.sector_size; i += step) {
-    step = read_name_position(data, offset + i);
+  for(int i = 0; i < fat32.sector_size; i += 0x20) {
+    read_name_position(data, offset + i);
   }
 }
 
