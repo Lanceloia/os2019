@@ -81,16 +81,6 @@ void read_unicode(char dest[], char src[], int len) {
   }
 }
 
-/*
-int is_valid(char ch) {
-  if('a' <= ch && ch <= 'z') return 1;
-  if('A' <= ch && ch <= 'Z') return 1;
-  if('0' <= ch && ch <= '9') return 1;
-  if(ch == '.' || ch == '_' || ch == ' ' || ch == '\0') return 1;
-  return 0;
-}
-*/
-
 struct myFILE {
   char filename[256];
   int position, filesize;
@@ -156,24 +146,6 @@ int search_bmp_name_position(char *data, int offset) {
   }
   return tot_file - old_tot_file;
 }
-
-/*
-   void search_bmp_head_structure(char *data, int offset) {
-   for(int j = 0; j < fat32.sector_size; j += 0x20) {
-   if(data[offset + j] == 'B' && data[offset + j + 1] == 'M') {
-// init_BMP_INFO
-BMP_INFO[tot_bmp].color = read_num(data + offset + j + 0x54, 3);
-BMP_INFO[tot_bmp].width = read_num(data + offset + 0x12, 4);
-BMP_INFO[tot_bmp].height = read_num(data + offset + 0x16, 4);
-BMP_INFO[tot_bmp].offset = offset + j;
-for(int i = 0; i < tot_file; i ++)
-if (file[i].position == ((BMP_INFO[tot_bmp].offset - 0x81c00) / 0x200))
-strcpy(BMP_INFO[tot_bmp].filename, file[i].filename);
-tot_bmp ++;
-}
-}
-}
- */
 
 void show_file(){
   for(int i = 0; i < tot_file; i ++){
@@ -263,7 +235,8 @@ int main(int argc, char *argv[]) {
   while(deep_search_bmp_name_position(imgmap, fat_begin + fat_tot_size));
 
   for(int i = fat_begin + fat_tot_size + 2 * fat32.sector_size; i < 32 MB; i += fat32.sector_size) {
-    search_bmp_name_position(imgmap, i);
+    if(search_bmp_name_position(imgmap, i))
+      deep_search_bmp_name_position(imgmap, fat_begin + fat_tot_size);
   }
 
   //while(1);
