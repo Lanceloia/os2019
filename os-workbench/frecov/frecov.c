@@ -204,7 +204,7 @@ fclose(fp);
 
 int deep_search_bmp_name_position(char *data, int offset) {
   int cnt = 0;
-  int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2;
+  //int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2;
   for(int i = 0; i <= tot_file; i ++) 
   if(file[i].visited == 0) {
     file[i].visited = 1;
