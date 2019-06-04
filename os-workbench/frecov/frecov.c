@@ -174,7 +174,7 @@ void output_bmp(char *data,  struct myFILE *f){
   //while(filesize % 0x200) filesize++;
   fwrite(data + (f->position - 0x2) * fat32.sector_size,
     sizeof(char), f->filesize, fp);
-  char end = EOF;
+  char end = '\0';
   fwrite(&end, sizeof(char), 1,fp);
   fclose(fp);
 }
