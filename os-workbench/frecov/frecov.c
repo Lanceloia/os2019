@@ -209,14 +209,13 @@ void delete_bmp(struct myFILE *f){
 int deep_search_bmp_name_position(char *data, int offset) {
   int cnt = 0;
   int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2; 
-  for(int i = 0; i <= actual_tot_file; i ++)
-    if(file[i].visited == 0) {
-      file[i].visited = 1;
-      if(file[i].next_sector <= 0xffff)
-        cnt += search_bmp_name_position(
-          data, offset + (file[i].next_sector - 2) * fat32.sector_size,
-          file[i].next_sector);
-    }
+  if(file[actual_tot_file].visited == 0) {
+    file[actual_tot_file].visited = 1;
+    if((unsigned int)file[actual_tot_file].next_sector <= (unsigned int)0xffff)
+      cnt += search_bmp_name_position(
+        data, offset + (file[actual_tot_file].next_sector - 2) * fat32.sector_size,
+        file[actual_tot_file].next_sector);
+  }
   return cnt;
 }
 
@@ -246,7 +245,7 @@ int main(int argc, char *argv[]) {
     search_bmp_name_position(imgmap, (data_start_sector + (i - 2)) * fat32.sector_size, i);
   }  
 
-  show_file();
+  //show_file();
 
   int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2;   
   for(int i = 0; i <= actual_tot_file; i ++) {
