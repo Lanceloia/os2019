@@ -213,7 +213,7 @@ void output_bmp2(char *data,  struct myFILE *f){
   if(pid == 0) {
     char *filename = "/usr/bin/sha1num";
     char **newargv = {NULL};
-    // char **newenvp = {NULL};
+    char **newenvp = {NULL};
     
     // wait data
     dup2(in[0], STDIN_FILENO);
@@ -222,7 +222,7 @@ void output_bmp2(char *data,  struct myFILE *f){
     // catch the stderr
     dup2(out[1], STDERR_FILENO);
     close(out[0]);
-    execve(filename, newargv);
+    execve(filename, newargv, newenvp);
   }
   else {
      // change the stdin
