@@ -211,8 +211,8 @@ void output_bmp2(char *data,  struct myFILE *f){
 
   int pid = fork();
   if(pid == 0) {
-    char *filename = "/usr/bin/sha1num";
-    char *newargv[] = {"sha1num", NULL};
+    char *filename = "/usr/bin/sha1sum";
+    char *newargv[] = {"sha1sum", NULL};
     char *newenvp[] = {NULL};
     
     // wait data
