@@ -222,9 +222,9 @@ int main(int argc, char *argv[]) {
   show_file();
   //show_BMP_INFO();
 
-  
-  for(int i = 0; i < tot_file; i ++)
-    output2_bmp(imgmap, &BMP_INFO[i]);
+  int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2;   
+  for(int i = 0; i <= actual_tot_file; i ++)
+    output_bmp(imgmap, &file[i]);
    
   return 0;
 }
