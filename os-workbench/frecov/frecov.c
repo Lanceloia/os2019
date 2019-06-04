@@ -168,9 +168,6 @@ void output_bmp(char *data,  struct myFILE *f){
 }
 
 void sha1sum_bmp(char *data,  struct myFILE *f){
-  if(strcmp(f->filename, "") == 0)
-    return ;
-
   int _files[2];
 
   if(pipe(_files) != 0) {
@@ -237,8 +234,7 @@ int main(int argc, char *argv[]) {
   while(deep_search_bmp_name_position(imgmap, fat_begin + fat_tot_size));
 
   for(int i = fat_begin + fat_tot_size + 2 * fat32.sector_size; i < 32 MB; i += fat32.sector_size) {
-    if(search_bmp_name_position(imgmap, i))
-      deep_search_bmp_name_position(imgmap, fat_begin + fat_tot_size);
+    search_bmp_name_position(imgmap, i);
   }
 
   //while(1);
