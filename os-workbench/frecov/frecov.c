@@ -126,8 +126,13 @@ void read_name_position_do(char *data, int offset, struct myFILE *file) {
 }
 
 void read_name_position(char *data, int offset) {
-  tot_file ++, top = 0;
-  read_name_position_do(data, offset, &file[tot_file - 1]);
+  if(ctrl == 0) {
+    tot_file ++, top = 0;
+    read_name_position_do(data, offset, &file[tot_file - 1]);
+  }
+  else {
+    read_name_position_do(data, offset, &file[tot_file]);
+  }
 }
 
 void search_bmp_name_position(char *data, int offset) {
