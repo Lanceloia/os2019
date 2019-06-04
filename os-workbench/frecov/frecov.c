@@ -32,7 +32,7 @@ struct FAT32 {
 
 void print_FAT32_info() {
   return;
-  
+
   debug("sector size", fat32.sector_size);
   debug("cluster size", fat32.cluster_size);
   debug("DOS sector amount", fat32.DOS_sec_amount);
@@ -195,6 +195,10 @@ void sha1sum_bmp(char *data,  struct myFILE *f){
   }
 }
 
+void delete_bmp(struct myFILE *f){
+  unlink(f->filename);
+}
+
 int deep_search_bmp_name_position(char *data, int offset) {
   int cnt = 0;
   int actual_tot_file = top == 0 ? tot_file - 1 : tot_file - 2; 
@@ -234,6 +238,7 @@ int main(int argc, char *argv[]) {
   for(int i = 0; i <= actual_tot_file; i ++) {
     output_bmp(imgmap + fat_begin + fat_tot_size, &file[i]);
     sha1sum_bmp(imgmap + fat_begin + fat_tot_size, &file[i]);
+    delete_bmp(&file[i]);
   }
    
   return 0;
