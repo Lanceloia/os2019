@@ -91,7 +91,7 @@ static int kvdb_alloc(kvdb_t *db, int size, const char *key) {
 
 static int kvdb_free(kvdb_t *db, int item_idx) {
     item_t *itm = &db->items[item_idx];
-    int cnt = 0, need = (itm->size + DATA_LENGTH-1) / DATA_LENGTH;
+    int need = (itm->size + DATA_LENGTH-1) / DATA_LENGTH;
     int x = itm->head;
     for(int i = 0; i < need; i ++) {
         db->datas[x].used = 0;
