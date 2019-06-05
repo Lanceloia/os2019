@@ -276,7 +276,6 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value) {
     fprintf(lp, "put %s %s\n", key, value);
     myfclose(lp);
 
-PUT_SUCCESS:
 #ifdef THREAD_LOCK
     pthread_mutex_unlock(&db->tlock);
 #endif
@@ -313,7 +312,6 @@ char *kvdb_get(kvdb_t *db, const char *key) {
     fprintf(lp, "get %s \n", key);
     myfclose(lp);
 
-GET_SUCCESS:
 #ifdef THREAD_LOCK
     pthread_mutex_unlock(&db->tlock); 
 #endif
