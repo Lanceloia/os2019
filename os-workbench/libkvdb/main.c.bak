@@ -13,7 +13,7 @@ void *test(void *_db) {
   return NULL;
 }
 
-#define THREADS 1
+#define THREADS 4
 
 int main(int argc, char *argv[]) {
   kvdb_t *db = malloc(sizeof(kvdb_t));
