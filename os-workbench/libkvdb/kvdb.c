@@ -58,8 +58,6 @@
     }while(0)
 #endif
 
-struct flock flk;
-
 static int kvdb_get_unused_idx(kvdb_t *db, int k) {
     if(k < 0) return -1;
     for(int i = k; i < DATAS_SIZE; i ++) 
