@@ -340,6 +340,7 @@ void tty_task(void *arg)
 char readbuf[128], writebuf[128];
 
 /* shell command */
+#include <fs.h>
 
 static void echo_do(char *str)
 {
