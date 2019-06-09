@@ -1,29 +1,18 @@
-/* mem_block, three states
- * 1. unused, totally new
- * 2. unallocated, belong to <list> free
- * 3. allocated, some processes used
- */
-
 #include <common.h>
 #include <alloc.h>
 #include <klib.h>
 
 #define POOL_SIZE 4096
 
-enum {
-  UNUSED=0, UNALLOCATED=1, ALLOCATED=2
-};
-
 naivelock_t memoplk;
 
 //--- data structure ---//
-mem_block pool[POOL_SIZE], special[2];
-block_list free;
+mem_block_t pool[POOL_SIZE], special[2];
+block_list_t free;
 
-//--- pool helper functions ---//
+//--- [pool] helper functions ---//
 /* function get_unused_block()
- * search for an unuesd block, for wich there is
- * state == UNUSED
+ * search for an unuesd block, whose state == UNUSED
  */
 static int get_unused_block(){
   int ret = -1;
@@ -36,8 +25,8 @@ static int get_unused_block(){
 }
 
 /* function get_allocated_block()
- * search for the used block, for which there is
- * state == ALLOCATED and block->begin == begin
+ * search for the used block, whose state == [ALLOCATED]
+ * and block->begin == begin
  */
 static int get_allocated_block(uintptr_t begin){
   int ret = -1;
@@ -50,15 +39,14 @@ static int get_allocated_block(uintptr_t begin){
   return ret;
 }
 
-//--- free member functions ---//
+//--- [free] member functions ---//
 /* function free_init(): interface
- * initial the <list> free, keep a well-order when
- * start always help a lot
+ * initial the <list> [free]
  */
 static void free_init(uintptr_t begin, uintptr_t end){
   for(int i = 0; i < POOL_SIZE; i ++)
     pool[i].id = i, pool[i].state = UNUSED;
-  // state == UNUSED means the node is totally new
+  // state == [UNUSED] means the node is totally new
   free.head = &special[0];
   free.tail = &special[1];
   free.head->prev = NULL, free.head->next = &pool[0];
@@ -71,12 +59,12 @@ static void free_init(uintptr_t begin, uintptr_t end){
 }
 
 /* function free_print()
- * print the <list> free, show each item's [id], [state],
+ * print the <list> [free], show each item's [id], [state],
  * [size], [begin], [next_id], notice that all the [state]
- * shouble [1]UNALLOCATED
+ * should be [UNALLOCATED]
  */
 static void free_print(){
-  mem_block *block = free.head->next;
+  mem_block_t *block = free.head->next;
   printf("---------------------------------------------\n");
   printf("  id   state      size      begin     next_id\n");
   printf("---------------------------------------------\n");
@@ -90,9 +78,7 @@ static void free_print(){
 }
 
 /* function extern_free_print(): interface
- * an extern interface of free_print()
- * print the current [cpu] and flag to make
- * checking log eaiser 
+ * print the infomation of <list> [free]
  */
 void extern_free_print(int flag){
   naivelock_lock(memoplk);
@@ -109,7 +95,7 @@ void extern_free_print(int flag){
  */
 static void free_check(){
   int cnt = 0;
-  mem_block *block = free.head->next;
+  mem_block_t *block = free.head->next;
   while(block != free.tail){
     cnt ++;
     assert(block->next->prev == block);
@@ -121,15 +107,15 @@ static void free_check(){
 
 /* function free_cut()
  * cut block into 2 parts, the former should larger
- * than size, set the new part into unallocated, mean
- * the new part is belong to <list> free now.
+ * than size, set it [UNALLOCATED], means that it
+ * is belong to <list> [free] now.
  */
-static void free_cut(mem_block *block, size_t size){
+static void free_cut(mem_block_t *block, size_t size){
   int newid = get_unused_block();
   assert(block->state == UNALLOCATED);
   assert(pool[newid].id == newid);
   assert(pool[newid].state == UNUSED);
-  mem_block *newblock = &pool[newid];
+  mem_block_t *newblock = &pool[newid];
   newblock->prev = block, newblock->next = block->next;
   block->next->prev = newblock, block->next = newblock;
 
@@ -149,7 +135,7 @@ static void free_cut(mem_block *block, size_t size){
  * adjcent(p->end == q->begin) return true, otherwise
  * return false.
  */
-static int free_adjcent(mem_block *p, mem_block *q){
+static int free_adjcent(mem_block_t *p, mem_block_t *q){
   if(p == free.head || q == free.tail)
     return 0;
   assert(p != free.tail);
@@ -163,7 +149,7 @@ static int free_adjcent(mem_block *p, mem_block *q){
  * latter->end, former->next = latter->next, latter->next->prev =
  * former, then remove the latter.
  */
-static void free_merge(mem_block *former, mem_block *latter){
+static void free_merge(mem_block_t *former, mem_block_t *latter){
   assert(free_adjcent(former, latter));
   assert(former != free.head);
   assert(latter != free.tail);
@@ -192,7 +178,7 @@ static void free_merge(mem_block *former, mem_block *latter){
  * and block q, if p->begin < q->begin return true, 
  * otherwise return false
  */
-static int free_cmp(mem_block *p, mem_block *q){
+static int free_cmp(mem_block_t *p, mem_block_t *q){
   if(p == free.head || q == free.tail)
     return 1;
   assert(p != free.tail);
@@ -202,14 +188,14 @@ static int free_cmp(mem_block *p, mem_block *q){
 }
 
 /* function free_insert(): interface
- * <list> free is a list with ascdent order, find out
+ * <list> [free] is a list with ascdent order, find out
  * the fitting place that block should be inserted,
  * then insert the block into <list> free.
  */
-static void free_insert(mem_block *block){
+static void free_insert(mem_block_t *block){
   assert(block->state == ALLOCATED);
-  mem_block *former = free.head;
-  mem_block *latter = former->next;
+  mem_block_t *former = free.head;
+  mem_block_t *latter = former->next;
   while(!(free_cmp(former, block) && free_cmp(block, latter))){
     assert(latter != free.tail);
     former = former->next;
@@ -233,8 +219,8 @@ static void free_insert(mem_block *block){
 /* function free_delete(): interface
  * delete a node from <list> free  
  */
-static void free_delete(mem_block *block){
-  mem_block *former, *latter;
+static void free_delete(mem_block_t *block){
+  mem_block_t *former, *latter;
   assert(block != free.head);
   assert(block != free.tail);
   assert(block->state == UNALLOCATED);
@@ -255,10 +241,10 @@ static void free_delete(mem_block *block){
  * free all should be unallocated. 
  */
 #define KB *1024
-static mem_block *free_find(size_t size){
+static mem_block_t *free_find(size_t size){
   size_t newsz = 1 KB;
   while(newsz < size) newsz <<= 1;
-  mem_block *block = free.head->next;
+  mem_block_t *block = free.head->next;
   while((block != free.tail) && (block->size < newsz)){
     assert(block->state == UNALLOCATED);
     block = block->next;
@@ -290,7 +276,7 @@ static void *kalloc(size_t size) {
     return NULL;
 
   naivelock_lock(memoplk);
-  mem_block *block = free_find(size);
+  mem_block_t *block = free_find(size);
   assert(block != NULL);
   free_check();
   assert(block->begin != 0);
