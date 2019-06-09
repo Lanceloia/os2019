@@ -1,8 +1,4 @@
-
-#ifndef __SIMEXT2_H__
-#define __SIMEXT2_H__
-
-#include "devices.h"
+#include <devices.h>
 
 #define SB_SIZE (sizeof(sb_t))
 #define GD_SIZE (sizeof(gd_t))
@@ -57,12 +53,10 @@ struct ext2 {
   struct super_block sb[1];
   struct group_desc gdt[1];
   struct inode inode_area[1];
-  devices_t* dev;
+  device_t* dev;
 };
 
 typedef struct super_block sb_t;
 typedef struct group_desc gd_t;
 typedef struct inode ind_t;
 typedef struct ext2 ext2_t;
-
-#endif
