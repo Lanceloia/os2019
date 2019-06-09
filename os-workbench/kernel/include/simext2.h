@@ -1,3 +1,6 @@
+#ifndef __SIMEXT2_H__
+#define __SIMEXT2_H__
+
 #include <unistd.h>
 #define INODE_SIZE 64
 #define DISK_START 0
@@ -32,5 +35,7 @@ struct inode {
   void *ptr;           // private data start
   filesystem_t *fs;
   inodeops_t *ops;
-  uint32_t block[N_BLOCKS]
+  uint32_t block[N_BLOCKS];
 };
+
+#endif
