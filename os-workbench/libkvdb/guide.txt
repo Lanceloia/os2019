@@ -6,7 +6,7 @@ open:
   "*.log". 
 
 close:
-  copy "*.dbc" to "*.db", if success, remove "*.dbc" and "*.log".
+  save data to "*.db", if success, remove "*.dbc" and "*.log".
 
 crash:
   when open "*.db", but there exist "*.dbc" and "*.log", copy
