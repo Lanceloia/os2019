@@ -30,16 +30,16 @@ void pushcli()
   cli();
   if (ncli[_cpu()] == 0)
     intena[_cpu()] = get_efl() & FL_IF;
-  naivelock_lock(cli_mutex);
+  naivelock_lock(&cli_mutex);
   ncli[_cpu()]++;
-  naivelock_unlock(cli_mutex);
+  naivelock_unlock(&cli_mutex);
 }
 
 void popcli()
 {
-  naivelock_lock(cli_mutex);
+  naivelock_lock(&cli_mutex);
   ncli[_cpu()]--;
-  naivelock_unlock(cli_mutex);
+  naivelock_unlock(&cli_mutex);
   if (ncli[_cpu()] == 0 && intena[_cpu()])
     sti();
 }
