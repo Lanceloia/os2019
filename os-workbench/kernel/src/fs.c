@@ -2,19 +2,19 @@
 #include <klib.h>
 #include <fs.h>
 
-void vfs_init();
-int vfs_access(const char *path, int mode);
-int vfs_mount(const char *path, filesystem_t *fs);
-int vfs_unmount(const char *path);
-int vfs_mkdir(const char *path);
-int vfs_rmdir(const char *path);
-int vfs_link(const char *oldpath, const char *newpath);
-int vfs_unlink(const char *path);
-int vfs_open(const char *path, int flags);
-ssize_t vfs_read(int fd, void *buf, size_t nbyte);
-ssize_t vfs_write(int fd, void *buf, size_t nbyte);
-off_t vfs_lseek(int fd, off_t offset, int whence);
-int vfs_close(int fd);
+void vfs_init(){}
+int vfs_access(const char *path, int mode){}
+int vfs_mount(const char *path, filesystem_t *fs){}
+int vfs_unmount(const char *path){}
+int vfs_mkdir(const char *path){}
+int vfs_rmdir(const char *path){}
+int vfs_link(const char *oldpath, const char *newpath){}
+int vfs_unlink(const char *path){}
+int vfs_open(const char *path, int flags){}
+ssize_t vfs_read(int fd, void *buf, size_t nbyte){}
+ssize_t vfs_write(int fd, void *buf, size_t nbyte){}
+off_t vfs_lseek(int fd, off_t offset, int whence){}
+int vfs_close(int fd){}
 
 MODULE_DEF(vfs)
 {
