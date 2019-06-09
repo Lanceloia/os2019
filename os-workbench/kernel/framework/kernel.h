@@ -52,6 +52,7 @@ typedef struct {
 } MODULE(dev);
 
 /* created by leungjyufung2019@outlook.com */
+typedef struct filesystem filesystem_t;
 typedef struct {
   void (*init)();
   int (*access)(const char *path, int mode);
