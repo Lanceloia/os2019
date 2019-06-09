@@ -60,7 +60,7 @@ static void tasks_insert(task_t *x)
   if (x->idx == tasks_size)
     tasks_size++;
   tasks[x->idx] = x;
-  naive_unlock(&tasks_mutex);
+  naivelock_unlock(&tasks_mutex);
 }
 
 static void tasks_remove(task_t *x)
