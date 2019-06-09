@@ -343,13 +343,13 @@ char bigbuf[2048] = {};
 /* shell command */
 #include <fs.h>
 
-static void echo_do(char *str)
+static void echo_do(device_t *tty, char *str)
 {
   sprintf(bigbuf, "%s\n", str);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
-static void cat_do(char *path)
+static void cat_do(device_t *tty, char *path)
 {
   int fd = vfs->open(path, RD_ENABLE);
   if (fd == -1)
@@ -366,7 +366,7 @@ static void cat_do(char *path)
   }
 }
 
-static void default_do()
+static void default_do(device_t *tty)
 {
   sprintf(bigbuf, "unexpected command\n");
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
@@ -383,10 +383,10 @@ void shell_task(void *name)
     readbuf[nread - 1] = '\0';
 
     if (strncmp(readbuf, "echo ", 5) == 0)
-      echo_do(readbuf + 5);
+      echo_do(tty, readbuf + 5);
     else if (strncmp(readbuf, "cat ", 4) == 0)
-      cat_do(readbuf + 4);
+      cat_do(tty, readbuf + 4);
     else
-      default_do();
+      default_do(tty);
   }
 }
