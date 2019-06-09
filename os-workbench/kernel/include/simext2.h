@@ -58,7 +58,6 @@ struct ext2 {
   struct group_desc gdt[1];
   struct inode inode_area[1];
   devices_t* dev;
-  devops_t* ops;
 };
 
 typedef struct super_block sb_t;
