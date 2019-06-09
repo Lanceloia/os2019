@@ -1,6 +1,6 @@
 #ifndef __ALLOC_H__
 #define __ALLOC_H__
-#include <unistd.h>
+#include <stdint.h>
 
 struct mem_block {
   int id, state;
