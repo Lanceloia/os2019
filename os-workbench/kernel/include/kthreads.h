@@ -11,9 +11,6 @@
  static void kmt_sem_wait(sem_t *);
  static void kmt_sem_signal(sem_t *);
 
-#define MAX_TASK 32
-#define STK_SIZE 4096
-
 enum {
   NIL = 0, STARTED = 1, RUNNABLE = 2,
   RUNNING = 3, YIELD = 4, KILLED = 5

@@ -5,6 +5,7 @@
  */
 
 #include <common.h>
+#include <alloc.h>
 #include <klib.h>
 
 #define POOL_SIZE 4096
@@ -16,22 +17,8 @@ enum {
 naivelock_t memoplk;
 
 //--- data structure ---//
-struct mem_block {
-  int id, state;
-  size_t size;
-  uintptr_t begin, end;
-  struct mem_block *prev;
-  struct mem_block *next;
-}pool[POOL_SIZE], special[2];
-typedef struct mem_block mem_block;
-
-//--- data structure ---//
-struct block_list {
-  struct mem_block *head;
-  struct mem_block *tail;
-  size_t list_size;
-}free;
-typedef struct block_list block_list;
+mem_block pool[POOL_SIZE], special[2];
+block_list free;
 
 //--- pool helper functions ---//
 /* function get_unused_block()
