@@ -11,6 +11,38 @@
  static void kmt_sem_wait(sem_t *);
  static void kmt_sem_signal(sem_t *);
 
+#define MAX_TASK 32
+#define STK_SIZE 4096
+
+enum {
+  NIL = 0, STARTED = 1, RUNNABLE = 2,
+  RUNNING = 3, YIELD = 4, KILLED = 5
+};
+
+ struct task {
+  int idx;
+  int state;
+  _Context ctx;
+  _Area stk;
+  char name[32];
+  char stack[STK_SIZE];
+}__attribute__((aligned(32)));
+
+struct spinlock {
+  char name[32];
+  volatile int locked;
+  int cpu;
+};
+
+struct semaphore {
+  char name[32];
+  volatile int value;
+  struct spinlock lk;
+
+  struct task *que[MAX_TASK];
+  int head, tail;
+};
+
 /* data-structure
  * tasks_list_head, current_tasks
  */
