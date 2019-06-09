@@ -274,21 +274,21 @@ static mem_block_t *free_find(size_t size)
  */
 void free_print2(int flag)
 {
-  naivelock_lock(memoplk);
+  naivelock_lock(&memoplk);
   printf("[CPU: %d Flag: %d]\n", _cpu(), flag);
   free_print();
-  naivelock_unlock(memoplk);
+  naivelock_unlock(&memoplk);
 }
 
 static void pmm_init()
 {
-  naivelock_lock(memoplk);
+  naivelock_lock(&memoplk);
 
   pm_start = (uintptr_t)_heap.start;
   pm_end = (uintptr_t)_heap.end;
 
   free_init(pm_start, pm_end);
-  naivelock_unlock(memoplk);
+  naivelock_unlock(&memoplk);
 }
 
 /* function kalloc():interface */
@@ -296,22 +296,22 @@ static void *kalloc(size_t size)
 {
   if (size == 0)
     return NULL;
-  naivelock_lock(memoplk);
+  naivelock_lock(&memoplk);
   mem_block_t *block = free_find(size);
   assert(block != NULL);
   free_check();
   assert(block->begin != 0);
-  naivelock_unlock(memoplk);
+  naivelock_unlock(&memoplk);
   return (void *)block->begin;
 }
 
 /* function kfree():interface */
 static void kfree(void *ptr)
 {
-  naivelock_lock(memoplk);
+  naivelock_lock(&memoplk);
   int idx = find_allocated_block((uintptr_t)ptr);
   free_insert(&pool[idx]);
-  naivelock_unlock(memoplk);
+  naivelock_unlock(&memoplk);
 }
 
 MODULE_DEF(pmm){
