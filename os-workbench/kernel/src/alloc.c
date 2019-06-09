@@ -12,7 +12,7 @@ block_list_t free;
 
 //--- [pool] helper functions ---//
 /* function get_unused_block()
- * search for an unuesd block, whose state == UNUSED
+ * search for an unuesd block, whose state == [UNUSED]
  */
 static int get_unused_block(){
   int ret = -1;
@@ -24,11 +24,11 @@ static int get_unused_block(){
   return ret;
 }
 
-/* function get_allocated_block()
+/* function find_allocated_block()
  * search for the used block, whose state == [ALLOCATED]
  * and block->begin == begin
  */
-static int get_allocated_block(uintptr_t begin){
+static int find_allocated_block(uintptr_t begin){
   int ret = -1;
   for(int i = 0; i < POOL_SIZE; i++){
     if(pool[i].state == ALLOCATED && pool[i].begin == begin){
@@ -287,7 +287,7 @@ static void *kalloc(size_t size) {
 static void kfree(void *ptr) {
   naivelock_lock(memoplk);
 
-  int idx = get_allocated_block((uintptr_t)ptr);
+  int idx = find_allocated_block((uintptr_t)ptr);
   free_insert(&pool[idx]);
 
   naivelock_unlock(memoplk);
