@@ -1,8 +1,8 @@
 #ifndef __ALLOC_H__
 #define __ALLOC_H__
 
-typedef unsigned long uintptr_t;
-typedef unsigned long size_t;
+typedef unsigned int uintptr_t;
+typedef unsigned size_t;
 
 struct mem_block {
   int id, state;
