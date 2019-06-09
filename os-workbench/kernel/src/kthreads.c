@@ -55,19 +55,19 @@ static int get_tasks_idx()
 
 static void tasks_insert(task_t *x)
 {
-  kmt_spin_lock(&tasks_mutex);
+  naivelock_lock(&tasks_mutex);
   x->idx = get_tasks_idx();
   if (x->idx == tasks_size)
     tasks_size++;
   tasks[x->idx] = x;
-  kmt_spin_unlock(&tasks_mutex);
+  naive_unlock(&tasks_mutex);
 }
 
 static void tasks_remove(task_t *x)
 {
-  kmt_spin_lock(&tasks_mutex);
+  naivelock_lock(&tasks_mutex);
   tasks[x->idx] = NULL;
-  kmt_spin_unlock(&tasks_mutex);
+  naivelock_unlock(&tasks_mutex);
 }
 
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg)
@@ -103,8 +103,8 @@ static void kmt_create_wait()
 static void kmt_init()
 {
   os->on_irq(INT32_MAX, _EVENT_NULL, kmt_context_save_switch);
-  kmt_spin_init(&tasks_mutex, "tasks-mutex");
-  kmt_spin_init(&current_tasks_mutex, "current-tasks-mutex");
+  //kmt_spin_init(&tasks_mutex, "tasks-mutex");
+  //kmt_spin_init(&current_tasks_mutex, "current-tasks-mutex");
   kmt_create_wait();
 }
 

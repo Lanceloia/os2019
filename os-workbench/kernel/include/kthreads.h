@@ -15,8 +15,8 @@ enum
  * tasks_list_head, current_tasks
  */
 
-spinlock_t tasks_mutex;
-spinlock_t current_tasks_mutex;
+naivelock_t tasks_mutex;
+naivelock_t current_tasks_mutex;
 
 /* spinlock-manage
  * pushcli(), popcli(), holding()
