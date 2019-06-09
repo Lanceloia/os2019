@@ -52,14 +52,14 @@ struct semaphore
 
 typedef intptr_t naivelock_t;
 #define SLEEP(time) for (volatile int __itr__ = 0; __itr__ < (time); __itr__++)
-#define naivelock_lock(locked)              \
+#define naivelock_lock(lock)              \
   {                                         \
-    while (_atomic_xchg((&locked), LOCKED)) \
+    while (_atomic_xchg((lock), LOCKED)) \
       SLEEP(16);                            \
   }
-#define naivelock_unlock(locked)       \
+#define naivelock_unlock(lock)       \
   {                                    \
-    _atomic_xchg((&locked), UNLOCKED); \
+    _atomic_xchg((lock), UNLOCKED); \
   }
 
 #define TRACEME
