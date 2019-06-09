@@ -44,10 +44,11 @@ struct inodeops
 struct filesystem
 {
     char name[NAME_lENGTH];
+    fsops_t *ops;
     device_t *dev;
 };
 
-struct fsop
+struct fsops
 {
     void (*init)(filesystem_t *fs, const char *name, device_t *dev);
     inode_t *(lookup)(filesystem_t *fs, const char *path, int flags);
