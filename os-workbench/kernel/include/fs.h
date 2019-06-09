@@ -6,47 +6,47 @@ enum {
   WR_ENABLE = 2,
 };
 
-typedef struct file file_t;
-typedef struct inodeops inodeops_t;
-typedef struct inode inode_t;
-typedef struct filesystem filesystem_t;
-typedef struct fsops fsops_t;
+typedef struct file_desc fd_t;
+typedef struct inode_desc id_t;
+typedef struct inode_desc_ops id_ops_t;
+typedef struct file_sys fs_t;
+typedef struct file_sys_ops fs_ops_t;
 
-struct file {
+struct file_desc {
   int refcnt;
-  inode_t *inode;
+  id_t *id;
   uint64_t offset;
 };
 
-struct inode {
+struct inode_desc {
   uint32_t refcnt;
   void *ptr;  // private data start
-  filesystem_t *fs;
-  inodeops_t *ops;
+  fs_t *fs;
+  id_ops_t *ops;
 };
 
-struct inodeops {
-  int (*open)(file_t *file, int flags);
-  int (*close)(file_t *file);
-  ssize_t (*read)(file_t *file, char *buf, size_t size);
-  ssize_t (*write)(file_t *file, const char *buf, size_t size);
-  off_t (*lseek)(file_t *file, off_t offset, int whence);
+struct inode_desc_ops {
+  int (*open)(fd_t *file, int flags);
+  int (*close)(fd_t *file);
+  ssize_t (*read)(fd_t *file, char *buf, size_t size);
+  ssize_t (*write)(fd_t *file, const char *buf, size_t size);
+  off_t (*lseek)(fd_t *file, off_t offset, int whence);
   int (*mkdir)(const char *name);
   int (*rmdir)(const char *name);
-  int (*link)(const char *name, inode_t *inode);
+  int (*link)(const char *name, id_t *id);
   int (*unlink)(const char *name);
 };
 
-struct filesystem {
+struct file_sys {
   char name[NAME_lENGTH];
-  fsops_t *ops;
+  fs_ops_t *ops;
   device_t *dev;
 };
 
-struct fsops {
-  void (*init)(filesystem_t *fs, const char *name, device_t *dev);
-  inode_t (*lookup)(filesystem_t *fs, const char *path, int flags);
-  int (*close)(inode_t *inode);
+struct file_sys_ops {
+  void (*init)(fs_t *fs, const char *name, device_t *dev);
+  id_t (*lookup)(fs_t *fs, const char *path, int flags);
+  int (*close)(id_t *id);
 };
 
 #endif
