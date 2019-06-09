@@ -6,5 +6,5 @@ static void simext2_init(ext2_t* fs, char* rd_name) {
 }
 
 static void update_sb(ext2_t* fs) {
-  fs->rd_ops->write(fs->rd, DISK_START, fs->sb, SB_SIZE);
+  fs->ops->write(fs->rd, DISK_START, fs->sb, SB_SIZE);
 }
