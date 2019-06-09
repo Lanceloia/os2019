@@ -22,6 +22,7 @@ enum
 
 #define MAX_TASK 32
 #define NAME_lENGTH 32
+#define MAX_FILE 32
 #define STK_SIZE (4 KB)
 
 struct task
@@ -30,6 +31,7 @@ struct task
   int state;
   _Context ctx;
   _Area stk;
+  file_t *files[MAX_FILE];
   char name[NAME_lENGTH];
   char stack[STK_SIZE];
 } __attribute__((aligned(32)));
