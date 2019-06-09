@@ -268,7 +268,7 @@ void tty_task(void *arg) {
   }
 }
 
-void echo_task(void *name) {
+void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
   while (1) {
     char line[128], text[128];

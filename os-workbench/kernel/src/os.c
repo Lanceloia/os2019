@@ -1,16 +1,16 @@
 #include <common.h>
 #include <os.h>
 
-extern void echo_task(void *name);
+extern void shell_task(void *name);
 
 static void os_init() {
   pmm->init();
   kmt->init();
   dev->init();
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty1");
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty2");
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty3");
-  kmt->create(pmm->alloc(sizeof(task_t)), "print", echo_task, "tty4");
+  kmt->create(pmm->alloc(sizeof(task_t)), "print", shell_task, "tty1");
+  kmt->create(pmm->alloc(sizeof(task_t)), "print", shell_task, "tty2");
+  kmt->create(pmm->alloc(sizeof(task_t)), "print", shell_task, "tty3");
+  kmt->create(pmm->alloc(sizeof(task_t)), "print", shell_task, "tty4");
 }
 
 static void hello() {
