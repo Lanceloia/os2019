@@ -348,7 +348,7 @@ static void echo_do(char *str)
 
 static void cat_do(char *path)
 {
-  vfs->open(path, R_ENABLE);
+  vfs->open(path, RD_ENABLE);
   sprintf(writebuf, "not fulfil\n");
 }
 
