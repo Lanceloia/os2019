@@ -348,6 +348,8 @@ void shell_task(void *name)
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
     readbuf[nread - 1] = '\0';
+
+    int 1st_space = 0;
     sprintf(writebuf, "echo: %s\n", readbuf);
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
   }
