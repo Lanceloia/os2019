@@ -1,7 +1,7 @@
 #ifndef __ALLOC_H__
 #define __ALLOC_H__
 
-typedef unsigned int uintptr_t;
+typedef unsigned uintptr_t;
 typedef unsigned size_t;
 
 struct mem_block {
