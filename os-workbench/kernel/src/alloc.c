@@ -12,7 +12,7 @@ block_list_t free;
 
 //--- [pool] helper functions ---//
 /* function get_unused_block()
- * search for an unuesd block, whose state == [UNUSED]
+ * get an unuesd block, whose state == [UNUSED]
  */
 static int get_unused_block(){
   int ret = -1;
@@ -25,7 +25,7 @@ static int get_unused_block(){
 }
 
 /* function find_allocated_block()
- * search for the used block, whose state == [ALLOCATED]
+ * find the allocated block, whose state == [ALLOCATED]
  * and block->begin == begin
  */
 static int find_allocated_block(uintptr_t begin){
@@ -75,16 +75,6 @@ static void free_print(){
     block = block->next;
   }
   printf("---------------------------------------------\n\n");
-}
-
-/* function extern_free_print(): interface
- * print the infomation of <list> [free]
- */
-void extern_free_print(int flag){
-  naivelock_lock(memoplk);
-  printf("[CPU: %d Flag: %d]\n", _cpu(), flag);
-  free_print();
-  naivelock_unlock(memoplk);
 }
 
 /* function free_check()
@@ -240,7 +230,6 @@ static void free_delete(mem_block_t *block){
  * is unallocated. Notice that the members of <list> 
  * free all should be unallocated. 
  */
-#define KB *1024
 static mem_block_t *free_find(size_t size){
   size_t newsz = 1 KB;
   while(newsz < size) newsz <<= 1;
@@ -256,7 +245,16 @@ static mem_block_t *free_find(size_t size){
   free_delete(block);
   return block;
 }
-#undef KB
+
+/* function extern_free_print(): interface
+ * print the infomation of <list> [free]
+ */
+void extern_free_print(int flag){
+  naivelock_lock(memoplk);
+  printf("[CPU: %d Flag: %d]\n", _cpu(), flag);
+  free_print();
+  naivelock_unlock(memoplk);
+}
 
 static uintptr_t pm_start, pm_end;
 
