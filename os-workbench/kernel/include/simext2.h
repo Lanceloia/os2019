@@ -1,9 +1,14 @@
 #ifndef __SIMEXT2_H__
 #define __SIMEXT2_H__
 
+#include <device.h>
 #include <stdint.h>
+#define SB_SIZE (sizeof(sb_t))
+#define GD_SIZE (sizeof(gd_t))
+#define IND_SIZE (sizeof(ind_t))
 #define DISK_START (0)                // disk offset
 #define GDT_START (DISK_START + 512)  // group_desc table offset
+#define EXT2_N_BLOCKS (15)            // ext2 inode blocks
 #define VOLUME_NAME "EXT2FS"          // volume name
 
 struct super_block {
@@ -27,17 +32,35 @@ struct group_desc {
   char pad[4];
 };
 
-struct real_inode {
-  /* real inode, 64 bytes */
-  uint16_t mode;      // the mode of file
-  uint16_t blocks;    // the size of file (blks)
-  uint32_t size;      // the size of file (bytes)
-  uint16_t block[8];  // direct or indirect blocks
-  char pad[40];
+struct inode {
+  /* inode, 32 bytes */
+  uint16_t mode;                  // the mode of file
+  uint16_t uid;                   // the uid of owner
+  uint32_t blocks;                // the size of file (blks)
+  uint32_t size;                  // the size of file (bytes)
+  uint32_t block[EXT2_N_BLOCKS];  // direct or indirect blocks
+  char pad[14];
 };
 
-struct ext2fs {
-  struct super_block sb;
-  struct group_desc gdt;
+struct dir_entry {
+  /* directory entry, 32 bytes */
+  uint32_t inode;
+  uint16_t rec_len;
+  uint8_t name_len;
+  uint8_t file_type;
+  char name[16];
+  char pad[26];
 };
+
+struct ext2 {
+  struct super_block sb[1];
+  struct group_desc gdt[1];
+  struct inode inode_area[1];
+  rd_t *rd;
+};
+
+typedef struct super_block sb_t;
+typedef struct group_desc gd_t;
+typedef struct inode ind_t;
+typedef struct ext2 ext2_t;
 #endif
