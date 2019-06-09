@@ -15,3 +15,11 @@ static void ext2_rd_sb(ext2_t* fs) {
 static void ext2_wr_sb(ext2_t* fs) {
   fs->dev->ops->write(fs->dev, DISK_START, fs->sb, SB_SIZE);
 }
+
+static void ext2_rd_gd(ext2_t* fs) {
+  fs->dev->ops->read(fs->dev, GDT_START, fs->gd, GD_SIZE);
+}
+
+static void ext2_wr_gd(ext2_t* fs) {
+  fs->dev->ops->read(fs->dev, GDT_START, fs->gd, GD_SIZE);
+}

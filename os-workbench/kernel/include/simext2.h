@@ -1,9 +1,14 @@
+#ifndef __SIMEXT2_H__
+#define __SIMEXT2_H__
+
 #include <devices.h>
 
 #define SB_SIZE (sizeof(sb_t))
 #define GD_SIZE (sizeof(gd_t))
 #define IND_SIZE (sizeof(ind_t))
+#define DIR_SIZE (sizeof(dir_entry))
 #define DISK_START (0)                // disk offset
+#define DISK_SIZE (4096 + 512)        // disk size
 #define GDT_START (DISK_START + 512)  // group_desc table offset
 #define EXT2_N_BLOCKS (15)            // ext2 inode blocks
 #define VOLUME_NAME "EXT2FS"          // volume name
@@ -39,7 +44,7 @@ struct inode {
   char pad[14];
 };
 
-struct dir_entry {
+struct dirty {
   /* directory entry, 32 bytes */
   uint32_t inode;
   uint16_t rec_len;
@@ -50,13 +55,17 @@ struct dir_entry {
 };
 
 struct ext2 {
-  struct super_block sb[1];
-  struct group_desc gdt[1];
-  struct inode inode_area[1];
+  struct super_block sb;
+  struct group_desc gd;
+  struct inode ind;
+  struct dirty dir;
   device_t* dev;
 };
 
 typedef struct super_block sb_t;
 typedef struct group_desc gd_t;
 typedef struct inode ind_t;
+typedef struct dirty dir_t;
 typedef struct ext2 ext2_t;
+
+#endif
