@@ -31,7 +31,7 @@ struct task
   int state;
   _Context ctx;
   _Area stk;
-  file_t *files[MAX_FILE];
+  struct file *files[MAX_FILE];
   char name[NAME_lENGTH];
   char stack[STK_SIZE];
 } __attribute__((aligned(32)));
