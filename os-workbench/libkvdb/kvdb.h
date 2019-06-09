@@ -6,12 +6,12 @@
 #define KEY_LENGTH (256)
 #define FILENAME_LENGTH (256)
 #define ITEMS_SIZE (256)
-#define DATAS_SIZE (8*1024)
+#define DATAS_SIZE (12 * 1024)
 
 #define KB *1024
 #define MB *1024*1024
 #define DATA_LENGTH (4 KB)
-#define MAX_LENGTH (16 MB)
+#define MAX_LENGTH (32 MB)
 
 #define panic(str) fprintf(stderr, "%s", str)
 
