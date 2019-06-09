@@ -339,9 +339,17 @@ void tty_task(void *arg)
 
 char readbuf[128], writebuf[128];
 
+/* shell command */
+
 static void echo_do(char *str)
 {
     sprintf(writebuf, "%s\n", str);
+}
+
+static void cat_do(char *path)
+{
+  vfs->open(path, R_ENABLE);
+  sprintf(writebuf, "not fulfil\n");
 }
 
 static void default_do()
@@ -361,6 +369,8 @@ void shell_task(void *name)
 
     if(strncmp(readbuf, "echo ", 5) == 0)
       echo_do(readbuf + 5);
+    else if(strncmp(readbuf, "cat ", 4) == 0)
+      cat_do(readbuf + 4);
     else
       default_do();
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
