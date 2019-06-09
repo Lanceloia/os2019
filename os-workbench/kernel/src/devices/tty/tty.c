@@ -344,6 +344,11 @@ static void echo_do()
     sprintf(writebuf, "%s\n", readbuf + 5);
 }
 
+static void default_do()
+{
+  sprintf(writebuf, "unexpected command\n");
+}
+
 void shell_task(void *name)
 {
   device_t *tty = dev_lookup(name);
@@ -356,6 +361,8 @@ void shell_task(void *name)
 
     if(strncmp(readbuf, "echo ", 5) == 0)
       echo_do();
+    else
+      default_do();
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
   }
 }
