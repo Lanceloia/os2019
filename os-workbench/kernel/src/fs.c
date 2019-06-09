@@ -1,4 +1,5 @@
 #include <common.h>
+#include <klib.h>
 #include <fs.h>
 
 void vfs_init();
@@ -15,17 +16,22 @@ ssize_t vfs_write(int fd, void *buf, size_t nbyte);
 off_t vfs_lseek(int fd, off_t offset, int whence);
 int vfs_close(int fd);
 
-MODULE_DEF(vfs){
-    .init = vfs_init,
-    .create = kmt_create,
-    .teardown = kmt_teardown,
-    .spin_init = kmt_spin_init,
-    .spin_lock = kmt_spin_lock,
-    .spin_unlock = kmt_spin_unlock,
-    .sem_init = kmt_sem_init,
-    .sem_wait = kmt_sem_wait,
-    .sem_signal = kmt_sem_signal,
-};
+MODULE_DEF(vfs)
+{
+  .init = vfs_init,
+  .access = vfs_access,
+  .mount = vfs_mount,
+  .unmount = vfs_unmount,
+  .mkdir = vfs_mkdir,
+  .rmdir = vfs_rmdir,
+  .link = vfs_link,
+  .unlink = vfs_unlink,
+  .open = vfs_open,
+  .read = vfs_read,
+  .write = vfs_write,
+  .lseek = vfs_lseek,
+  .close = vfs_close,
+} MODULE(vfs);
 
 #ifdef _LANCELOIA_DEBUG_
 #undef _LANCELOIA_DEBUG_
