@@ -1,79 +1,67 @@
 #include <common.h>
-#include <klib.h>
 #include <fs.h>
+#include <klib.h>
 
 void vfs_init() {}
 
-int vfs_access(const char *path, int mode)
-{
-    assert(0);
-    return 0;
+int vfs_access(const char *path, int mode) {
+  assert(0);
+  return 0;
 }
 
-int vfs_mount(const char *path, filesystem_t *fs)
-{
-    assert(0);
-    return 0;
+int vfs_mount(const char *path, filesystem_t *fs) {
+  assert(0);
+  return 0;
 }
 
-int vfs_unmount(const char *path)
-{
-    assert(0);
-    return 1;
+int vfs_unmount(const char *path) {
+  assert(0);
+  return 1;
 }
 
-int vfs_mkdir(const char *path)
-{
-    assert(0);
-    return 1;
+int vfs_mkdir(const char *path) {
+  assert(0);
+  return 1;
 }
 
-int vfs_rmdir(const char *path)
-{
-    assert(0);
-    return 1;
+int vfs_rmdir(const char *path) {
+  assert(0);
+  return 1;
 }
 
-int vfs_link(const char *oldpath, const char *newpath)
-{
-    assert(0);
-    return 1;
+int vfs_link(const char *oldpath, const char *newpath) {
+  assert(0);
+  return 1;
 }
 
-int vfs_unlink(const char *path)
-{
-    assert(0);
-    return 1;
+int vfs_unlink(const char *path) {
+  assert(0);
+  return 1;
 }
 
-int vfs_open(const char *path, int flags)
-{
-    assert(0);
-    return 1;
+int vfs_open(const char *path, int flags) {
+  assert(0);
+  return 1;
 }
 
-ssize_t vfs_read(int fd, void *buf, size_t nbyte)
-{
-    assert(0);
-    return 1;
+ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
+  assert(0);
+  return 1;
 }
 
-ssize_t vfs_write(int fd, void *buf, size_t nbyte)
-{
-    assert(0);
-    return 1;
+ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
+  assert(0);
+  return 1;
 }
 
-off_t vfs_lseek(int fd, off_t offset, int whence)
-{
-    assert(0);
-    return 1;
+off_t vfs_lseek(int fd, off_t offset, int whence) {
+  assert(0);
+  return 1;
 }
 
-int vfs_close(int fd)
-{
-    assert(0);
-    return 1;
+int vfs_close(int fd) {
+  assert(0);
+  return 1;
 }
 
 MODULE_DEF(vfs){

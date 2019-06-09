@@ -18,7 +18,8 @@ static void hello() {
   for (const char *ptr = "Hello from CPU #"; *ptr; ptr++) {
     _putc(*ptr);
   }
-  _putc("12345678"[_cpu()]); _putc('\n');
+  _putc("12345678"[_cpu()]);
+  _putc('\n');
 }
 
 static void os_run() {
@@ -49,9 +50,9 @@ static void os_on_irq(int seq, int event, handler_t handler) {
   ITEM_bubble_sort();
 }
 
-MODULE_DEF(os) {
-  .init   = os_init,
-    .run    = os_run,
-    .trap   = os_trap,
+MODULE_DEF(os){
+    .init = os_init,
+    .run = os_run,
+    .trap = os_trap,
     .on_irq = os_on_irq,
 };

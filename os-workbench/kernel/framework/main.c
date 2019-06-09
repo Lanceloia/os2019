@@ -11,22 +11,22 @@ const int maxk = 8;
 int cnt = 0;
 
 static void producer(void *arg) {
-  while(1) {
+  while (1) {
     kmt->sem_wait(&empty);
     kmt->sem_wait(&mutex);
-    cnt ++;
-    printf("%d+%c\t", cnt, _cpu()+'a');
+    cnt++;
+    printf("%d+%c\t", cnt, _cpu() + 'a');
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&full);
   }
 }
 
 static void consumer(void *arg) {
-  while(1) {
+  while (1) {
     kmt->sem_wait(&full);
     kmt->sem_wait(&mutex);
-    cnt --;
-    printf("%d-%c\t", cnt, _cpu()+'a');
+    cnt--;
+    printf("%d-%c\t", cnt, _cpu() + 'a');
     kmt->sem_signal(&mutex);
     kmt->sem_signal(&empty);
   }
@@ -49,7 +49,7 @@ int main() {
   // call sequential init code
   os->init();
   create_threads();
-  _mpe_init(os->run); // all cores call os->run()
+  _mpe_init(os->run);  // all cores call os->run()
   return 1;
 }
 
@@ -64,7 +64,7 @@ int main() {
 
   // call sequential init code
   os->init();
-  _mpe_init(os->run); // all cores call os->run()
+  _mpe_init(os->run);  // all cores call os->run()
   return 1;
 }
 

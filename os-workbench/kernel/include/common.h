@@ -1,21 +1,14 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#include <../src/x86/x86-qemu.h>
 #include <kernel.h>
 #include <nanos.h>
 #include <x86.h>
-#include <../src/x86/x86-qemu.h>
 
-enum
-{
-  UNLOCKED = 0,
-  LOCKED = 1
-};
+enum { UNLOCKED = 0, LOCKED = 1 };
 
-enum
-{
-  NONE_CPU = -1
-};
+enum { NONE_CPU = -1 };
 
 #define KB *1024
 #define MB *1024 * 1024
@@ -25,8 +18,7 @@ enum
 #define MAX_FILE 32
 #define STK_SIZE (4 KB)
 
-struct task
-{
+struct task {
   int idx;
   int state;
   _Context ctx;
@@ -36,15 +28,13 @@ struct task
   char stack[STK_SIZE];
 } __attribute__((aligned(32)));
 
-struct spinlock
-{
+struct spinlock {
   char name[NAME_lENGTH];
   volatile int locked;
   int cpu;
 };
 
-struct semaphore
-{
+struct semaphore {
   char name[NAME_lENGTH];
   volatile int value;
   struct spinlock lk;
@@ -54,11 +44,9 @@ struct semaphore
 
 typedef intptr_t naivelock_t;
 #define SLEEP(time) for (volatile int __itr__ = 0; __itr__ < (time); __itr__++)
-#define naivelock_lock(lock)           \
-    while (_atomic_xchg(lock, LOCKED)) \
-      SLEEP(16);                            
-#define naivelock_unlock(lock)       \
-    _atomic_xchg(lock, UNLOCKED); 
+#define naivelock_lock(lock) \
+  while (_atomic_xchg(lock, LOCKED)) SLEEP(16);
+#define naivelock_unlock(lock) _atomic_xchg(lock, UNLOCKED);
 
 #define TRACEME
 #ifdef TRACEME

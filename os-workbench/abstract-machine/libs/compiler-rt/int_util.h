@@ -27,7 +27,7 @@ NORETURN void compilerrt_abort_impl(const char *file, int line,
 
 #define COMPILE_TIME_ASSERT(expr) COMPILE_TIME_ASSERT1(expr, __COUNTER__)
 #define COMPILE_TIME_ASSERT1(expr, cnt) COMPILE_TIME_ASSERT2(expr, cnt)
-#define COMPILE_TIME_ASSERT2(expr, cnt)                                        \
+#define COMPILE_TIME_ASSERT2(expr, cnt) \
   typedef char ct_assert_##cnt[(expr) ? 1 : -1] UNUSED
 
 #endif /* INT_UTIL_H */

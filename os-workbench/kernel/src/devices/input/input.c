@@ -4,30 +4,34 @@
 sem_t sem_kbdirq;
 
 static struct input_event event(int ctrl, int alt, int data) {
-  return (struct input_event) {
-    .ctrl = ctrl,
-    .alt = alt,
-    .data = data,
+  return (struct input_event){
+      .ctrl = ctrl,
+      .alt = alt,
+      .data = data,
   };
 }
 
 static void push_event(input_t *in, struct input_event ev) {
-//  TRACE_ENTRY;
+  //  TRACE_ENTRY;
 
   kmt->spin_lock(&in->lock);
   in->events[in->rear] = ev;
   in->rear = (in->rear + 1) % NEVENTS;
-  if (in->rear == in->front) { panic("input queue full"); }
+  if (in->rear == in->front) {
+    panic("input queue full");
+  }
   kmt->spin_unlock(&in->lock);
   kmt->sem_signal(&in->event_sem);
 }
 
 static struct input_event pop_event(input_t *in) {
-//  TRACE_ENTRY;
+  //  TRACE_ENTRY;
 
   kmt->sem_wait(&in->event_sem);
   kmt->spin_lock(&in->lock);
-  if (in->rear == in->front) { panic("input queue empty"); }
+  if (in->rear == in->front) {
+    panic("input queue empty");
+  }
   int idx = in->front;
   in->front = (in->front + 1) % NEVENTS;
   struct input_event ret = in->events[idx];
@@ -42,13 +46,27 @@ void input_keydown(device_t *dev, int code) {
   if (code & 0x8000) {
     // keydown
     switch (key) {
-      case _KEY_CAPSLOCK: in->capslock     ^= 1; break; 
-      case _KEY_LCTRL:    in->ctrl_down[0]  = 1; break; 
-      case _KEY_RCTRL:    in->ctrl_down[1]  = 1; break; 
-      case _KEY_LALT:     in->alt_down[0]   = 1; break; 
-      case _KEY_RALT:     in->alt_down[1]   = 1; break; 
-      case _KEY_LSHIFT:   in->shift_down[0] = 1; break; 
-      case _KEY_RSHIFT:   in->shift_down[1] = 1; break; 
+      case _KEY_CAPSLOCK:
+        in->capslock ^= 1;
+        break;
+      case _KEY_LCTRL:
+        in->ctrl_down[0] = 1;
+        break;
+      case _KEY_RCTRL:
+        in->ctrl_down[1] = 1;
+        break;
+      case _KEY_LALT:
+        in->alt_down[0] = 1;
+        break;
+      case _KEY_RALT:
+        in->alt_down[1] = 1;
+        break;
+      case _KEY_LSHIFT:
+        in->shift_down[0] = 1;
+        break;
+      case _KEY_RSHIFT:
+        in->shift_down[1] = 1;
+        break;
       default:
         ch = keymap[key];
         if (ch) {
@@ -73,12 +91,24 @@ void input_keydown(device_t *dev, int code) {
   } else {
     // keyup
     switch (code) {
-      case _KEY_LCTRL:  in->ctrl_down[0]  = 0; break; 
-      case _KEY_RCTRL:  in->ctrl_down[1]  = 0; break; 
-      case _KEY_LALT:   in->alt_down[0]   = 0; break; 
-      case _KEY_RALT:   in->alt_down[1]   = 0; break; 
-      case _KEY_LSHIFT: in->shift_down[0] = 0; break; 
-      case _KEY_RSHIFT: in->shift_down[1] = 0; break; 
+      case _KEY_LCTRL:
+        in->ctrl_down[0] = 0;
+        break;
+      case _KEY_RCTRL:
+        in->ctrl_down[1] = 0;
+        break;
+      case _KEY_LALT:
+        in->alt_down[0] = 0;
+        break;
+      case _KEY_RALT:
+        in->alt_down[1] = 0;
+        break;
+      case _KEY_LSHIFT:
+        in->shift_down[0] = 0;
+        break;
+      case _KEY_RSHIFT:
+        in->shift_down[1] = 0;
+        break;
     }
   }
 }
@@ -112,7 +142,8 @@ static int input_init(device_t *dev) {
   return 0;
 }
 
-static ssize_t input_read(device_t *dev, off_t offset, void *buf, size_t count) {
+static ssize_t input_read(device_t *dev, off_t offset, void *buf,
+                          size_t count) {
   struct input_event ev = pop_event(dev->ptr);
   if (count >= sizeof(ev)) {
     memcpy(buf, &ev, sizeof(ev));
@@ -122,12 +153,13 @@ static ssize_t input_read(device_t *dev, off_t offset, void *buf, size_t count) 
   }
 }
 
-static ssize_t input_write(device_t *dev, off_t offset, const void *buf, size_t count) {
+static ssize_t input_write(device_t *dev, off_t offset, const void *buf,
+                           size_t count) {
   return 0;
 }
 
 devops_t input_ops = {
-  .init = input_init,
-  .read = input_read,
-  .write = input_write,
+    .init = input_init,
+    .read = input_read,
+    .write = input_write,
 };

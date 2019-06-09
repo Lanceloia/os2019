@@ -1,5 +1,5 @@
-#include <klib.h>
 #include <amdev.h>
+#include <klib.h>
 
 uint32_t uptime() {
   _DEV_TIMER_UPTIME_t uptime;
@@ -20,10 +20,13 @@ int read_key() {
 }
 
 void draw_rect(uint32_t *pixels, int x, int y, int w, int h) {
-  _DEV_VIDEO_FBCTL_t ctl = (_DEV_VIDEO_FBCTL_t) {
-    .pixels = pixels,
-    .x = x, .y = y, .w = w, .h = h,
-    .sync = 0,
+  _DEV_VIDEO_FBCTL_t ctl = (_DEV_VIDEO_FBCTL_t){
+      .pixels = pixels,
+      .x = x,
+      .y = y,
+      .w = w,
+      .h = h,
+      .sync = 0,
   };
   _io_write(_DEV_VIDEO, _DEVREG_VIDEO_FBCTL, &ctl, sizeof(ctl));
 }

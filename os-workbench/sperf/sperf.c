@@ -8,15 +8,15 @@
  * example usage 64: ./sperf-64 /bin/cat sperf.c
  */
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <assert.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #define POOL_SIZE (1024)
 #define syscall _syscall_list
@@ -28,7 +28,7 @@ struct list_node {
   double time;
   struct list_node *prev;
   struct list_node *next;
-}pool[POOL_SIZE], special[2];
+} pool[POOL_SIZE], special[2];
 typedef struct list_node list_node;
 
 struct list {
@@ -36,10 +36,10 @@ struct list {
   struct list_node *tail;
   size_t list_size;
   double total_time;
-}syscall;
+} syscall;
 typedef struct list list;
 
-//--- syscall member functions ---// 
+//--- syscall member functions ---//
 /* function syscall_init(): interface
  * initial the <list> syscall, keep a well-order when
  * start always help a lot
@@ -65,27 +65,26 @@ static void syscall_print() {
   static int clear_screen_flag = 1;
   double remaining_time = syscall.total_time;
   int cnt = 0;
-  if(clear_screen_flag) {
+  if (clear_screen_flag) {
     fprintf(stdout, "\033[2J");
     clear_screen_flag = 0;
   }
   list_node *node = syscall.head->next;
   fprintf(stdout, "\033[0;0H");
-  while(node != syscall.tail) {
+  while (node != syscall.tail) {
     fprintf(stdout, "%-32s", node->name);
-    fprintf(stdout, "%.1lf%%   \n",
-        node->time * 100 / syscall.total_time);
+    fprintf(stdout, "%.1lf%%   \n", node->time * 100 / syscall.total_time);
 
     remaining_time -= node->time;
-    cnt ++;
-    
-    if(cnt >= 16) {
+    cnt++;
+
+    if (cnt >= 16) {
       fprintf(stdout, "%-32s", "others");
-      fprintf(stdout, "%.1lf%%   \n", 
-          remaining_time * 100 / syscall.total_time);
+      fprintf(stdout, "%.1lf%%   \n",
+              remaining_time * 100 / syscall.total_time);
       break;
     }
-    
+
     node = node->next;
   }
 }
@@ -99,8 +98,8 @@ static void syscall_print() {
 static void syscall_check() {
   int cnt = 0;
   list_node *node = syscall.head->next;
-  while(node != syscall.tail) {
-    cnt ++;
+  while (node != syscall.tail) {
+    cnt++;
     assert(node->next->prev == node);
     assert(node->prev->next == node);
     node = node->next;
@@ -111,9 +110,8 @@ static void syscall_check() {
 /* function syscall_cmp()
  * helper function, compare two node
  */
-static int syscall_cmp(list_node *A, list_node *B){
-  if(A == syscall.head || B == syscall.tail)
-    return 1;
+static int syscall_cmp(list_node *A, list_node *B) {
+  if (A == syscall.head || B == syscall.tail) return 1;
   assert(A != syscall.tail);
   assert(B != syscall.head);
   return A->time >= B->time;
@@ -122,10 +120,10 @@ static int syscall_cmp(list_node *A, list_node *B){
 /* function syscall_insert_do()
  * keep the <list> descending sort
  */
-static void syscall_insert_do(list_node *node){
+static void syscall_insert_do(list_node *node) {
   list_node *temp = syscall.head;
   assert(node != syscall.tail);
-  while(!(syscall_cmp(temp, node) && syscall_cmp(node, temp->next))) {
+  while (!(syscall_cmp(temp, node) && syscall_cmp(node, temp->next))) {
     temp = temp->next;
   }
   assert(temp != syscall.tail);
@@ -135,7 +133,7 @@ static void syscall_insert_do(list_node *node){
   temp->next->prev = node;
   temp->next = node;
 
-  syscall.list_size ++;
+  syscall.list_size++;
   syscall.total_time += node->time;
   syscall_check();
 }
@@ -143,40 +141,39 @@ static void syscall_insert_do(list_node *node){
 /* function syscall_delete_do()
  * delete the node
  */
-static void syscall_delete_do(list_node *node){
+static void syscall_delete_do(list_node *node) {
   node->prev->next = node->next;
   node->next->prev = node->prev;
 
   node->prev = NULL;
   node->next = NULL;
 
-  syscall.list_size --;
+  syscall.list_size--;
   syscall.total_time -= node->time;
   syscall_check();
 }
 
 /* function syscall_insert():interface
  * try to insert a new item into <list> syscall
- * If there is a node of the same name, plus the time, 
+ * If there is a node of the same name, plus the time,
  * Otherwise, create a new node, set the name and time
  */
 static void syscall_insert(char name[], double time) {
   // judge whether to insert or not
   list_node *node = syscall.head->next;
-  while(node != syscall.tail && strcmp(name, node->name) != 0)
+  while (node != syscall.tail && strcmp(name, node->name) != 0)
     node = node->next;
 
-  if(node != syscall.tail) {
+  if (node != syscall.tail) {
     assert(strcmp(name, node->name) == 0);
     // delete_do
     syscall_delete_do(node);
-    
+
     node->time += time;
 
     // insert_do
     syscall_insert_do(node);
-  }
-  else {
+  } else {
     int index = syscall.list_size;
     list_node *current = &pool[index];
     current->id = index;
@@ -194,14 +191,14 @@ static int _files[2];
 
 int main(int argc, char *argv[]) {
   /* exception handling */
-  if(argc <= 1) {
+  if (argc <= 1) {
     fprintf(stderr, "Error: \n");
     fprintf(stderr, "Please enter the command you want to trace. \n");
     return 1;
   }
 
   /* exception handling */
-  if(pipe(_files) != 0) {
+  if (pipe(_files) != 0) {
     fprintf(stderr, "Error: \n");
     fprintf(stderr, "Can't create pipes. \n");
     return 1;
@@ -210,12 +207,12 @@ int main(int argc, char *argv[]) {
   syscall_init();
 
   int pid = fork();
-  if(pid == 0) {
+  if (pid == 0) {
     char *filename = "/usr/bin/strace";
-    char **newargv = (char **)malloc((argc + 1)*sizeof(char *));
+    char **newargv = (char **)malloc((argc + 1) * sizeof(char *));
     char **newenvp = {NULL};
     newargv[0] = "strace", newargv[1] = "-T";
-    for(int i = 1; i < argc; i ++) newargv[i + 1] = argv[i];
+    for (int i = 1; i < argc; i++) newargv[i + 1] = argv[i];
 
     // aboard the stdout
     int trash = open("/dev/null", O_WRONLY, S_IWUSR);
@@ -227,31 +224,31 @@ int main(int argc, char *argv[]) {
     close(_files[0]);
     execve(filename, newargv, newenvp);
     assert(0);
-  }
-  else {
+  } else {
     // change the stdin
     dup2(_files[0], STDIN_FILENO);
     close(_files[1]);
 
     char buf[4096];
-    while(fgets(buf, 1024, stdin)){
+    while (fgets(buf, 1024, stdin)) {
       int len = strlen(buf);
-      if(len > 2 && buf[len - 2] == '>') {
+      if (len > 2 && buf[len - 2] == '>') {
         int name_begin, name_end, time_begin, time_end;
         name_begin = name_end = 0;
         time_begin = time_end = len - 3;
-        while(buf[name_end + 1] != '(') name_end ++;
-        while(buf[time_begin - 1] != '<') time_begin --;
+        while (buf[name_end + 1] != '(') name_end++;
+        while (buf[time_begin - 1] != '<') time_begin--;
         char name[1024], time[1024];
         strncpy(name, buf + name_begin, name_end - name_begin + 1);
         strncpy(time, buf + time_begin, time_end - time_begin + 1);
         name[name_end - name_begin + 1] = '\0';
         time[time_end - time_begin + 1] = '\0';
-        double _time; sscanf(time, "%lf", &_time);
+        double _time;
+        sscanf(time, "%lf", &_time);
         syscall_insert(name, _time);
         syscall_print();
       }
-      buf[0]='\0';
+      buf[0] = '\0';
       usleep(200000);
     }
   }

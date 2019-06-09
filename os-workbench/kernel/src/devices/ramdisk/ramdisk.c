@@ -6,11 +6,11 @@ int rd_init(device_t *dev) {
   rd_t *rd = dev->ptr;
   if (dev->id == 1) {
     rd->start = &initrd_start;
-    rd->end   = &initrd_end;
+    rd->end = &initrd_end;
   } else {
     char *space = pmm->alloc(RD_SIZE);
     rd->start = space;
-    rd->end   = space + RD_SIZE;
+    rd->end = space + RD_SIZE;
   }
   return 0;
 }
@@ -28,7 +28,7 @@ ssize_t rd_write(device_t *dev, off_t offset, const void *buf, size_t count) {
 }
 
 devops_t rd_ops = {
-  .init = rd_init,
-  .read = rd_read,
-  .write = rd_write,
+    .init = rd_init,
+    .read = rd_read,
+    .write = rd_write,
 };

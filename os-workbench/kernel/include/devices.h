@@ -1,5 +1,5 @@
-#include <common.h>
 #include <amdev.h>
+#include <common.h>
 #include <klib.h>
 
 #define LENGTH(arr) ((sizeof(arr) / sizeof(arr[0])))
@@ -14,15 +14,18 @@ struct device {
 device_t *dev_lookup(const char *name);
 
 #ifndef panic
-  static inline void panic(const char *s) { printf("%s\n", s); _halt(1); }
+static inline void panic(const char *s) {
+  printf("%s\n", s);
+  _halt(1);
+}
 #endif
 
 // Input
 // -------------------------------------------------------------------
 
 struct input_event {
-  uint32_t ctrl: 1, alt: 1;
-  uint32_t data: 16;
+  uint32_t ctrl : 1, alt : 1;
+  uint32_t data : 16;
 };
 
 typedef struct {
@@ -73,8 +76,8 @@ struct texture {
 
 struct sprite {
   uint16_t texture, x, y;
-  unsigned int display: 4;
-  unsigned int z: 12;
+  unsigned int display : 4;
+  unsigned int z : 12;
 } __attribute__((packed));
 
 typedef struct {
@@ -84,7 +87,7 @@ typedef struct {
 } fb_t;
 
 // -------------------------------------------------------------------
-// Virtual console on fb 
+// Virtual console on fb
 
 struct character {
   uint32_t metadata;
@@ -97,7 +100,8 @@ struct tty_queue {
 
 typedef struct {
   sem_t lock, cooked;
-  device_t *fbdev; int display;
+  device_t *fbdev;
+  int display;
   int lines, columns, size;
   struct character *buf, *end, *cursor;
   struct tty_queue queue;
