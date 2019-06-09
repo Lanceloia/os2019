@@ -9,17 +9,17 @@ static void ext2_init(ext2_t* fs, char* dev_name) {
 }
 
 static void ext2_rd_sb(ext2_t* fs) {
-  fs->dev->ops->read(fs->dev, DISK_START, fs->sb, SB_SIZE);
+  fs->dev->ops->read(fs->dev, DISK_START, &fs->sb, SB_SIZE);
 }
 
 static void ext2_wr_sb(ext2_t* fs) {
-  fs->dev->ops->write(fs->dev, DISK_START, fs->sb, SB_SIZE);
+  fs->dev->ops->write(fs->dev, DISK_START, &fs->sb, SB_SIZE);
 }
 
 static void ext2_rd_gd(ext2_t* fs) {
-  fs->dev->ops->read(fs->dev, GDT_START, fs->gd, GD_SIZE);
+  fs->dev->ops->read(fs->dev, GDT_START, &fs->gd, GD_SIZE);
 }
 
 static void ext2_wr_gd(ext2_t* fs) {
-  fs->dev->ops->read(fs->dev, GDT_START, fs->gd, GD_SIZE);
+  fs->dev->ops->read(fs->dev, GDT_START, &fs->gd, GD_SIZE);
 }
