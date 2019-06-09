@@ -31,7 +31,7 @@ MODULE_DEF(vfs)
   .write = vfs_write,
   .lseek = vfs_lseek,
   .close = vfs_close,
-} MODULE(vfs);
+};
 
 #ifdef _LANCELOIA_DEBUG_
 #undef _LANCELOIA_DEBUG_
