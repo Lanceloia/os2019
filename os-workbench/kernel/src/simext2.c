@@ -1,4 +1,4 @@
-#include <devices.h>
+//#include <devices.h>
 #include <simext2.h>
 
 static void simext2_init(ext2_t* fs, char* rd_name) {
