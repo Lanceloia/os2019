@@ -6,6 +6,7 @@ void vfs_init() {}
 
 int vfs_access(const char *path, int mode)
 {
+    assert(0);
     return 1;
 }
 
