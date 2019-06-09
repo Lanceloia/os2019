@@ -1,7 +1,7 @@
 #ifndef __SIMEXT2_H__
 #define __SIMEXT2_H__
 
-#include <unistd.h>
+#include <stdint.h>
 #define INODE_SIZE 64
 #define DISK_START 0
 #define N_BLOCKS 8
