@@ -54,13 +54,17 @@ struct ext2 {
   struct group_desc gdt[1];
   struct inode inode_area[1];
   rd_t* rd;
-  rd_ops* ops;
+  devops_t* ops;
 };
 
 typedef struct super_block sb_t;
 typedef struct group_desc gd_t;
 typedef struct inode ind_t;
 typedef struct ext2 ext2_t;
+
+/* functions
+ * copyright: leungjyufung2019@outlook.com
+ */
 
 static void simext2_init(ext2_t* fs, char* rd_name) {
   fs->rd = (rd_t*)dev_lookup(rd_name);
