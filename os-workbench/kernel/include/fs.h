@@ -23,7 +23,7 @@ struct file
 struct inode
 {
     int refcnt;
-    void *prt; //??
+    void *ptr; // private data start
     filesystem_t *fs;
     inodeops_t *ops;
 };
