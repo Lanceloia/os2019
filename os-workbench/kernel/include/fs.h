@@ -51,7 +51,7 @@ struct filesystem
 struct fsops
 {
     void (*init)(filesystem_t *fs, const char *name, device_t *dev);
-    inode_t *(lookup)(filesystem_t *fs, const char *path, int flags);
+    inode_t (*lookup)(filesystem_t *fs, const char *path, int flags);
     int (*close)(inode_t *inode);
 };
 
