@@ -52,18 +52,13 @@ struct semaphore
 
 typedef intptr_t naivelock_t;
 #define SLEEP(time) for (volatile int __itr__ = 0; __itr__ < (time); __itr__++)
-#define naivelock_lock(lock)              \
-  {                                         \
-    while (_atomic_xchg(((intptr_t)lock), LOCKED)) \
-      SLEEP(16);                            \
-  }
+#define naivelock_lock(lock)           \
+    while (_atomic_xchg(lock, LOCKED)) \
+      SLEEP(16);                            
 #define naivelock_unlock(lock)       \
-  {                                    \
-    _atomic_xchg(((intptr_t)lock), UNLOCKED); \
-  }
+    _atomic_xchg(lock, UNLOCKED); 
 
 #define TRACEME
-
 #ifdef TRACEME
 #define TRACE_ENTRY printf("[trace] %s:entry\n", __func__)
 #define TRACE_EXIT printf("[trace] %s:exit\n", __func__)
