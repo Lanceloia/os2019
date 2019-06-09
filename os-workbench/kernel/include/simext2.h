@@ -2,6 +2,7 @@
 #define __SIMEXT2_H__
 
 #include <stdint.h>
+#include "devices.h"
 #define SB_SIZE (sizeof(sb_t))
 #define GD_SIZE (sizeof(gd_t))
 #define IND_SIZE (sizeof(ind_t))
