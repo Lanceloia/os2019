@@ -7,6 +7,7 @@ static void os_init() {
   pmm->init();
   kmt->init();
   dev->init();
+  vfs->init();
   kmt->create(pmm->alloc(sizeof(task_t)), "print", shell_task, "tty1");
   kmt->create(pmm->alloc(sizeof(task_t)), "print", shell_task, "tty2");
   kmt->create(pmm->alloc(sizeof(task_t)), "print", shell_task, "tty3");
