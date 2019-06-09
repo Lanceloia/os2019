@@ -339,9 +339,9 @@ void tty_task(void *arg)
 
 char readbuf[128], writebuf[128];
 
-static void echo_do()
+static void echo_do(char *str)
 {
-    sprintf(writebuf, "%s\n", readbuf + 5);
+    sprintf(writebuf, "%s\n", str);
 }
 
 static void default_do()
@@ -360,7 +360,7 @@ void shell_task(void *name)
     readbuf[nread - 1] = '\0';
 
     if(strncmp(readbuf, "echo ", 5) == 0)
-      echo_do();
+      echo_do(readbuf + 5);
     else
       default_do();
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
