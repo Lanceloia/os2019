@@ -4,6 +4,16 @@
 #include <klib.h>
 #include <kthreads.h>
 
+ static void kmt_init();
+ static int kmt_create(task_t *, const char *, void (*)(void *), void *);
+ static void kmt_teardown(task_t *);
+ static void kmt_spin_init(spinlock_t *, const char *);
+ static void kmt_spin_lock(spinlock_t *);
+ static void kmt_spin_unlock(spinlock_t *);
+ static void kmt_sem_init(sem_t *, const char *, int);
+ static void kmt_sem_wait(sem_t *);
+ static void kmt_sem_signal(sem_t *);
+
 static int tasks_size = 0;
 static task_t *tasks[MAX_TASK];
 static task_t *current_tasks[MAX_CPU];

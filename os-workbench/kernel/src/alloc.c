@@ -10,6 +10,8 @@ naivelock_t memoplk;
 mem_block_t pool[POOL_SIZE], special[2];
 block_list_t free;
 
+static uintptr_t pm_start, pm_end;
+
 //--- [pool] helper functions ---//
 /* function get_unused_block()
  * get an unuesd block, whose state == [UNUSED]
@@ -206,7 +208,7 @@ static void free_insert(mem_block_t *block){
   free_check();
 }
 
-/* function free_delete(): interface
+/* function free_delete():
  * delete a node from <list> free  
  */
 static void free_delete(mem_block_t *block){
@@ -225,7 +227,7 @@ static void free_delete(mem_block_t *block){
   // block isn't belong to <list> now
 }
 
-/* function free_find(): interface
+/* function free_find():
  * find a block whose size is greater than size and it
  * is unallocated. Notice that the members of <list> 
  * free all should be unallocated. 
@@ -246,17 +248,15 @@ static mem_block_t *free_find(size_t size){
   return block;
 }
 
-/* function extern_free_print(): interface
+/* function free_print2():
  * print the infomation of <list> [free]
  */
-void extern_free_print(int flag){
+void free_print2(int flag){
   naivelock_lock(memoplk);
   printf("[CPU: %d Flag: %d]\n", _cpu(), flag);
   free_print();
   naivelock_unlock(memoplk);
 }
-
-static uintptr_t pm_start, pm_end;
 
 static void pmm_init() {
   naivelock_lock(memoplk);
@@ -268,11 +268,10 @@ static void pmm_init() {
   naivelock_unlock(memoplk);
 }
 
-
+/* function kalloc():interface */
 static void *kalloc(size_t size) {
   if(size == 0)
     return NULL;
-
   naivelock_lock(memoplk);
   mem_block_t *block = free_find(size);
   assert(block != NULL);
@@ -282,12 +281,11 @@ static void *kalloc(size_t size) {
   return (void *)block->begin;
 }
 
+/* function kfree():interface */
 static void kfree(void *ptr) {
   naivelock_lock(memoplk);
-
   int idx = find_allocated_block((uintptr_t)ptr);
   free_insert(&pool[idx]);
-
   naivelock_unlock(memoplk);
 }
 
