@@ -58,7 +58,7 @@ void ext2_wr_inodebitmap(ext2_t* fs) {
   fs->dev->ops->write(fs->dev, IND_BITMAP, &fs->inodebitmapbuf, BLK_SIZE);
 }
 
-void ext2_rd_datablock(ext2_t* fs) {
+void ext2_rd_datablock(ext2_t* fs, uint32_t i) {
   uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
   fs->dev->ops->read(fs->dev, offset, &fs->datablockbuf, BLK_SIZE);
 }
