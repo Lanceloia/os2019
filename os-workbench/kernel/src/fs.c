@@ -90,6 +90,13 @@ int vfs_close(int fd) {
   return 1;
 }
 
+void *vfs_get_fs(int idx) {
+  if (idx < 0 || idx >= MAX_FS)
+    return NULL;
+  else
+    return &_fs[idx];
+}
+
 MODULE_DEF(vfs){
     .init = vfs_init,
     .access = vfs_access,
@@ -104,6 +111,7 @@ MODULE_DEF(vfs){
     .write = vfs_write,
     .lseek = vfs_lseek,
     .close = vfs_close,
+    .get_fs = vfs_get_fs,
 };
 
 #ifdef _LANCELOIA_DEBUG_

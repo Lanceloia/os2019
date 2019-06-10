@@ -13,16 +13,14 @@
   mod_##name##_t __##name##_obj =
 
 typedef _Context *(*handler_t)(_Event, _Context *);
-typedef struct
-{
+typedef struct {
   void (*init)();
   void (*run)();
   _Context *(*trap)(_Event ev, _Context *context);
   void (*on_irq)(int seq, int event, handler_t handler);
 } MODULE(os);
 
-typedef struct
-{
+typedef struct {
   void (*init)();
   void *(*alloc)(size_t size);
   void (*free)(void *ptr);
@@ -31,10 +29,10 @@ typedef struct
 typedef struct task task_t;
 typedef struct spinlock spinlock_t;
 typedef struct semaphore sem_t;
-typedef struct
-{
+typedef struct {
   void (*init)();
-  int (*create)(task_t *task, const char *name, void (*entry)(void *arg), void *arg);
+  int (*create)(task_t *task, const char *name, void (*entry)(void *arg),
+                void *arg);
   void (*teardown)(task_t *task);
   void (*spin_init)(spinlock_t *lk, const char *name);
   void (*spin_lock)(spinlock_t *lk);
@@ -45,21 +43,18 @@ typedef struct
 } MODULE(kmt);
 
 typedef struct device device_t;
-typedef struct devops
-{
+typedef struct devops {
   int (*init)(device_t *dev);
   ssize_t (*read)(device_t *dev, off_t offset, void *buf, size_t count);
   ssize_t (*write)(device_t *dev, off_t offset, const void *buf, size_t count);
 } devops_t;
-typedef struct
-{
+typedef struct {
   void (*init)();
 } MODULE(dev);
 
 /* created by leungjyufung2019@outlook.com */
 typedef struct filesystem filesystem_t;
-typedef struct
-{
+typedef struct {
   void (*init)();
   int (*access)(const char *path, int mode);
   int (*mount)(const char *path, filesystem_t *fs);
@@ -73,6 +68,7 @@ typedef struct
   ssize_t (*write)(int fd, void *buf, size_t nbyte);
   off_t (*lseek)(int fd, off_t offset, int whence);
   int (*close)(int fd);
+  void *(*get_fs)(int idx);
 } MODULE(vfs);
 
 #endif

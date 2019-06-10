@@ -153,4 +153,5 @@ void ext2_wr_datablock(ext2_t* ext2, uint32_t i) {
   ext2->dev->ops->write(ext2->dev, offset, &ext2->datablockbuf, BLK_SIZE);
 }
 
+void ext2_ls(ext2_t* ext2, char* dirname, char* out);
 #endif

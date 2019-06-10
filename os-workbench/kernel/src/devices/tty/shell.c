@@ -1,4 +1,5 @@
 #include <devices.h>
+#include <simext2.h>
 
 char readbuf[128], writebuf[128];
 char bigbuf[2048] = {};
@@ -20,8 +21,11 @@ static void cd_do(device_t *tty, char *dirname) {
   extern void ext2_cd(fs_t * fs, char *dirname, char *buf);
 }
 */
-
-static void ls_do(device_t *tty, char *dirname) {}
+extern void ext2_ls(ext2_t *ext2, char *dirname, char *out);
+static void ls_do(device_t *tty, char *dirname) {
+  ext2_ls(vfs->get_fs(0)->fs, dirname, bigbuf);
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+}
 
 static void cat_do(device_t *tty, char *path) {
   int fd = vfs->open(path, RD_ENABLE);
