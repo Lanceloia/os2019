@@ -63,12 +63,12 @@ void ext2_rd_datablock(ext2_t* fs) {
   fs->dev->ops->read(fs->dev, offset, &fs->datablockbuf, BLK_SIZE);
 }
 
-void ext2_wr_datablock(ext2_t* fs) {
+void ext2_wr_datablock(ext2_t* fs, uint32_t i) {
   uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
   fs->dev->ops->write(fs->dev, offset, &fs->datablockbuf, BLK_SIZE);
 }
 
-uint32_t ext2_alloc_block(ext2_t* fs) {
+uint32_t ext2_alloc_block(ext2_t* fs, uint32_t i) {
   uint32_t cur = fs->last_alloc_block / 8;
   uint32_t con = 0x80; /* 0b10000000 */
   int flag = 0;
