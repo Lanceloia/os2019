@@ -1,11 +1,11 @@
+#include <ext2fs.h>
+#include <fs.h>
 #include <klib.h>
-#include <simext2.h>
 
 char readbuf[128], writebuf[128];
 char bigbuf[2048] = {};
 
 /* shell command */
-#include <fs.h>
 
 static void pwd_do(device_t *tty, char *pwd) {
   sprintf(bigbuf, "%s\n", pwd);
