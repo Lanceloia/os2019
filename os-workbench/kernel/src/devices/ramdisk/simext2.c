@@ -365,14 +365,13 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
     }
     if (ext2->ind.size != ext2->ind.blocks * BLK_SIZE) {
       // not full
-      int i = ext2->ind.blocks - 1, j;
-      ext2_rd_dir(ext2, ext2->ind.block[i]);
-      for (j = 0; j < DIR_AMUT; j++) {
-        if (ext2->dir[j].inode == 0) {
-          flag = 0;
-          break;
-        }
+      int i, j;
+      for (i = 0, flag = 1; flag && i < ext2->ind.blocks; i++) {
+        ext2_rd_dir(ext2, ext2->ind.block[i]);
+        for (j = 0; j < DIR_AMUT; j++)
+          if (ext2->dir[j].inode == 0) goto End;
       }
+    End:
       idx = ext2->dir[j].inode = ext2_alloc_inode(ext2);
       ext2->dir[j].name_len = strlen(dirname);
       ext2->dir[j].file_type = type;
