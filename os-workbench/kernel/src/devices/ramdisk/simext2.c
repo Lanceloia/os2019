@@ -156,7 +156,7 @@ void ext2_dir_prepare(ext2_t* fs, uint32_t idx, uint32_t len, int type) {
     strcpy(fs->dir[0].name, ".");
     strcpy(fs->dir[1].name, "..");
     ext2_wr_dir(fs, fs->ind.block[0]);
-    fs->ind.mode = 01006 /* drwxrwxrwx: ? */
+    fs->ind.mode = 01006; /* drwxrwxrwx: ? */
   } else {
     fs->ind.size = 0;
     fs->ind.blocks = 0;
