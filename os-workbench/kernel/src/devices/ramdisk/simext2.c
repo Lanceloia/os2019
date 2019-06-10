@@ -360,6 +360,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       return;
     }
     if (ext2->ind.size != ext2->ind.blocks * BLK_SIZE) {
+      // not full
       int i, j;
       for (i = 0, flag = 1; flag && i < ext2->ind.blocks; i++) {
         ext2_rd_dir(ext2, ext2->ind.block[i]);
@@ -375,7 +376,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       ext2->dir[j].name_len = strlen(dirname);
       ext2->dir[j].file_type = type;
       strcpy(ext2->dir[j].name, dirname);
-      ext2_wr_dir(ext2, ext2->ind.block[i - 1]);
+      ext2_wr_dir(ext2, ext2->ind.block[i]);
     } else {
       assert(0);
       printf("fuck ? %d ", ext2->ind.blocks);
