@@ -185,7 +185,7 @@ uint32_t ext2_alloc_inode(ext2_t* ext2) {
   return ext2->last_alloc_inode;
 }
 
-uint32_t ext2_reserch_file(ext2_t* ext2, const char* name, int file_type,
+uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int file_type,
                            uint32_t* inode_num, uint32_t* block_num,
                            uint32_t* dir_num) {
   ext2_rd_ind(ext2, ext2->current_dir);
@@ -304,7 +304,7 @@ int ext2_search_file(ext2_t* ext2, uint32_t idx) {
   return 0;
 }
 
-void ext2_cd(ext2_t* ext2, const char* dirname) {
+void ext2_cd(ext2_t* ext2, char* dirname) {
   uint32_t i, j, k, flag;
   if (!strcmp(dirname, "../")) dirname[2] = '\0';
   if (!strcmp(dirname, "./")) dirname[1] = '\0';
