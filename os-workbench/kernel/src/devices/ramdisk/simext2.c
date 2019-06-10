@@ -116,10 +116,10 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int file_type,
                            uint32_t* dir_num) {
   printf("1");
   ext2_rd_ind(ext2, ext2->current_dir);
-  for (uint32_t j = 0; j < ext2->ind.blocks; j++) {
+  for (int j = 0; j < ext2->ind.blocks; j++) {
     printf("2");
     ext2_rd_dir(ext2, ext2->ind.block[j]);
-    for (uint32_t k = 0; k < 32;) {
+    for (int k = 0; k < DIR_AMUT;) {
       if (!ext2->dir[k].inode || ext2->dir[k].file_type != file_type ||
           strcmp(ext2->dir[k].name, name)) {
         k++;
