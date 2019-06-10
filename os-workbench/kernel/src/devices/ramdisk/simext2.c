@@ -35,8 +35,8 @@ void ext2_init(ext2_t* fs, char* dev_name) {
   fs->last_alloc_block = 0;
   for (int i = 0; i < MAX_OPEN_FILE_AMUT; i++) fs->file_open_table[i] = 0;
   // for (int i = 0; i < BLK_SIZE; i++) fs->datablockbuf = 0;
-  memset(fs->sb, 0x00, SB_SIZE);
-  memset(fs->gdt, 0x00, GD_SIZE * 1);
+  memset(&fs->sb, 0x00, SB_SIZE);
+  memset(&fs->gdt, 0x00, GD_SIZE * 1);
   ext2_wr_ind(fs, 1);
   ext2_wr_dir(fs, 0);
   strcpy(fs->current_dir_name, "[root@ /");
