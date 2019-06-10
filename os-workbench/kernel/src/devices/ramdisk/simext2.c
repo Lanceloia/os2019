@@ -57,7 +57,7 @@ void ext2_init(ext2_t* fs, char* dev_name) {
   fs->ind.block[0] = ext2_alloc_block(fs);
   fs->ind.blocks++;
   fs->current_dir = ext2_alloc_inode(fs);
-  ext2_wr_ind(fs->current_dir);
+  ext2_wr_ind(fs, fs->current_dir);
 
   fs->dir[0].inode = fs->dir[1].inode = fs->current_dir;
   fs->dir[0].name_len = fs->dir[1].name_len = 0;
