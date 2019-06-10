@@ -231,7 +231,7 @@ int ext2_search_file(ext2_t* ext2, uint32_t idx) {
 }
 
 void ext2_cd(ext2_t* ext2, char* dirname, char* pwd, char* out) {
-  int offset = 0;
+  int offset = sprintf(out, "");
   uint32_t i, j, k, flag;
   if (!strcmp(dirname, "../")) dirname[2] = '\0';
   if (!strcmp(dirname, "./")) dirname[1] = '\0';
@@ -247,9 +247,9 @@ void ext2_cd(ext2_t* ext2, char* dirname, char* pwd, char* out) {
       strcat(pwd, dirname);
       strcat(pwd, "/");
     }
-    offset += sprintf(out + offset, "Current directory: [%s]\n", pwd);
+    offset += sprintf(out + offset, "Current directory: %s\n", pwd);
   } else {
-    offset += sprintf(out + offset, "No directory: [%s]\n", dirname);
+    offset += sprintf(out + offset, "No directory: %s\n", dirname);
   }
 }
 
@@ -346,7 +346,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
 
 void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
   uint32_t idx, ninode, nblock, ndir;
-  int offset = 0;
+  int offset = sprintf(out, "");
   ext2_rd_ind(ext2, ext2->current_dir);
   if (!ext2_reserch_file(ext2, dirname, type, &ninode, &nblock, &ndir)) {
     if (ext2->ind.size == 4096) {  // origin 4096
