@@ -27,6 +27,12 @@ static void ls_do(device_t *tty, char *dirname) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+extern void ext2_mkdir(ext2_t *ext2, char *dirname, char *out);
+static void mkdir_do(device_t *tty, char dirname) {
+  ext2_mk(vfs->get_fs(0)->fs, dirname, bigbuf);
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+}
+
 static void cat_do(device_t *tty, char *path) {
   int fd = vfs->open(path, RD_ENABLE);
   if (fd == -1) {
