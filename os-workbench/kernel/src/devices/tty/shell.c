@@ -27,6 +27,7 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
       break;
     case 0:  // ext2 cd
       ext2_cd(vfs->get_fs(0)->fs, dirname, pwd, bigbuf);
+      break;
     default:
       assert(0);
       break;
