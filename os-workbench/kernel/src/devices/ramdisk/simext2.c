@@ -1,4 +1,3 @@
-#include <ext2.h>
 #include <fs.h>
 #include <klib.h>
 #include <simext2.h>
