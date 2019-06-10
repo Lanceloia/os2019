@@ -50,7 +50,7 @@ struct inode {
   char pad[14];
 };
 
-struct dir {
+struct directory {
   /* directory entry, 32 bytes */
   uint32_t inode;
   uint16_t rec_len;
@@ -64,7 +64,7 @@ struct ext2 {
   struct super_block sb;
   struct group_desc gd;
   struct inode ind;
-  struct dirty dir;
+  struct directory dir;
   unsigned char blockbitmapbuf[512];
   unsigned char inodebitmapbuf[512];
   device_t* dev;
@@ -73,7 +73,7 @@ struct ext2 {
 typedef struct super_block sb_t;
 typedef struct group_desc gd_t;
 typedef struct inode ind_t;
-typedef struct dir dir_t;
+typedef struct directory dir_t;
 typedef struct ext2 ext2_t;
 
 #endif
