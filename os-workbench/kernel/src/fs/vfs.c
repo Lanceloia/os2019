@@ -1,6 +1,7 @@
-#include <ext2fs.h>
 #include <klib.h>
-#include <vfs.h>
+
+#include "../../../include/fs/ext2fs.h"
+#include "../../../include/fs/vfs.h"
 
 #define MAX_FS 4
 

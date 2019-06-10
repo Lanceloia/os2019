@@ -1,6 +1,7 @@
-#include <ext2fs.h>
-#include <fs.h>
 #include <klib.h>
+
+#include "../../../include/fs/ext2fs.h"
+#include "../../../include/fs/vfs.h"
 
 /* functions
  * copyright: leungjyufung2019@outlook.com
