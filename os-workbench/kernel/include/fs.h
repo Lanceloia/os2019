@@ -48,7 +48,7 @@ struct file_sys {
 
 struct file_sys_ops {
   void (*init)(fs_t *fs, const char *name, device_t *dev);
-  id_t (*lookup)(fs_t *fs, const char *path, int flags);
+  id_t *(*lookup)(fs_t *fs, const char *path, int flags);
   int (*close)(id_t *id);
 };
 
