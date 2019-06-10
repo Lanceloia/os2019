@@ -19,17 +19,14 @@ int ext2_close(id_t* id) { return 0; }
 
 void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   ext2_t* ext2 = (ext2_t*)fs->fs;
+  memset(ext2, 0x00, sizeof(ext2_t));
   ext2->dev = dev;
   printf("Creating ext2fs\n");
   ext2->last_alloc_inode = 1;
   ext2->last_alloc_block = 0;
   for (int i = 0; i < MAX_OPEN_FILE_AMUT; i++) ext2->file_open_table[i] = 0;
-  // for (int i = 0; i < BLK_SIZE; i++) ext2->datablockbuf = 0;
-  memset(&ext2->sb, 0x00, SB_SIZE);
-  memset(&ext2->gdt, 0x00, GD_SIZE * 1);
-  ext2_wr_ind(ext2, 1);
-  ext2_wr_dir(ext2, 0);
-  strcpy(ext2->current_dir_name, "[root@ /");
+  ext2_rd_ind(ext2, 1);
+  ext2_rd_dir(ext2, 0);
   ext2_rd_gd(ext2);  // gdt is changed here
   ext2->gdt.block_bitmap = BLK_BITMAP;
   ext2->gdt.inode_bitmap = IND_BITMAP;
@@ -43,11 +40,12 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   ext2_rd_inodebitmap(ext2);
   ext2->ind.mode = 01006;
   ext2->ind.blocks = 0;
-  ext2->ind.blocks = 32;  // maybe wrong
+  ext2->ind.size = 32;  // maybe wrong
   ext2->ind.block[0] = ext2_alloc_block(ext2);
   ext2->ind.blocks++;
 
   ext2->current_dir = ext2_alloc_inode(ext2);
+  strcpy(ext2->current_dir_name, "[root@ /");
   ext2_wr_ind(ext2, ext2->current_dir);
   // "." == ".." == root_dir
   // root_dir with no name
@@ -262,9 +260,9 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
   int offset = sprintf(out, "items  type  mode  size\n");
   printf("items  type  mode  size\n");
   uint32_t flag;
-  printf("b");
+  // printf("b");
   ext2_rd_ind(ext2, ext2->current_dir);
-  printf("e");
+  // printf("e");
   for (int i = 0; i < ext2->ind.block[i]; i++) {
     printf("b");
     ext2_rd_dir(ext2, ext2->ind.block[i]);
@@ -349,7 +347,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
       offset += sprintf(out + offset, "\n");
     }
   }
-  printf("end\n");
+  // printf("end\n");
 }
 
 void ext2_rd_sb(ext2_t* ext2) {
