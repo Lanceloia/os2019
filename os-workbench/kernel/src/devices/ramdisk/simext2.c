@@ -351,7 +351,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
   uint32_t idx, tmp1, tmp2, tmp3, flag;
   int offset = 0;
   ext2_rd_ind(ext2, ext2->current_dir);
-  if (!ext2_reserch_file(ext2, dirname, &tmp1, &tmp2, &tmp3)) {
+  if (!ext2_reserch_file(ext2, dirname, type, &tmp1, &tmp2, &tmp3)) {
     if (ext2->ind.size == DATA_SIZE) {
       offset += sprintf(out + offset, "No room to make directory!\n");
       return;
