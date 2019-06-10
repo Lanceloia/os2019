@@ -316,7 +316,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
         for (int j = 0; j < 15 - dir[k].name_len; j++)
           offset += sprintf(out + offset, "%c", ' ');
         offset += sprintf(out + offset, " <FILE>");
-        switch (inode_area[0].i_mode & 7) {
+        switch (ext2->ind.mode & 7) {
           case 1:
             offset += sprintf(out + offset, "____x");
             break;
