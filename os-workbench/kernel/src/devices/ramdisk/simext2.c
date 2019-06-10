@@ -264,8 +264,67 @@ void ext2_remove_block(ext2_t* ext2, uint32_t del_num) {
   ext2_wr_gd(ext2);
 }
 
+void ext2_remove_inode(ext2_t* ext2, uint32_t del_num) {
+  uint32_t tmp = (del_num - 1) / 8;
+  ext2_rd_inodebitmap(ext2);
+  switch ((del_num - 1) % 8) {
+    case 0:
+      ext2->inodebitmapbuf[tmp] &= 127;
+      break; /* 127 = 0b 01111111 */
+    case 1:
+      ext2->inodebitmapbuf[tmp] &= 191;
+      break; /* 191 = 0b 10111111 */
+    case 2:
+      ext2->inodebitmapbuf[tmp] &= 223;
+      break; /* 223 = 0b 11011111 */
+    case 3:
+      ext2->inodebitmapbuf[tmp] &= 239;
+      break; /* 239 = 0b 11101111 */
+    case 4:
+      ext2->inodebitmapbuf[tmp] &= 247;
+      break; /* 247 = 0b 11110111 */
+    case 5:
+      ext2->inodebitmapbuf[tmp] &= 251;
+      break; /* 251 = 0b 11111011 */
+    case 6:
+      ext2->inodebitmapbuf[tmp] &= 253;
+      break; /* 253 = 0b 11111101 */
+    case 7:
+      ext2->inodebitmapbuf[tmp] &= 254;
+      break; /* 254 = 0b 11111110 */
+  }
+  ext2_wr_inodebitmap(ext2);
+  ext2->gdt.free_inodes_count++;
+  ext2_wr_gd(ext2);
+}
+
 int ext2_search_file(ext2_t* ext2, uint32_t idx) {
   for (int i = 0; i < MAX_OPEN_FILE_AMUT; i++)
     if (ext2->file_open_table[i] == idx) return 1;
   return 0;
+}
+
+void ext2_cd(ext2_t* ext2, char* dirname) {
+  uint32_t i, j, k, flag;
+  if (!strcmp(dirname, "../")) dirname[2] = '\0';
+  if (!strcmp(dirname, "./")) dirname[1] = '\0';
+
+  flag = ext2_reserch_file(ext2, TYPE_DIR, &i, &j, &k);
+  if (flag) {
+    ext2->current_dir = i;
+    if (!strcmp(dirname, "..") && ext2->dir[k - 1].name_len) {
+      ext2->current_dir_name[strlen(ext2->current_dir_name) -
+                             ext2->dir[k - 1].name_len - 1] = '\0';
+      ext2->current_dir_name_len = ext->dir[k].name_len;
+    } else if (!strcmp(dirname, "."))
+      ;
+    else if (strcmp(dirname, "..")) {
+      ext2->current_dir_name_len = strlen(dirname);
+      strcat(ext2->current_dir_name, dirname);
+      strcat(ext2->current_dir_name, "/");
+    }
+    printf("Now in: [%s]\n"), ext2->current_dir_name);
+  } else {
+    printf("The directory [%s] not exists!\n", dirname);
+  }
 }
