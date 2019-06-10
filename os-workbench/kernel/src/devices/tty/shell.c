@@ -7,13 +7,12 @@ char bigbuf[2048] = {};
 /* shell command */
 #include <fs.h>
 
-uint32_t current_dir;
-uint32_t current_dir_name_len;
-char current_dir_name[128];
+static void pwd_do(device_t *tty, char *pwd) {
+  tty->ops->write(tty, 0, pwd, strlen(pwd));
+}
 
 static void echo_do(device_t *tty, char *str) {
-  sprintf(bigbuf, "%s\n", str);
-  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+  tty->ops->write(tty, 0, str, strlen(str));
 }
 
 /*
@@ -21,6 +20,7 @@ static void cd_do(device_t *tty, char *dirname) {
   extern void ext2_cd(fs_t * fs, char *dirname, char *buf);
 }
 */
+
 extern void ext2_ls(ext2_t *ext2, char *dirname, char *out);
 static void ls_do(device_t *tty, char *dirname) {
   ext2_ls(vfs->get_fs(0)->fs, dirname, bigbuf);
@@ -57,13 +57,16 @@ static void default_do(device_t *tty) {
 
 void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
+  char pwd[256] = "/";
   while (1) {
     sprintf(writebuf, "(%s) $ ", name);
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
     readbuf[nread - 1] = '\0';
 
-    if (!strncmp(readbuf, "echo ", 5))
+    if (!strcmp(readbuf, "pwd"))
+      pwd_do(tty, pwd);
+    else if (!strncmp(readbuf, "echo ", 5))
       echo_do(tty, readbuf + 5);
     else if (!strncmp(readbuf, "cat ", 4))
       cat_do(tty, readbuf + 4);
@@ -71,6 +74,7 @@ void shell_task(void *name) {
       ls_do(tty, readbuf + 3);
     else if (!strncmp(readbuf, "mkdir ", 6))
       mkdir_do(tty, readbuf + 6);
+
     else
       default_do(tty);
   }

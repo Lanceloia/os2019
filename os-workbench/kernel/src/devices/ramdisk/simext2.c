@@ -104,12 +104,10 @@ uint32_t ext2_alloc_inode(ext2_t* ext2) {
     flag++;
   }
   ext2->inodebitmapbuf[cur] = ext2->inodebitmapbuf[cur] + con;
-  ext2->last_alloc_inode = cur * 8 + flag + 1;  // why add 1 here?
+  ext2->last_alloc_inode = cur * 8 + flag + 1;
   ext2_wr_inodebitmap(ext2);
   ext2->gdt.free_inodes_count--;
   ext2_wr_gd(ext2);
-  // memset(ext2->datablockbuf, 0x00, BLK_SIZE);
-  // ext2_wr_ind(ext2, ext2->last_alloc_block);
   return ext2->last_alloc_inode;
 }
 
