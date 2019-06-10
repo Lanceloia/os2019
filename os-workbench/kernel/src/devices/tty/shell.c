@@ -1,4 +1,4 @@
-#include <devices.h>
+#include <klib.h>
 #include <simext2.h>
 
 char readbuf[128], writebuf[128];

@@ -154,4 +154,5 @@ void ext2_wr_datablock(ext2_t* ext2, uint32_t i) {
 }
 
 void ext2_ls(ext2_t* ext2, char* dirname, char* out);
+
 #endif
