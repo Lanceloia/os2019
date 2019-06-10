@@ -56,7 +56,7 @@ struct directory {
   uint8_t name_len;
   uint8_t file_type;
   char name[16];
-  char pad[26];
+  char pad[4];
 };
 
 typedef struct super_block sb_t;
