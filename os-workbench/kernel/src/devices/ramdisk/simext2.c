@@ -4,6 +4,29 @@
 /* functions
  * copyright: leungjyufung2019@outlook.com
  */
+void ext2_init(ext2_t* fs, char* dev_name);
+void ext2_rd_sb(ext2_t* fs);
+void ext2_wr_sb(ext2_t* fs);
+void ext2_rd_gd(ext2_t* fs);
+void ext2_wr_gd(ext2_t* fs);
+void ext2_rd_ind(ext2_t* fs, uint32_t i);
+void ext2_wr_ind(ext2_t* fs, uint32_t i);
+void ext2_rd_dir(ext2_t* fs, uint32_t i);
+void ext2_wr_dir(ext2_t* fs, uint32_t i);
+void ext2_rd_blockbitmap(ext2_t* fs);
+void ext2_wr_blockbitmap(ext2_t* fs);
+void ext2_rd_inodebitmap(ext2_t* fs);
+void ext2_wr_inodebitmap(ext2_t* fs);
+void ext2_rd_datablock(ext2_t* fs, uint32_t i);
+void ext2_wr_datablock(ext2_t* fs, uint32_t i);
+uint32_t ext2_alloc_block(ext2_t* fs);
+uint32_t ext2_alloc_inode(ext2_t* fs);
+uint32_t ext2_reserch_file(ext2_t* fs, char* name, int file_type,
+                           uint32_t* inode_num, uint32_t* block_num,
+                           uint32_t* dir_num);
+void ext2_dir_prepare(ext2_t* fs, uint32_t idx, uint32_t len, int type);
+void ext2_remove_block(ext2_t* fs, uint32_t del_num);
+int ext2_search_file(ext2_t* fs, uint32_t idx);
 
 void ext2_init(ext2_t* fs, char* dev_name) {
   fs->dev = dev_lookup(dev_name);
