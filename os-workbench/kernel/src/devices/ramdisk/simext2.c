@@ -310,9 +310,10 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
               break;
           }
           if (flag != 2)
-            offset += sprintf(out + offset, "-N/A");
+            offset += sprintf(out + offset, "  -N/A");
           else
-            offset += sprintf(out + offset, "%4d\n", ext2->ind.size);
+            offset += sprintf(out + offset, "%6d", ext2->ind.size);
+          offset += sprintf(out + offset, "\n");
         }
       } else if (ext2->dir[k].file_type == 1) {
         ext2_rd_ind(ext2, ext2->dir[k].inode);
@@ -342,7 +343,8 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
             offset += sprintf(out + offset, "r_w_x    ");
             break;
         }
-        offset += sprintf(out + offset, "%4d\n", ext2->ind.size);
+        offset += sprintf(out + offset, "%6d\n", ext2->ind.size);
+        offset += sprintf(out + offset, "\n");
       }
     }
   }
