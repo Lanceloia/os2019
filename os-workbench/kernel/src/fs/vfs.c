@@ -1,6 +1,6 @@
-#include <fs.h>
+#include <ext2fs.h>
 #include <klib.h>
-#include <simext2.h>
+#include <vfs.h>
 
 #define MAX_FS 4
 
