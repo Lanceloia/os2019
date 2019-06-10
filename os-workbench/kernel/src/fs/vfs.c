@@ -38,6 +38,13 @@ void vfs_build(int idx, char *name, char *path, device_t *dev, size_t size,
 fd_t fds[MAX_FD];
 id_t ids[32];
 
+struct node {
+  char *name;
+  int dot, ddot;
+  int next, child;
+} nodes[256] = {
+    {"/", 0, 0, -1, 1}, {"/dev/", 1, 0, 2, -1}, {"/proc/", 2, 0, -1, -1}};
+
 void vfs_init() {
   vfs_build(0, "ext2fs-ramdisk0", "/dev/ramdisk0", dev_lookup("ramdisk0"),
             sizeof(ext2_t), ext2_init, ext2_lookup, ext2_close);
@@ -146,6 +153,25 @@ fs_t *vfs_get_fs(int idx) {
     return NULL;
   else
     return &_fs[idx];
+}
+
+void vfs_cd(char *dirname, char *pwd, char *out) {
+  int offset = sprintf(out, "");
+  if (!strcmp(dirname, "../")) dirname[2] = '\0';
+  if (!strcmp(dirname, "./")) dirname[1] = '\0';
+
+  int idx = 0;
+  for (; strcmp(nodes[idx].name, pwd);) idx++;
+
+  if (!strcmp(dirname, ".."))
+    strcpy(pwd, nodes[nodes[idx].ddot].name);
+  else if (!strcmp(dirname, "."))
+    ;
+  else {
+    strcat(pwd, dirname);
+    strcat(pwd, "/");
+  }
+  offset += sprintf(out + offset, "Current directory: %s\n", pwd);
 }
 
 MODULE_DEF(vfs){

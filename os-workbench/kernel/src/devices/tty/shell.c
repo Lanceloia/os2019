@@ -18,6 +18,7 @@ static void echo_do(device_t *tty, char *str) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+void vfs_cd(char *dirname, char *pwd, char *out);
 void ext2_cd(ext2_t *ext2, char *dirname, char *pwd, char *out);
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
   switch (vfs_identify_fs(pwd)) {
