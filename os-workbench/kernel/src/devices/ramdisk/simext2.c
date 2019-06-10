@@ -350,9 +350,11 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
 void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
   uint32_t idx, tmp1, tmp2, tmp3, flag;
   int offset = 0;
-
+  printf("b");
   ext2_rd_ind(ext2, ext2->current_dir);
+  printf("e");
   if (!ext2_reserch_file(ext2, dirname, type, &tmp1, &tmp2, &tmp3)) {
+    printf("b");
     if (ext2->ind.size == DATA_SIZE) {
       offset += sprintf(out + offset, "No room to make directory!\n");
       return;
@@ -386,6 +388,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       for (int i = 0; i < DIR_AMUT; i++) ext2->dir[i].inode = 0;
       ext2_wr_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
     }
+    printf("e");
     ext2->ind.size += DIR_SIZE;  // origin 16
     ext2_wr_ind(ext2, ext2->current_dir);
     ext2_dir_prepare(ext2, idx, strlen(dirname), type);
