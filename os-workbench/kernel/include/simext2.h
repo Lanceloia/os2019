@@ -91,7 +91,7 @@ typedef struct ext2 ext2_t;
 
 enum { TYPE_DIR = 2 };
 
-void ext2_rd_sb(ext2_t* ext2) {
+static void ext2_rd_sb(ext2_t* ext2) {
   ext2->dev->ops->read(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
 }
 
