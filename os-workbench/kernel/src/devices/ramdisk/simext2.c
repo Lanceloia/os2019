@@ -376,7 +376,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       ext2->dir[j].name_len = strlen(dirname);
       ext2->dir[j].file_type = type;
       strcpy(ext2->dir[j].name, dirname);
-      ext2_wr_dir(ext2, ext2->ind.block[i]);
+      ext2_wr_dir(ext2, ext2->ind.block[i - 1]);
     } else {
       assert(0);
       printf("fuck ? %d ", ext2->ind.blocks);
