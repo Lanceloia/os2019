@@ -24,7 +24,7 @@ void vfs_build(int idx, char *name, device_t *dev,
   _fs_ops[idx].init = init;
   _fs_ops[idx].lookup = lookup;
   _fs_ops[idx].close = close;
-  _fs_ops[idx].init(_fs[idx], name, dev);
+  _fs_ops[idx].init(&_fs[idx], name, dev);
 }
 
 void vfs_init() {
