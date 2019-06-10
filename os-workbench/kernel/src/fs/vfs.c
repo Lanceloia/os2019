@@ -44,7 +44,7 @@ void vfs_init() {
   // vfs_build(1, "tty1", dev_lookup("tty1"));
 }
 
-static int identify_fs(const char *path) {
+int vfs_identify_fs(const char *path) {
   int idx = -1;
   for (int i = 0; i < MAX_FS; i++)
     if (!strncmp(path, _path[i], strlen(_path[i]))) idx = i;

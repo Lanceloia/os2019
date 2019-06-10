@@ -20,7 +20,15 @@ static void echo_do(device_t *tty, char *str) {
 
 void ext2_cd(ext2_t *ext2, char *dirname, char *pwd, char *out);
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
-  ext2_cd(vfs->get_fs(0)->fs, dirname, pwd, bigbuf);
+  switch (vfs_identify_fs(pwd)) {
+    case -1:  // vfs cd
+      break;
+    case 0:  // ext2 cd
+      ext2_cd(vfs->get_fs(0)->fs, dirname, pwd, bigbuf);
+    default:
+      assert(0);
+      break;
+  };
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 

@@ -52,4 +52,6 @@ struct file_sys_ops {
   int (*close)(id_t *id);
 };
 
+int vfs_identify_fs(const char *path);
+
 #endif
