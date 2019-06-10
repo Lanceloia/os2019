@@ -91,7 +91,7 @@ int vfs_close(int fd) {
   return 1;
 }
 
-void *vfs_get_fs(int idx) {
+fs_t *vfs_get_fs(int idx) {
   if (idx < 0 || idx >= MAX_FS)
     return NULL;
   else
