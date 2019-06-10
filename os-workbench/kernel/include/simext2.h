@@ -12,7 +12,7 @@
 #define DATA_BLOCK ((4 + 512) * BLK_SIZE)  // data block offset
 #define DATA_SIZE (4096)                   // data block size(blocks)
 #define DISK_SIZE (DATA_SIZE + 512)        // disk size(blocks)
-#define EXT2_N_BLOCKS (15)                 // ext2 inode blocks
+#define EXT2_N_BLOCKS (12)                 // ext2 inode blocks
 #define VOLUME_NAME "EXT2FS"               // volume name
 
 struct super_block {
@@ -40,13 +40,12 @@ struct group_desc {
 };
 
 struct inode {
-  /* inode, 32 bytes */
+  /* inode, 64 bytes */
   uint16_t mode;                  // the mode of file
-  uint16_t uid;                   // the uid of owner
   uint32_t blocks;                // the size of file (blks)
   uint32_t size;                  // the size of file (bytes)
   uint32_t block[EXT2_N_BLOCKS];  // direct or indirect blocks
-  char pad[14];
+  char pad[6];
 };
 
 struct directory {
