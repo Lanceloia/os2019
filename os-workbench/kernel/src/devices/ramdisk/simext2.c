@@ -377,7 +377,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       ext2->ind.block[ext2->ind.blocks] = ext2_alloc_block(ext2);
       ext2->ind.blocks++;
       ext2_rd_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
-      idx = ext2->dir[0].inode = ext2->last_alloc_inode(ext2);
+      idx = ext2->dir[0].inode = ext2_last_alloc_inode(ext2);
       ext2->dir[0].name_len = strlen(dirname);
       ext2->dir[0].file_type = type;
       strcpy(ext2->dir[0].name, dirname);
