@@ -1,8 +1,33 @@
 #include <common.h>
+#include <devices.h>
 #include <fs.h>
 #include <klib.h>
 
-void vfs_init() {}
+#define MAX_FS 4
+
+fs_t _fs[MAX_FS];
+fs_ops_t _fs_ops[MAX_FS];
+
+extern void ext2_init(fs_t *fs, const char *name, device_t *dev);
+extern id_t ext2_lookup(fs_t *fs, const char *path, int flags);
+extern int ext2_close(id_t *id);
+
+void vfs_build(int idx, char *name,
+               void (*init)(fs_t *, const char *, device_t *),
+               id_t (*lookup)(fs_t *fs, const char *path, int flags),
+               int (*close)(id_t *id)) {
+  strcpy(_fs[idx].name, name);
+  _fs[idx].ops = &_fs_ops[idx];
+  _fs[idx].dev = dev;
+  _fs_ops[idx].init = init;
+  _fs_ops[idx].lookup = lookup;
+  _fs_ops[idx].close = close;
+}
+
+void vfs_init() {
+  vfs_build(0, "ext2fs-ramdisk0", dev_lookup("ramdisk0"));
+  // vfs_build(1, "ext2fs-ramdisk1", dev_lookup("ramdisk1"));
+}
 
 int vfs_access(const char *path, int mode) {
   assert(0);

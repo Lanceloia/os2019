@@ -39,6 +39,7 @@ struct inode_desc_ops {
 
 struct file_sys {
   char name[NAME_lENGTH];
+  void *fs;
   fs_ops_t *ops;
   device_t *dev;
 };
