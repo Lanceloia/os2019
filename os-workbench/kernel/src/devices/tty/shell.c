@@ -29,7 +29,7 @@ static void ls_do(device_t *tty, char *dirname) {
 
 extern void ext2_mkdir(ext2_t *ext2, char *dirname, char *out);
 static void mkdir_do(device_t *tty, char dirname) {
-  ext2_mk(vfs->get_fs(0)->fs, dirname, bigbuf);
+  ext2_mkdir(vfs->get_fs(0)->fs, dirname, bigbuf);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
@@ -60,12 +60,14 @@ void shell_task(void *name) {
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
     readbuf[nread - 1] = '\0';
 
-    if (strncmp(readbuf, "echo ", 5) == 0)
+    if (!strncmp(readbuf, "echo ", 5))
       echo_do(tty, readbuf + 5);
-    else if (strncmp(readbuf, "cat ", 4) == 0)
+    else if (!strncmp(readbuf, "cat ", 4))
       cat_do(tty, readbuf + 4);
-    else if (strncmp(readbuf, "ls ", 3) == 0)
+    else if (!strncmp(readbuf, "ls ", 3))
       ls_do(tty, readbuf + 3);
+    else if (!strncmp(readbuf, "mkdir ", 6))
+      mkdir_do(tty, readbuf + 6);
     else
       default_do(tty);
   }
