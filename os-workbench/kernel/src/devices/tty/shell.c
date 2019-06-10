@@ -1,6 +1,6 @@
 #include <klib.h>
-#include "../../../fs/ext2fs.h"
-#include "../../../fs/vfs.h"
+#include "../../../include/fs/ext2fs.h"
+#include "../../../include/fs/vfs.h"
 
 char readbuf[128], writebuf[128];
 char bigbuf[2048] = {};
