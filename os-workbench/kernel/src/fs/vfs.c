@@ -58,14 +58,15 @@ static int identify_fs(const char *path) {
 int vfs_access(const char *path, int mode) {
   int idx = identify_fs(path);
   // 0 for accessable
-  return _fs[idx].ops->lookup(&_fs[idx], path + strlen(_path[idx]), mode) ==
-         NULL;
+  if (_fs[idx].ops->lookup(&_fs[idx], path + strlen(_path[idx]), mode) == NULL)
+    return 1;
+  return 0;
 }
 
 int vfs_mount(const char *path, fs_t *fs) {
   int idx = fs - &_fs[0];
   if (idx < 0 || idx >= MAX_FS) return 1;
-  _path[idx] = path;
+  strcpy(_path[idx], path);
   return 0;
 }
 
