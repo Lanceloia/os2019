@@ -259,7 +259,7 @@ void ext2_cd(fs_t* fs, char* dirname, char* buf) {
 */
 
 void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
-  int offset = sprintf(out, "items          type     mode     size\n");
+  int offset = sprintf(out, "items           type      mode      size\n");
   uint32_t flag;
   ext2_rd_ind(ext2, ext2->current_dir);
   for (int i = 0; i < ext2->ind.blocks; i++) {
@@ -282,7 +282,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
               offset += sprintf(out + offset, "%c", ' ');
             flag = 2;
           }
-          offset += sprintf(out + offset, " <DIR>   ");
+          offset += sprintf(out + offset, " <DIR>    ");
           switch (ext2->ind.mode & 7) {
             case 1:
               offset += sprintf(out + offset, "____x    ");
@@ -316,7 +316,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
         ext2_rd_ind(ext2, ext2->dir[k].inode);
         for (int j = 0; j < 15 - ext2->dir[k].name_len; j++)
           offset += sprintf(out + offset, "%c", ' ');
-        offset += sprintf(out + offset, " <FILE>  ");
+        offset += sprintf(out + offset, " <FILE>   ");
         switch (ext2->ind.mode & 7) {
           case 1:
             offset += sprintf(out + offset, "____x    ");
@@ -358,9 +358,9 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
     }
     if (ext2->ind.size != ext2->ind.blocks * BLK_SIZE) {
       int i, j;
+      printf("%d ", ext2->ind.blocks);
       for (i = 0, flag = 1; flag && i < ext2->ind.blocks; i++) {
         ext2_rd_dir(ext2, ext2->ind.block[i]);
-        printf("%d ", ext2->ind.blocks);
         // why start at 0? it can start at (blocks - 1)
         for (j = 0; j < DIR_AMUT; j++) {
           if (ext2->dir[j].inode == 0) {
