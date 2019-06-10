@@ -25,7 +25,8 @@ void vfs_build(int idx, char *name, device_t *dev,
 }
 
 void vfs_init() {
-  vfs_build(0, "ext2fs-ramdisk0", dev_lookup("ramdisk0"));
+  vfs_build(0, "ext2fs-ramdisk0", dev_lookup("ramdisk0"), ext2_init,
+            ext2_lookup, ext2_close);
   // vfs_build(1, "ext2fs-ramdisk1", dev_lookup("ramdisk1"));
 }
 
