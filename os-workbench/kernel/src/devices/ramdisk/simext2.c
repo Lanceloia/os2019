@@ -260,6 +260,7 @@ void ext2_cd(fs_t* fs, char* dirname, char* buf) {
 
 void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
   int offset = sprintf(out, "items  type  mode  size\n");
+  printf("items  type  mode  size\n");
   uint32_t flag;
   ext2_rd_ind(ext2, ext2->current_dir);
   for (int i = 0; i < ext2->ind.block[i];) {
