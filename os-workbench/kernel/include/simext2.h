@@ -4,16 +4,15 @@
 #include <devices.h>
 
 #define BLK_SIZE (512)
-#define BLK *512
-#define DISK_START (0 BLK)          // disk offset
-#define GDT_START (1 BLK)           // group_desc table offset
-#define BLK_BITMAP (2 BLK)          // block bitmap offset
-#define IND_BITMAP (3 BLK)          // inode bitmap offset
-#define INDT_START (4 BLK)          // inode table offset
-#define DATA_BLOCK ((4 + 512) BLK)  // data block offset
-// #define DISK_SIZE (4096 + 512)      // disk size(blocks)
-#define EXT2_N_BLOCKS (15)    // ext2 inode blocks
-#define VOLUME_NAME "EXT2FS"  // volume name
+#define DISK_START (0 * BLK_SIZE)          // disk offset
+#define GDT_START (1 * BLK_SIZE)           // group_desc table offset
+#define BLK_BITMAP (2 * BLK_SIZE)          // block bitmap offset
+#define IND_BITMAP (3 * BLK_SIZE)          // inode bitmap offset
+#define INDT_START (4 * BLK_SIZE)          // inode table offset
+#define DATA_BLOCK ((4 + 512) * BLK_SIZE)  // data block offset
+#define DISK_SIZE (4096 + 512)             // disk size(blocks)
+#define EXT2_N_BLOCKS (15)                 // ext2 inode blocks
+#define VOLUME_NAME "EXT2FS"               // volume name
 
 struct super_block {
   /* super block, 32 bytes */
@@ -23,6 +22,9 @@ struct super_block {
   uint16_t inodes_per_blocks;
   char pad[10];
 };
+
+#define INODE_TABLE_COUNT 4096
+#define DATA_BLOCK_COUNT 4096
 
 struct group_desc {
   /* block group descriptor, 32 bytes */
@@ -66,6 +68,7 @@ typedef struct directory dir_t;
 #define IND_SIZE (sizeof(ind_t))
 #define DIR_SIZE (sizeof(dir_t))
 #define DIR_AMUT (BLK_SIZE / DIR_SIZE)
+#define MAX_OPEN_FILE_AMUT (16)
 
 struct ext2 {
   struct super_block sb;
@@ -79,6 +82,8 @@ struct ext2 {
   uint32_t last_alloc_inode;
   uint32_t current_dir;
   uint32_t current_dir_name_len;
+  uint32_t file_open_table[MAX_OPEN_FILE_AMUT];
+  char current_dir_name[128];
   device_t* dev;
 };
 

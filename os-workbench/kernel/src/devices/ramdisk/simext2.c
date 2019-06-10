@@ -1,10 +1,48 @@
+#include <klib.h>
 #include <simext2.h>
 
 /* functions
  * copyright: leungjyufung2019@outlook.com
  */
 
-void ext2_init(ext2_t* fs, char* dev_name) { fs->dev = dev_lookup(dev_name); }
+void ext2_init(ext2_t* fs, char* dev_name) {
+  fs->dev = dev_lookup(dev_name);
+  printf("Creating ext2fs\n");
+  fs->last_alloc_inode = 1;
+  fs->last_alloc_block = 0;
+  for (int i = 0; i < MAX_OPEN_FILE_AMUT; i++) fs->file_open_table[i] = 0;
+  // for (int i = 0; i < BLK_SIZE; i++) fs->datablockbuf = 0;
+  memset(fs->sb, 0x00, SB_SIZE);
+  memset(fs->gdt, 0x00, GD_SIZE * 1);
+  ext2_wr_ind(fs, 1);
+  ext2_wr_dir(fs, 0);
+  strcpy(fs->current_dir_name, "[root@ /");
+  ext2_rd_gd(fs);  // gdt is changed here
+  fs->gdt.block_bitmap = BLK_BITMAP;
+  fs->gdt.inode_bitmap = IND_BITMAP;
+  fs->gdt.inode_table = INDT_START;  // maye be no use
+  fs->gdt.free_blocks_count = DATA_BLOCK_COUNT;
+  fs->gdt.free_inodes_count = INODE_TABLE_COUNT;
+  fs->gdt.used_dirs_count = 0;
+  ext2_wr_gd(fs);
+
+  ext2_rd_blockbitmap(fs);
+  ext2_rd_inodebitmap(fs);
+  fs->ind.mode = 01006;
+  fs->ind.blocks = 0;
+  fs->ind.blocks = 32;  // maybe wrong
+  fs->ind.block[0] = ext2_alloc_block(fs);
+  fs->ind.blocks++;
+  fs->current_dir = ext2_alloc_inode(fs);
+  ext2_wr_ind(fs->current_dir);
+
+  fs->dir[0].inode = fs->dir[1].inode = fs->current_dir;
+  fs->dir[0].name_len = fs->dir[1].name_len = 0;
+  fs->dir[0].file_type = fs->dir[1].file_type = TYPE_DIR;
+  strcpy(fs->dir[0].name, ".");
+  strcpy(fs->dir[1].name, "..");
+  ext2_wr_dir(fs, fs->ind.block[0]);
+}
 
 void ext2_rd_sb(ext2_t* fs) {
   fs->dev->ops->read(fs->dev, DISK_START, &fs->sb, SB_SIZE);
@@ -163,4 +201,44 @@ void ext2_dir_prepare(ext2_t* fs, uint32_t idx, uint32_t len, int type) {
     fs->ind.mode = 00407; /* drwxrwxrwx: ? */
   }
   ext2_wr_ind(fs, idx);
+}
+
+void ext2_remove_block(ext2_t* fs, uint32_t del_num) {
+  uint32_t tmp = del_num / 8;
+  ext2_rd_blockbitmap(fs);
+  switch (del_num % 8) {
+    case 0:
+      fs->blockbitmapbuf[tmp] &= 127;
+      break; /* 127 = 0b 01111111 */
+    case 1:
+      fs->blockbitmapbuf[tmp] &= 191;
+      break; /* 191 = 0b 10111111 */
+    case 2:
+      fs->blockbitmapbuf[tmp] &= 223;
+      break; /* 223 = 0b 11011111 */
+    case 3:
+      fs->blockbitmapbuf[tmp] &= 239;
+      break; /* 239 = 0b 11101111 */
+    case 4:
+      fs->blockbitmapbuf[tmp] &= 247;
+      break; /* 247 = 0b 11110111 */
+    case 5:
+      fs->blockbitmapbuf[tmp] &= 251;
+      break; /* 251 = 0b 11111011 */
+    case 6:
+      fs->blockbitmapbuf[tmp] &= 253;
+      break; /* 253 = 0b 11111101 */
+    case 7:
+      fs->blockbitmapbuf[tmp] &= 254;
+      break; /* 254 = 0b 11111110 */
+  }
+  ext2_wr_blockbitmap(fs);
+  fs->gdt.free_blocks_count++;
+  ext2_wr_gd(fs);
+}
+
+int ext2_search_file(ext2_t* fs, uint32_t idx) {
+  for (int i = 0; i < MAX_OPEN_FILE_AMUT; i++)
+    if (fs->file_open_table[i] == idx) return 1;
+  return 0;
 }
