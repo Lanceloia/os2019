@@ -342,7 +342,8 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
         }
         offset += sprintf(out + offset, "%6d\n", ext2->ind.size);
         offset += sprintf(out + offset, "\n");
-      }
+      } else
+        printf("Fuck me, plz!\n");
     }
   }
 }
