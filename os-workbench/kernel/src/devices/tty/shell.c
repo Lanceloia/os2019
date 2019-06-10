@@ -17,11 +17,11 @@ static void echo_do(device_t *tty, char *str) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
-/*
-static void cd_do(device_t *tty, char *dirname) {
-  extern void ext2_cd(fs_t * fs, char *dirname, char *buf);
+void ext2_cd(ext2_t *ext2, char *dirname, char *pwd, char *out);
+static void cd_do(device_t *tty, char *dirname, char *pwd) {
+  ext2_cd(vfs->get_fs(0)->fs, dirname, pwd, bigbuf);
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
-*/
 
 extern void ext2_ls(ext2_t *ext2, char *dirname, char *out);
 static void ls_do(device_t *tty, char *dirname) {
@@ -76,7 +76,8 @@ void shell_task(void *name) {
       ls_do(tty, readbuf + 3);
     else if (!strncmp(readbuf, "mkdir ", 6))
       mkdir_do(tty, readbuf + 6);
-
+    else if (!strncmp(readbuf, "cd ", 3))
+      cd_do(tty, readbuf + 3, pwd);
     else
       default_do(tty);
   }

@@ -230,9 +230,8 @@ int ext2_search_file(ext2_t* ext2, uint32_t idx) {
   return 0;
 }
 
-/*
-void ext2_cd(fs_t* fs, char* dirname, char* buf) {
-  ext2_t* ext2 = fs->fs;
+void ext2_cd(ext2_t* ext2, char* dirname, char* pwd, char* out) {
+  int offset = 0;
   uint32_t i, j, k, flag;
   if (!strcmp(dirname, "../")) dirname[2] = '\0';
   if (!strcmp(dirname, "./")) dirname[1] = '\0';
@@ -240,23 +239,19 @@ void ext2_cd(fs_t* fs, char* dirname, char* buf) {
   flag = ext2_reserch_file(ext2, dirname, TYPE_DIR, &i, &j, &k);
   if (flag) {
     ext2->current_dir = i;
-    if (!strcmp(dirname, "..") && ext2->dir[k - 1].name_len) {
-      ext2->current_dir_name[strlen(ext2->current_dir_name) -
-                             ext2->dir[k - 1].name_len - 1] = '\0';
-      ext2->current_dir_name_len = ext2->dir[k].name_len;
-    } else if (!strcmp(dirname, "."))
+    if (!strcmp(dirname, "..") && ext2->dir[k - 1].name_len)
+      pwd[strlen(pwd) - ext2->dir[k - 1].name_len - 1] = '\0';
+    else if (!strcmp(dirname, "."))
       ;
     else if (strcmp(dirname, "..")) {
-      ext2->current_dir_name_len = strlen(dirname);
-      strcat(ext2->current_dir_name, dirname);
-      strcat(ext2->current_dir_name, "/");
+      strcat(pwd, dirname);
+      strcat(pwd, "/");
     }
-    sprintf(buf, "Now in: [%s]\n", ext2->current_dir_name);
+    offset += sprintf(out + offset, "Current directory: [%s]\n", pwd);
   } else {
-    sprintf(buf, "The directory [%s] not exists!\n", dirname);
+    offset += sprintf(out + offset, "No directory: [%s]\n", dirname);
   }
 }
-*/
 
 void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
   int offset = sprintf(out, "items           type     mode     size\n");
