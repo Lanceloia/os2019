@@ -350,11 +350,11 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
 void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
   uint32_t idx, ninode, nblock, ndir, flag;
   int offset = 0;
-  printf("b");
+  // printf("b");
   ext2_rd_ind(ext2, ext2->current_dir);
-  printf("e");
+  // printf("e");
   if (!ext2_reserch_file(ext2, dirname, type, &ninode, &nblock, &ndir)) {
-    printf("b");
+    // printf("b");
     if (ext2->ind.size == DATA_SIZE) {
       offset += sprintf(out + offset, "No room to make directory!\n");
       return;
@@ -377,6 +377,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       strcpy(ext2->dir[j].name, dirname);
       ext2_wr_dir(ext2, ext2->ind.block[i - 1]);
     } else {
+      assert(0);
       printf("fuck ? %d ", ext2->ind.blocks);
       ext2->ind.block[ext2->ind.blocks] = ext2_alloc_block(ext2);
       ext2->ind.blocks++;
@@ -385,10 +386,10 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       ext2->dir[0].name_len = strlen(dirname);
       ext2->dir[0].file_type = type;
       strcpy(ext2->dir[0].name, dirname);
-      for (int i = 0; i < DIR_AMUT; i++) ext2->dir[i].inode = 0;
+      for (int i = 1; i < DIR_AMUT; i++) ext2->dir[i].inode = 0;
       ext2_wr_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
     }
-    printf("e");
+    // printf("e");
     ext2->ind.size += DIR_SIZE;  // origin 16
     ext2_wr_ind(ext2, ext2->current_dir);
     ext2_dir_prepare(ext2, idx, strlen(dirname), type);
