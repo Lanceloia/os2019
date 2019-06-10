@@ -41,7 +41,7 @@ id_t ids[32];
 void vfs_init() {
   vfs_build(0, "ext2fs-ramdisk0", "/dev/ramdisk0", dev_lookup("ramdisk0"),
             sizeof(ext2_t), ext2_init, ext2_lookup, ext2_close);
-  vfs_build(1, "tty1", dev_lookup("tty1"));
+  // vfs_build(1, "tty1", dev_lookup("tty1"));
 }
 
 static int identify_fs(const char *path) {
