@@ -14,13 +14,14 @@ extern void ext2_init(fs_t *fs, const char *name, device_t *dev);
 extern id_t *ext2_lookup(fs_t *fs, const char *path, int flags);
 extern int ext2_close(id_t *id);
 
-void vfs_build(int idx, char *name, device_t *dev, int size,
+void vfs_build(int idx, char *name, device_t *dev, size_t size,
                void (*init)(fs_t *, const char *, device_t *),
                id_t *(*lookup)(fs_t *fs, const char *path, int flags),
                int (*close)(id_t *id)) {
   strcpy(_fs[idx].name, name);
   // printf("name: %s", name);
-  _fs[idx].fs = pmm->alloc() _fs[idx].ops = &_fs_ops[idx];
+  _fs[idx].fs = pmm->alloc(size);
+  _fs[idx].ops = &_fs_ops[idx];
   _fs[idx].dev = dev;
   _fs_ops[idx].init = init;
   _fs_ops[idx].lookup = lookup;
