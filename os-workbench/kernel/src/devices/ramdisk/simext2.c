@@ -68,7 +68,7 @@ void ext2_wr_datablock(ext2_t* fs, uint32_t i) {
   fs->dev->ops->write(fs->dev, offset, &fs->datablockbuf, BLK_SIZE);
 }
 
-uint32_t ext2_alloc_block(ext2_t* fs, uint32_t i) {
+uint32_t ext2_alloc_block(ext2_t* fs) {
   uint32_t cur = fs->last_alloc_block / 8;
   uint32_t con = 0x80; /* 0b10000000 */
   int flag = 0;
