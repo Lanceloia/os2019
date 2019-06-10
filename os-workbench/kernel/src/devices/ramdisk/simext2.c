@@ -269,18 +269,20 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
         offset += sprintf(out + offset, "%s", ext2->dir[k].name);
         if (ext2->dir[k].file_type == TYPE_DIR) {
           ext2_rd_ind(ext2, ext2->dir[k].inode);
-          if (!strcmp(ext2->dir[k].name, "..")) {
-            for (int j = 0; j < 15 - 2; j++)
-              offset += sprintf(out + offset, "%c", ' ');
-            flag = 1;
-          } else if (!strcmp(ext2->dir[k].name, ".")) {
+          if (!strcmp(ext2->dir[k].name, ".")) {
+            flag = 0;
             for (int j = 0; j < 15 - 1; j++)
               offset += sprintf(out + offset, "%c", ' ');
-            flag = 0;
+
+          } else if (!strcmp(ext2->dir[k].name, "..")) {
+            flag = 1;
+            for (int j = 0; j < 15 - 2; j++)
+              offset += sprintf(out + offset, "%c", ' ');
+
           } else {
+            flag = 2;
             for (int j = 0; j < 15 - ext2->dir[k].name_len; j++)
               offset += sprintf(out + offset, "%c", ' ');
-            flag = 2;
           }
           offset += sprintf(out + offset, " <DIR>    ");
           switch (ext2->ind.mode & 7) {
@@ -342,8 +344,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
         }
         offset += sprintf(out + offset, "%6d\n", ext2->ind.size);
         offset += sprintf(out + offset, "\n");
-      } else
-        printf("Fuck me, plz!\n");
+      }
     }
   }
 }
@@ -392,7 +393,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       ext2_wr_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
     }
     // printf("e");
-    ext2->ind.size += DIR_SIZE;  // origin 16
+    ext2->ind.size += 16;  // origin 16
     ext2_wr_ind(ext2, ext2->current_dir);
     ext2_dir_prepare(ext2, idx, strlen(dirname), type);
   } else {
