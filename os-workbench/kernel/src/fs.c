@@ -18,6 +18,7 @@ void vfs_build(int idx, char *name, device_t *dev,
                id_t *(*lookup)(fs_t *fs, const char *path, int flags),
                int (*close)(id_t *id)) {
   strcpy(_fs[idx].name, name);
+  printf("name: %s", name);
   _fs[idx].ops = &_fs_ops[idx];
   _fs[idx].dev = dev;
   _fs_ops[idx].init = init;
