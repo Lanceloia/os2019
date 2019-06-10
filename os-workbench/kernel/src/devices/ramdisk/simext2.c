@@ -261,9 +261,9 @@ void ext2_cd(fs_t* fs, char* dirname, char* buf) {
 void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
   int offset = sprintf(out, "items  type  mode  size\n");
   uint32_t flag;
-  ext2_rd_ind(ext2->current_dir);
+  ext2_rd_ind(ext2, ext2->current_dir);
   for (int i = 0; i < ext2->ind.blocks[i];) {
-    ext2_rd_dir(ext2, ext2->ind.block[i]);
+    ext2_rd_dir(ext2, ext2->ind.blocks[i]);
     for (int k = 0; k < DIR_AMUT; k++) {
       if (ext2->dir[k].inode) {
         offset += sprintf(out + offset, "%s", ext2->dir[k].name);
@@ -279,7 +279,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
             flag = 0;
           } else {
             for (int j = 0; j < 15 - ext2->dir[k].name_len; j++)
-              offset += sprintf(out + offset, "%c", '');
+              offset += sprintf(out + offset, "%c", ' ');
             flag = 2;
           }
           offset += sprintf(out + offset, " <DIR> ");
@@ -307,7 +307,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
               break;
           }
           if (flag != 2)
-            offset += sprintf(out + offset, " ----");
+            offset += sprintf(out + offset, "----");
           else
             offset += sprintf(out + offset, "%4d", ext2->ind.size);
         }
