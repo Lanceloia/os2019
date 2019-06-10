@@ -23,6 +23,7 @@ void ext2_cd(ext2_t *ext2, char *dirname, char *pwd, char *out);
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
   switch (vfs_identify_fs(pwd)) {
     case -1:  // vfs cd
+      vfs_cd(dirname, pwd, bigbuf);
       break;
     case 0:  // ext2 cd
       ext2_cd(vfs->get_fs(0)->fs, dirname, pwd, bigbuf);
@@ -69,7 +70,7 @@ static void default_do(device_t *tty) {
 
 void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
-  char pwd[256] = "/";
+  char pwd[256] = "/dev/ramdisk0";
   while (1) {
     sprintf(writebuf, "(%s) $ ", name);
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
