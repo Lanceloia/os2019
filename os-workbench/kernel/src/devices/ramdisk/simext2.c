@@ -42,7 +42,7 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   ext2_rd_inodebitmap(ext2);
   ext2->ind.mode = 01006;
   ext2->ind.blocks = 0;
-  ext2->ind.size = 32;  // maybe wrong
+  ext2->ind.size = 2 * DIR_SIZE;  // origin 32, maybe wrong
   ext2->ind.block[0] = ext2_alloc_block(ext2);
   ext2->ind.blocks++;
 
@@ -108,6 +108,8 @@ uint32_t ext2_alloc_inode(ext2_t* ext2) {
   ext2_wr_inodebitmap(ext2);
   ext2->gdt.free_inodes_count--;
   ext2_wr_gd(ext2);
+  memset(ext2->datablockbuf, 0x00, BLK_SIZE);
+  ext2_wr_ind(ext2, ext2->last_alloc_block);
   return ext2->last_alloc_inode;
 }
 
@@ -393,7 +395,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       ext2_wr_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
     }
     // printf("e");
-    ext2->ind.size += 16;  // origin 16
+    ext2->ind.size += DIR_SIZE;  // origin 16
     ext2_wr_ind(ext2, ext2->current_dir);
     ext2_dir_prepare(ext2, idx, strlen(dirname), type);
   } else {
