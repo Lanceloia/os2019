@@ -258,7 +258,7 @@ void ext2_cd(fs_t* fs, char* dirname, char* buf) {
 
 void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
   int offset = sprintf(out, "items  type  mode  size\n");
-  printf("items  type  mode  size\n");
+  printf("items             type     mode     size\n");
   uint32_t flag;
   // printf("b");
   ext2_rd_ind(ext2, ext2->current_dir);
@@ -285,66 +285,65 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
               offset += sprintf(out + offset, "%c", ' ');
             flag = 2;
           }
-          offset += sprintf(out + offset, " <DIR> ");
+          offset += sprintf(out + offset, " <DIR>   ");
           switch (ext2->ind.mode & 7) {
             case 1:
-              offset += sprintf(out + offset, "____x");
+              offset += sprintf(out + offset, "____x    ");
               break;
             case 2:
-              offset += sprintf(out + offset, "__w__");
+              offset += sprintf(out + offset, "__w__    ");
               break;
             case 3:
-              offset += sprintf(out + offset, "__w_x");
+              offset += sprintf(out + offset, "__w_x    ");
               break;
             case 4:
-              offset += sprintf(out + offset, "r____");
+              offset += sprintf(out + offset, "r____    ");
               break;
             case 5:
-              offset += sprintf(out + offset, "r___x");
+              offset += sprintf(out + offset, "r___x    ");
               break;
             case 6:
-              offset += sprintf(out + offset, "r_w__");
+              offset += sprintf(out + offset, "r_w__    ");
               break;
             case 7:
-              offset += sprintf(out + offset, "r_w_x");
+              offset += sprintf(out + offset, "r_w_x    ");
               break;
           }
           if (flag != 2)
-            offset += sprintf(out + offset, "----");
+            offset += sprintf(out + offset, "-N/A");
           else
-            offset += sprintf(out + offset, "%4d", ext2->ind.size);
+            offset += sprintf(out + offset, "%4d\n", ext2->ind.size);
         }
       } else if (ext2->dir[k].file_type == 1) {
         ext2_rd_ind(ext2, ext2->dir[k].inode);
         for (int j = 0; j < 15 - ext2->dir[k].name_len; j++)
           offset += sprintf(out + offset, "%c", ' ');
-        offset += sprintf(out + offset, " <FILE>");
+        offset += sprintf(out + offset, " <FILE>  ");
         switch (ext2->ind.mode & 7) {
           case 1:
-            offset += sprintf(out + offset, "____x");
+            offset += sprintf(out + offset, "____x    ");
             break;
           case 2:
-            offset += sprintf(out + offset, "__w__");
+            offset += sprintf(out + offset, "__w__    ");
             break;
           case 3:
-            offset += sprintf(out + offset, "__w_x");
+            offset += sprintf(out + offset, "__w_x    ");
             break;
           case 4:
-            offset += sprintf(out + offset, "r____");
+            offset += sprintf(out + offset, "r____    ");
             break;
           case 5:
-            offset += sprintf(out + offset, "r___x");
+            offset += sprintf(out + offset, "r___x    ");
             break;
           case 6:
-            offset += sprintf(out + offset, "r_w__");
+            offset += sprintf(out + offset, "r_w__    ");
             break;
           case 7:
-            offset += sprintf(out + offset, "r_w_x");
+            offset += sprintf(out + offset, "r_w_x    ");
             break;
         }
-        offset += sprintf(out + offset, "%4d", ext2->ind.size);
+        offset += sprintf(out + offset, "%4d\n", ext2->ind.size);
       }
-      offset += sprintf(out + offset, "\n");
     }
   }
   // printf("end\n");
