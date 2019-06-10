@@ -263,7 +263,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
   printf("items  type  mode  size\n");
   uint32_t flag;
   ext2_rd_ind(ext2, ext2->current_dir);
-  for (int i = 0; i < ext2->ind.block[i];) {
+  for (int i = 0; i < ext2->ind.block[i]; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
     for (int k = 0; k < DIR_AMUT; k++) {
       if (ext2->dir[k].inode) {
@@ -345,6 +345,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
       offset += sprintf(out + offset, "\n");
     }
   }
+  printf("end\n");
 }
 
 void ext2_rd_sb(ext2_t* ext2) {
