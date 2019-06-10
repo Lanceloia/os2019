@@ -1,5 +1,6 @@
 #include <fs.h>
 #include <klib.h>
+#include <simext2.h>
 
 #define MAX_FS 4
 
