@@ -311,7 +311,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
           else
             offset += sprintf(out + offset, "%4d", ext2->ind.size);
         }
-      } else if (dir[k].file_type == 1) {
+      } else if (ext2->dir[k].file_type == 1) {
         ext2_rd_ind(ext2, ext2->dir[k].inode);
         for (int j = 0; j < 15 - dir[k].name_len; j++)
           offset += sprintf(out + offset, "%c", ' ');
