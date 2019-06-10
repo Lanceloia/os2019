@@ -125,7 +125,7 @@ uint32_t ext2_reserch_file(ext2_t* fs, char* name, int file_type,
                            uint32_t* dir_num) {
   ext2_rd_ind(fs, fs->current_dir);
   for (uint32_t j = 0; j < fs->ind.blocks; j++) {
-    ext2_rd_dir(fs->ind.block[j]);
+    ext2_rd_dir(fs, fs->ind.block[j]);
     for (uint32_t k = 0; k < 32;) {
       if (!fs->dir[k].inode || fs->dir[k].file_type != file_type ||
           strcmp(dir[k].name, name)) {
