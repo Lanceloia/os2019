@@ -43,7 +43,6 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   memset(&ext2->gdt, 0x00, GD_SIZE * 1);
   ext2_wr_ind(ext2, 1);
   ext2_wr_dir(ext2, 0);
-  strcpy(ext2->current_dir_name, "[root@ /");
   ext2_rd_gd(ext2);  // gdt is changed here
   ext2->gdt.block_bitmap = BLK_BITMAP;
   ext2->gdt.inode_bitmap = IND_BITMAP;
@@ -60,10 +59,11 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   ext2->ind.blocks = 32;  // maybe wrong
   ext2->ind.block[0] = ext2_alloc_block(ext2);
   ext2->ind.blocks++;
-  ext2->current_dir = ext2_alloc_inode(ext2);
-  ext2_wr_ind(ext2, ext2->current_dir);
 
-  ext2->dir[0].inode = ext2->dir[1].inode = ext2->current_dir;
+  int root_dir = ext2_alloc_inode(ext2);
+  ext2_wr_ind(ext2, root_dir);
+  // "." == ".." == root_dir, root_dir
+  ext2->dir[0].inode = ext2->dir[1].inode = root_dir;
   ext2->dir[0].name_len = ext2->dir[1].name_len = 0;
   ext2->dir[0].file_type = ext2->dir[1].file_type = TYPE_DIR;
   strcpy(ext2->dir[0].name, ".");
@@ -304,7 +304,8 @@ int ext2_search_file(ext2_t* ext2, uint32_t idx) {
   return 0;
 }
 
-void ext2_cd(ext2_t* ext2, char* dirname) {
+void ext2_cd(fs_t* fs, char* dirname, char* buf) {
+  ext2_t* ext2 = fs->fs;
   uint32_t i, j, k, flag;
   if (!strcmp(dirname, "../")) dirname[2] = '\0';
   if (!strcmp(dirname, "./")) dirname[1] = '\0';
@@ -323,8 +324,10 @@ void ext2_cd(ext2_t* ext2, char* dirname) {
       strcat(ext2->current_dir_name, dirname);
       strcat(ext2->current_dir_name, "/");
     }
-    printf("Now in: [%s]\n", ext2->current_dir_name);
+    sprintf(buf, "Now in: [%s]\n", ext2->current_dir_name);
   } else {
-    printf("The directory [%s] not exists!\n", dirname);
+    sprintf(buf, "The directory [%s] not exists!\n", dirname);
   }
 }
+
+void ext2_ls()

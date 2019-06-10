@@ -6,10 +6,22 @@ char bigbuf[2048] = {};
 /* shell command */
 #include <fs.h>
 
+uint32_t current_dir;
+uint32_t current_dir_name_len;
+char current_dir_name[128];
+
 static void echo_do(device_t *tty, char *str) {
   sprintf(bigbuf, "%s\n", str);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
+
+/*
+static void cd_do(device_t *tty, char *dirname) {
+  extern void ext2_cd(fs_t * fs, char *dirname, char *buf);
+}
+*/
+
+static void ls_do(device_t *tty, char *dirname) {}
 
 static void cat_do(device_t *tty, char *path) {
   int fd = vfs->open(path, RD_ENABLE);
