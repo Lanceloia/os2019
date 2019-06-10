@@ -1,6 +1,6 @@
-#include <../fs/ext2fs.h>
 #include <fs.h>
 #include <klib.h>
+#include "../../fs/ext2fs.h"
 
 char readbuf[128], writebuf[128];
 char bigbuf[2048] = {};
