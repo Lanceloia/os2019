@@ -53,11 +53,11 @@ typedef struct {
 } MODULE(dev);
 
 /* created by leungjyufung2019@outlook.com */
-typedef struct filesystem filesystem_t;
+typedef struct filesys fs_t;
 typedef struct {
   void (*init)();
   int (*access)(const char *path, int mode);
-  int (*mount)(const char *path, filesystem_t *fs);
+  int (*mount)(const char *path, fs_t *fs);
   int (*unmount)(const char *path);
   int (*mkdir)(const char *path);
   int (*rmdir)(const char *path);
@@ -68,7 +68,7 @@ typedef struct {
   ssize_t (*write)(int fd, void *buf, size_t nbyte);
   off_t (*lseek)(int fd, off_t offset, int whence);
   int (*close)(int fd);
-  void *(*get_fs)(int idx);
+  fs_t *(*get_fs)(int idx);
 } MODULE(vfs);
 
 #endif
