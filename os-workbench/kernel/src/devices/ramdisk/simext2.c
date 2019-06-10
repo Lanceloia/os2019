@@ -88,9 +88,9 @@ uint32_t ext2_alloc_block(ext2_t* fs, uint32_t i) {
   }
   fs->blockbitmapbuf[cur] = fs->blockbitmapbuf[cur] + con;
   fs->last_alloc_block = cur * 8 + flag;
-  ext2_wr_blockbitmap();
+  ext2_wr_blockbitmap(fs);
   fs->gdt.free_blocks_count--;
-  ext2_wr_gd();
+  ext2_wr_gd(fs);
   return fs->last_alloc_block;
 }
 
@@ -114,9 +114,9 @@ uint32_t ext2_alloc_inode(ext2_t* fs) {
   }
   fs->inodebitmapbuf[cur] = fs->inodebitmapbuf[cur] + con;
   fs->last_alloc_inode = cur * 8 + flag + 1;  // why add 1 here?
-  ext2_wr_inodebitmap();
+  ext2_wr_inodebitmap(fs);
   fs->gdt.free_inodes_count--;
-  ext2_wr_gd();
+  ext2_wr_gd(fs);
   return fs->last_alloc_inode;
 }
 
