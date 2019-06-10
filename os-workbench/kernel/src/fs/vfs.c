@@ -58,7 +58,8 @@ static int identify_fs(const char *path) {
 int vfs_access(const char *path, int mode) {
   int idx = identify_fs(path);
   // 0 for accessable
-  return _fs[idx].ops->lookup(path + strlen(_path[idx])) == NULL;
+  return _fs[idx].ops->lookup(&_fs[idx], path + strlen(_path[idx]), mode) ==
+         NULL;
 }
 
 int vfs_mount(const char *path, fs_t *fs) {
@@ -106,7 +107,7 @@ int vfs_open(const char *path, int flags) {
   int fd = alloc_fd();
   if (fd == -1) return 1;
   int idx = identify_fs(path);
-  fds[fd].id = _fs[idx].ops->lookup(path + strlen(_path[idx]));
+  fds[fd].id = _fs[idx].ops->lookup(&_fs[idx], path + strlen(_path[idx]), mode);
   fds[fd].offset = 0;
   fds[fd].refcnt++;
   return 0;
