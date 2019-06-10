@@ -137,8 +137,8 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int file_type,
 void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t len, int type) {
   ext2_rd_ind(ext2, idx);
   if (type == TYPE_DIR) {
-    ext2->ind.size = DIR_AMUT;  // maybe wrong
-    ext2->ind.blocks = 1;       // "."
+    ext2->ind.size = 2 * DIR_SIZE;  // "." and ".."
+    ext2->ind.blocks = 1;
     ext2->ind.block[0] = ext2_alloc_block(ext2);
     ext2->dir[0].inode = idx;
     ext2->dir[1].inode = ext2->current_dir;
@@ -352,13 +352,10 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
 }
 
 void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
-  uint32_t idx, ninode, nblock, ndir, flag;
+  uint32_t idx, ninode, nblock, ndir;
   int offset = 0;
-  // printf("b");
   ext2_rd_ind(ext2, ext2->current_dir);
-  // printf("e");
   if (!ext2_reserch_file(ext2, dirname, type, &ninode, &nblock, &ndir)) {
-    // printf("b");
     if (ext2->ind.size == 4096) {  // origin 4096
       offset += sprintf(out + offset, "No room to make directory!\n");
       return;
@@ -366,7 +363,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
     if (ext2->ind.size != ext2->ind.blocks * BLK_SIZE) {
       // not full
       int i, j;
-      for (i = 0, flag = 1; flag && i < ext2->ind.blocks; i++) {
+      for (i = 0; i < ext2->ind.blocks; i++) {
         ext2_rd_dir(ext2, ext2->ind.block[i]);
         for (j = 0; j < DIR_AMUT; j++)
           if (ext2->dir[j].inode == 0) goto End;
