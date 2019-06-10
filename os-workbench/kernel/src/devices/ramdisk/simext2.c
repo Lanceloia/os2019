@@ -350,7 +350,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
 void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
   uint32_t idx, tmp1, tmp2, tmp3, flag;
   int offset = 0;
-  printf("%d ", ext2->ind.blocks);
+
   ext2_rd_ind(ext2, ext2->current_dir);
   if (!ext2_reserch_file(ext2, dirname, type, &tmp1, &tmp2, &tmp3)) {
     if (ext2->ind.size == DATA_SIZE) {
@@ -375,6 +375,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       strcpy(ext2->dir[j].name, dirname);
       ext2_wr_dir(ext2, ext2->ind.block[i - 1]);
     } else {
+      printf("%d ", ext2->ind.blocks);
       ext2->ind.block[ext2->ind.blocks] = ext2_alloc_block(ext2);
       ext2->ind.blocks++;
       ext2_rd_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
