@@ -15,11 +15,11 @@ void ext2_wr_sb(ext2_t* fs) {
 }
 
 void ext2_rd_gd(ext2_t* fs) {
-  fs->dev->ops->read(fs->dev, GDT_START, &fs->gd, GD_SIZE);
+  fs->dev->ops->read(fs->dev, GDT_START, &fs->gdt, GD_SIZE);
 }
 
 void ext2_wr_gd(ext2_t* fs) {
-  fs->dev->ops->read(fs->dev, GDT_START, &fs->gd, GD_SIZE);
+  fs->dev->ops->read(fs->dev, GDT_START, &fs->gdt, GD_SIZE);
 }
 
 void ext2_rd_ind(ext2_t* fs, uint32_t i) {
