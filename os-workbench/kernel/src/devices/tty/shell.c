@@ -8,11 +8,13 @@ char bigbuf[2048] = {};
 #include <fs.h>
 
 static void pwd_do(device_t *tty, char *pwd) {
-  tty->ops->write(tty, 0, pwd, strlen(pwd));
+  sprintf(bigbuf, "%s\n", pwd);
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
 static void echo_do(device_t *tty, char *str) {
-  tty->ops->write(tty, 0, str, strlen(str));
+  sprintf(bigbuf, "%s\n", str);
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
 /*
