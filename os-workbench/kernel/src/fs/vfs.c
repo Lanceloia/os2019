@@ -56,7 +56,7 @@ int vfs_identify_fs(const char *path) {
 }
 
 int vfs_access(const char *path, int mode) {
-  int idx = vfs_indentify_fs(path);
+  int idx = vfs_identify_fs(path);
   // 0 for accessable
   if (_fs[idx].ops->lookup(&_fs[idx], path + strlen(_path[idx]), mode) == NULL)
     return 1;
@@ -71,7 +71,7 @@ int vfs_mount(const char *path, fs_t *fs) {
 }
 
 int vfs_unmount(const char *path) {
-  int idx = vfs_indentify_fs(path);
+  int idx = vfs_identify_fs(path);
   _path[idx] = "DISABLE_PATH";
   return 0;
 }
@@ -107,7 +107,7 @@ int vfs_open(const char *path, int flags) {
   if (vfs_access(path, flags)) return 1;
   int fd = alloc_fd();
   if (fd == -1) return 1;
-  int idx = vfs_indentify_fs(path);
+  int idx = vfs_identify_fs(path);
   fds[fd].id =
       _fs[idx].ops->lookup(&_fs[idx], path + strlen(_path[idx]), flags);
   fds[fd].offset = 0;
