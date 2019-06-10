@@ -108,7 +108,7 @@ int vfs_open(const char *path, int flags) {
   int idx = identify_fs(path);
   fds[fd].id = _fs[idx].ops->lookup(path + strlen(_path[idx]));
   fds[fd].offset = 0;
-  fds[fd].refcnt = ++;
+  fds[fd].refcnt++;
   return 0;
 }
 
