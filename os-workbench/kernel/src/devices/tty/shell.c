@@ -27,9 +27,12 @@ static void ls_do(device_t *tty, char *dirname) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
-extern void ext2_mkdir(ext2_t *ext2, char *dirname, char *out);
+extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
 static void mkdir_do(device_t *tty, char *dirname) {
-  ext2_mkdir(vfs->get_fs(0)->fs, dirname, bigbuf);
+  int type = TYPE_DIR, name_len = strlen(dirname);
+  for (int i = 0; i < name_len; i++)
+    if (dirname[i] == '.') type = TYPE_FILE;  // point
+  ext2_mkdir(vfs->get_fs(0)->fs, dirname, type, bigbuf);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
