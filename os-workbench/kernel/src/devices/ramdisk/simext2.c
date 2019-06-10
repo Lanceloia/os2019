@@ -46,11 +46,11 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   ext2->ind.block[0] = ext2_alloc_block(ext2);
   ext2->ind.blocks++;
 
-  int root_dir = ext2_alloc_inode(ext2);
+  ext2->current_dir = ext2_alloc_inode(ext2);
   ext2_wr_ind(ext2, root_dir);
   // "." == ".." == root_dir
   // root_dir with no name
-  ext2->dir[0].inode = ext2->dir[1].inode = root_dir;
+  ext2->dir[0].inode = ext2->dir[1].inode = ext2->current_dir;
   ext2->dir[0].name_len = ext2->dir[1].name_len = 0;
   ext2->dir[0].file_type = ext2->dir[1].file_type = TYPE_DIR;
   strcpy(ext2->dir[0].name, ".");

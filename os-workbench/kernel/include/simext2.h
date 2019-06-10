@@ -80,6 +80,7 @@ struct ext2 {
   unsigned char datablockbuf[BLK_SIZE];
   uint32_t last_alloc_block;
   uint32_t last_alloc_inode;
+  uint32_t current_dir;
   uint32_t file_open_table[MAX_OPEN_FILE_AMUT];
   device_t* dev;
 };
