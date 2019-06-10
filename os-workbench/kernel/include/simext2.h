@@ -10,7 +10,8 @@
 #define IND_BITMAP (3 * BLK_SIZE)          // inode bitmap offset
 #define INDT_START (4 * BLK_SIZE)          // inode table offset
 #define DATA_BLOCK ((4 + 512) * BLK_SIZE)  // data block offset
-#define DISK_SIZE (4096 + 512)             // disk size(blocks)
+#define DATA_SIZE (4096)                   // data block size(blocks)
+#define DISK_SIZE (DATA_SIZE + 512)        // disk size(blocks)
 #define EXT2_N_BLOCKS (15)                 // ext2 inode blocks
 #define VOLUME_NAME "EXT2FS"               // volume name
 
@@ -89,7 +90,7 @@ struct ext2 {
 
 typedef struct ext2 ext2_t;
 
-enum { TYPE_DIR = 2 };
+enum { TYPE_FILE = 1, TYPE_DIR = 2 };
 
 void ext2_rd_sb(ext2_t* ext2);
 void ext2_wr_sb(ext2_t* ext2);
