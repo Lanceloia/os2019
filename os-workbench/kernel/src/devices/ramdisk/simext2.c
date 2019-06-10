@@ -360,6 +360,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       int i, j;
       for (i = 0, flag = 1; flag && i < ext2->ind.blocks; i++) {
         ext2_rd_dir(ext2, ext2->ind.block[i]);
+        printf("%d ", ext2->ind.blocks);
         // why start at 0? it can start at (blocks - 1)
         for (j = 0; j < DIR_AMUT; j++) {
           if (ext2->dir[j].inode == 0) {
