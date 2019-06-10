@@ -108,8 +108,8 @@ uint32_t ext2_alloc_inode(ext2_t* ext2) {
   ext2_wr_inodebitmap(ext2);
   ext2->gdt.free_inodes_count--;
   ext2_wr_gd(ext2);
-  memset(ext2->datablockbuf, 0x00, BLK_SIZE);
-  ext2_wr_ind(ext2, ext2->last_alloc_block);
+  // memset(ext2->datablockbuf, 0x00, BLK_SIZE);
+  // ext2_wr_ind(ext2, ext2->last_alloc_block);
   return ext2->last_alloc_inode;
 }
 
@@ -359,33 +359,28 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
   // printf("e");
   if (!ext2_reserch_file(ext2, dirname, type, &ninode, &nblock, &ndir)) {
     // printf("b");
-    if (ext2->ind.size == DATA_SIZE) {
+    if (ext2->ind.size == 4096) {  // origin 4096
       offset += sprintf(out + offset, "No room to make directory!\n");
       return;
     }
     if (ext2->ind.size != ext2->ind.blocks * BLK_SIZE) {
       // not full
-      int i, j;
-      for (i = 0, flag = 1; flag && i < ext2->ind.blocks; i++) {
-        ext2_rd_dir(ext2, ext2->ind.block[i]);
-        // why start at 0? it can start at (blocks - 1)
-        for (j = 0; j < DIR_AMUT; j++) {
-          if (ext2->dir[j].inode == 0) {
-            flag = 0;
-            break;
-          }
+      int i = ext2->ind.blocks - 1, j;
+      ext2_rd_dir(ext2, ext2->ind.block[i]);
+      for (j = 0; j < DIR_AMUT; j++) {
+        if (ext2->dir[j].inode == 0) {
+          flag = 0;
+          break;
         }
       }
       idx = ext2->dir[j].inode = ext2_alloc_inode(ext2);
       ext2->dir[j].name_len = strlen(dirname);
       ext2->dir[j].file_type = type;
       strcpy(ext2->dir[j].name, dirname);
-      ext2_wr_dir(ext2, ext2->ind.block[i - 1]);
+      ext2_wr_dir(ext2, ext2->ind.block[i]);
     } else {
-      assert(0);
-      printf("fuck ? %d ", ext2->ind.blocks);
-      ext2->ind.block[ext2->ind.blocks] = ext2_alloc_block(ext2);
-      ext2->ind.blocks++;
+      // full
+      ext2->ind.block[ext2->ind.blocks++] = ext2_alloc_block(ext2);
       ext2_rd_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
       idx = ext2->dir[0].inode = ext2_alloc_inode(ext2);
       ext2->dir[0].name_len = strlen(dirname);
