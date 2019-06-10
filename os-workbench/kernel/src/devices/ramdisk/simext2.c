@@ -5,20 +5,6 @@
 /* functions
  * copyright: leungjyufung2019@outlook.com
  */
-void ext2_rd_sb(ext2_t* ext2);
-void ext2_wr_sb(ext2_t* ext2);
-void ext2_rd_gd(ext2_t* ext2);
-void ext2_wr_gd(ext2_t* ext2);
-void ext2_rd_ind(ext2_t* ext2, uint32_t i);
-void ext2_wr_ind(ext2_t* ext2, uint32_t i);
-void ext2_rd_dir(ext2_t* ext2, uint32_t i);
-void ext2_wr_dir(ext2_t* ext2, uint32_t i);
-void ext2_rd_blockbitmap(ext2_t* ext2);
-void ext2_wr_blockbitmap(ext2_t* ext2);
-void ext2_rd_inodebitmap(ext2_t* ext2);
-void ext2_wr_inodebitmap(ext2_t* ext2);
-void ext2_rd_datablock(ext2_t* ext2, uint32_t i);
-void ext2_wr_datablock(ext2_t* ext2, uint32_t i);
 uint32_t ext2_alloc_block(ext2_t* ext2);
 uint32_t ext2_alloc_inode(ext2_t* ext2);
 uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int file_type,
@@ -62,75 +48,14 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
 
   int root_dir = ext2_alloc_inode(ext2);
   ext2_wr_ind(ext2, root_dir);
-  // "." == ".." == root_dir, root_dir
+  // "." == ".." == root_dir
+  // root_dir with no name
   ext2->dir[0].inode = ext2->dir[1].inode = root_dir;
   ext2->dir[0].name_len = ext2->dir[1].name_len = 0;
   ext2->dir[0].file_type = ext2->dir[1].file_type = TYPE_DIR;
   strcpy(ext2->dir[0].name, ".");
   strcpy(ext2->dir[1].name, "..");
   ext2_wr_dir(ext2, ext2->ind.block[0]);
-}
-
-void ext2_rd_sb(ext2_t* ext2) {
-  ext2->dev->ops->read(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
-}
-
-void ext2_wr_sb(ext2_t* ext2) {
-  ext2->dev->ops->write(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
-}
-
-void ext2_rd_gd(ext2_t* ext2) {
-  ext2->dev->ops->read(ext2->dev, GDT_START, &ext2->gdt, GD_SIZE);
-}
-
-void ext2_wr_gd(ext2_t* ext2) {
-  ext2->dev->ops->read(ext2->dev, GDT_START, &ext2->gdt, GD_SIZE);
-}
-
-void ext2_rd_ind(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = INDT_START + (i - 1) * IND_SIZE;
-  ext2->dev->ops->read(ext2->dev, offset, &ext2->ind, IND_SIZE);
-}
-
-void ext2_wr_ind(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = INDT_START + (i - 1) * IND_SIZE;
-  ext2->dev->ops->write(ext2->dev, offset, &ext2->ind, IND_SIZE);
-}
-
-void ext2_rd_dir(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
-  ext2->dev->ops->read(ext2->dev, offset, &ext2->dir, BLK_SIZE);
-}
-
-void ext2_wr_dir(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
-  ext2->dev->ops->write(ext2->dev, offset, &ext2->dir, BLK_SIZE);
-}
-
-void ext2_rd_blockbitmap(ext2_t* ext2) {
-  ext2->dev->ops->read(ext2->dev, BLK_BITMAP, &ext2->blockbitmapbuf, BLK_SIZE);
-}
-
-void ext2_wr_blockbitmap(ext2_t* ext2) {
-  ext2->dev->ops->write(ext2->dev, BLK_BITMAP, &ext2->blockbitmapbuf, BLK_SIZE);
-}
-
-void ext2_rd_inodebitmap(ext2_t* ext2) {
-  ext2->dev->ops->read(ext2->dev, IND_BITMAP, &ext2->inodebitmapbuf, BLK_SIZE);
-}
-
-void ext2_wr_inodebitmap(ext2_t* ext2) {
-  ext2->dev->ops->write(ext2->dev, IND_BITMAP, &ext2->inodebitmapbuf, BLK_SIZE);
-}
-
-void ext2_rd_datablock(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
-  ext2->dev->ops->read(ext2->dev, offset, &ext2->datablockbuf, BLK_SIZE);
-}
-
-void ext2_wr_datablock(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
-  ext2->dev->ops->write(ext2->dev, offset, &ext2->datablockbuf, BLK_SIZE);
 }
 
 uint32_t ext2_alloc_block(ext2_t* ext2) {
@@ -304,6 +229,7 @@ int ext2_search_file(ext2_t* ext2, uint32_t idx) {
   return 0;
 }
 
+/*
 void ext2_cd(fs_t* fs, char* dirname, char* buf) {
   ext2_t* ext2 = fs->fs;
   uint32_t i, j, k, flag;
@@ -329,5 +255,6 @@ void ext2_cd(fs_t* fs, char* dirname, char* buf) {
     sprintf(buf, "The directory [%s] not exists!\n", dirname);
   }
 }
+*/
 
-void ext2_ls()
+void ext2_ls(ext2_t* ext2, char* dirname, char* out) {}

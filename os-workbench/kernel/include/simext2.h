@@ -80,15 +80,74 @@ struct ext2 {
   unsigned char datablockbuf[BLK_SIZE];
   uint32_t last_alloc_block;
   uint32_t last_alloc_inode;
-  uint32_t current_dir;
-  uint32_t current_dir_name_len;
   uint32_t file_open_table[MAX_OPEN_FILE_AMUT];
-  char current_dir_name[128];
   device_t* dev;
 };
 
 typedef struct ext2 ext2_t;
 
 enum { TYPE_DIR = 2 };
+
+void ext2_rd_sb(ext2_t* ext2) {
+  ext2->dev->ops->read(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
+}
+
+void ext2_wr_sb(ext2_t* ext2) {
+  ext2->dev->ops->write(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
+}
+
+void ext2_rd_gd(ext2_t* ext2) {
+  ext2->dev->ops->read(ext2->dev, GDT_START, &ext2->gdt, GD_SIZE);
+}
+
+void ext2_wr_gd(ext2_t* ext2) {
+  ext2->dev->ops->read(ext2->dev, GDT_START, &ext2->gdt, GD_SIZE);
+}
+
+void ext2_rd_ind(ext2_t* ext2, uint32_t i) {
+  uint32_t offset = INDT_START + (i - 1) * IND_SIZE;
+  ext2->dev->ops->read(ext2->dev, offset, &ext2->ind, IND_SIZE);
+}
+
+void ext2_wr_ind(ext2_t* ext2, uint32_t i) {
+  uint32_t offset = INDT_START + (i - 1) * IND_SIZE;
+  ext2->dev->ops->write(ext2->dev, offset, &ext2->ind, IND_SIZE);
+}
+
+void ext2_rd_dir(ext2_t* ext2, uint32_t i) {
+  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
+  ext2->dev->ops->read(ext2->dev, offset, &ext2->dir, BLK_SIZE);
+}
+
+void ext2_wr_dir(ext2_t* ext2, uint32_t i) {
+  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
+  ext2->dev->ops->write(ext2->dev, offset, &ext2->dir, BLK_SIZE);
+}
+
+void ext2_rd_blockbitmap(ext2_t* ext2) {
+  ext2->dev->ops->read(ext2->dev, BLK_BITMAP, &ext2->blockbitmapbuf, BLK_SIZE);
+}
+
+void ext2_wr_blockbitmap(ext2_t* ext2) {
+  ext2->dev->ops->write(ext2->dev, BLK_BITMAP, &ext2->blockbitmapbuf, BLK_SIZE);
+}
+
+void ext2_rd_inodebitmap(ext2_t* ext2) {
+  ext2->dev->ops->read(ext2->dev, IND_BITMAP, &ext2->inodebitmapbuf, BLK_SIZE);
+}
+
+void ext2_wr_inodebitmap(ext2_t* ext2) {
+  ext2->dev->ops->write(ext2->dev, IND_BITMAP, &ext2->inodebitmapbuf, BLK_SIZE);
+}
+
+void ext2_rd_datablock(ext2_t* ext2, uint32_t i) {
+  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
+  ext2->dev->ops->read(ext2->dev, offset, &ext2->datablockbuf, BLK_SIZE);
+}
+
+void ext2_wr_datablock(ext2_t* ext2, uint32_t i) {
+  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
+  ext2->dev->ops->write(ext2->dev, offset, &ext2->datablockbuf, BLK_SIZE);
+}
 
 #endif
