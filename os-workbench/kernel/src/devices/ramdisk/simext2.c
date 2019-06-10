@@ -5,7 +5,6 @@
 /* functions
  * copyright: leungjyufung2019@outlook.com
  */
-void ext2_init(ext2_t* ext2, char* dev_name);
 void ext2_rd_sb(ext2_t* ext2);
 void ext2_wr_sb(ext2_t* ext2);
 void ext2_rd_gd(ext2_t* ext2);
