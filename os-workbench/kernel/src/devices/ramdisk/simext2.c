@@ -160,7 +160,7 @@ void ext2_dir_prepare(ext2_t* fs, uint32_t idx, uint32_t len, int type) {
   } else {
     fs->ind.size = 0;
     fs->ind.blocks = 0;
-    fs->ind.mode = 00407 /* drwxrwxrwx: ? */
+    fs->ind.mode = 00407; /* drwxrwxrwx: ? */
   }
   ext2_wr_ind(fs, idx);
 }
