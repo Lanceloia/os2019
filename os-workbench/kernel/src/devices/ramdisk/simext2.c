@@ -29,6 +29,7 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   memset(&ext2->gdt, 0x00, GD_SIZE * 1);
   ext2_wr_ind(ext2, 1);
   ext2_wr_dir(ext2, 0);
+  strcpy(ext2->current_dir_name, "[root@ /");
   ext2_rd_gd(ext2);  // gdt is changed here
   ext2->gdt.block_bitmap = BLK_BITMAP;
   ext2->gdt.inode_bitmap = IND_BITMAP;
@@ -257,4 +258,90 @@ void ext2_cd(fs_t* fs, char* dirname, char* buf) {
 }
 */
 
-void ext2_ls(ext2_t* ext2, char* dirname, char* out) {}
+void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
+  int offset = sprintf(out, "items  type  mode  size\n");
+  uint32_t flag;
+  ext2_rd_ind(ext2->current_dir);
+  for (int i = 0; i < ext2->ind.blocks[i];) {
+    ext2_rd_dir(ext2, ext2->ind.block[i]);
+    for (int k = 0; k < DIR_AMUT; k++) {
+      if (ext2->dir[k].inode) {
+        offset += sprintf(out + offset, "%s", ext2->dir[k].name);
+        if (ext2->dir[k].file_type == TYPE_DIR) {
+          ext2_rd_ind(ext2, ext2->dir[k].inode);
+          if (!strcmp(ext2->dir[k].name, "..")) {
+            for (int j = 0; j < 13; j++)
+              offset += sprintf(out + offset, "%c", ' ');
+            flag = 1;
+          } else if (!strcmp(ext2->dir[k].name, ".")) {
+            for (int j = 0; j < 14; j++)
+              offset += sprintf(out + offset, "%c", ' ');
+            flag = 0;
+          } else {
+            for (int j = 0; j < 15 - ext2->dir[k].name_len; j++)
+              offset += sprintf(out + offset, "%c", '');
+            flag = 2;
+          }
+          offset += sprintf(out + offset, " <DIR> ");
+          switch (ext2->ind.mode & 7) {
+            case 1:
+              offset += sprintf(out + offset, "____x");
+              break;
+            case 2:
+              offset += sprintf(out + offset, "__w__");
+              break;
+            case 3:
+              offset += sprintf(out + offset, "__w_x");
+              break;
+            case 4:
+              offset += sprintf(out + offset, "r____");
+              break;
+            case 5:
+              offset += sprintf(out + offset, "r___x");
+              break;
+            case 6:
+              offset += sprintf(out + offset, "r_w__");
+              break;
+            case 7:
+              offset += sprintf(out + offset, "r_w_x");
+              break;
+          }
+          if (flag != 2)
+            offset += sprintf(out + offset, " ----");
+          else
+            offset += sprintf(out + offset, "%4d", ext2->ind.size);
+        }
+      } else if (dir[k].file_type == 1) {
+        ext2_rd_ind(ext2, ext2->dir[k].inode);
+        for (int j = 0; j < 15 - dir[k].name_len; j++)
+          offset += sprintf(out + offset, "%c", ' ');
+        offset += sprintf(out + offset, " <FILE>");
+        switch (inode_area[0].i_mode & 7) {
+          case 1:
+            offset += sprintf(out + offset, "____x");
+            break;
+          case 2:
+            offset += sprintf(out + offset, "__w__");
+            break;
+          case 3:
+            offset += sprintf(out + offset, "__w_x");
+            break;
+          case 4:
+            offset += sprintf(out + offset, "r____");
+            break;
+          case 5:
+            offset += sprintf(out + offset, "r___x");
+            break;
+          case 6:
+            offset += sprintf(out + offset, "r_w__");
+            break;
+          case 7:
+            offset += sprintf(out + offset, "r_w_x");
+            break;
+        }
+        offset += sprintf(out + offset, "%4d", ext2->ind.size);
+      }
+      offset += sprintf(out + offset, "\n");
+    }
+  }
+}

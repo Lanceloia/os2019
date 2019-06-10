@@ -54,6 +54,8 @@ void shell_task(void *name) {
       echo_do(tty, readbuf + 5);
     else if (strncmp(readbuf, "cat ", 4) == 0)
       cat_do(tty, readbuf + 4);
+    else if (strncmp(readbuf, "ls ", 3) == 0)
+      ls_do(tty, readbuf + 3);
     else
       default_do(tty);
   }
