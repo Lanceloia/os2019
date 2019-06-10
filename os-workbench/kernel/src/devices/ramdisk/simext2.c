@@ -263,7 +263,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
   // printf("b");
   ext2_rd_ind(ext2, ext2->current_dir);
   // printf("e");
-  for (int i = 0; i < ext2->ind.block[i]; i++) {
+  for (int i = 0; i < ext2->ind.blocks; i++) {
     printf("b");
     ext2_rd_dir(ext2, ext2->ind.block[i]);
     printf("e");
