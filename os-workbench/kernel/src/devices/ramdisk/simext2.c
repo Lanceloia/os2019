@@ -29,8 +29,8 @@ void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t len, int type);
 void ext2_remove_block(ext2_t* ext2, uint32_t del_num);
 int ext2_search_file(ext2_t* ext2, uint32_t idx);
 
-id_t ext2_lookup(fs_t* fs, const char* path, int flags);
-int ext2_close(id_t* id);
+id_t ext2_lookup(fs_t* fs, const char* path, int flags) { return NULL; };
+int ext2_close(id_t* id) { return 0; }
 
 void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   ext2_t* ext2 = (ext2_t*)fs->fs;
