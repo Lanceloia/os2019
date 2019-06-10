@@ -36,7 +36,7 @@ int vfs_access(const char *path, int mode) {
   return 0;
 }
 
-int vfs_mount(const char *path, filesystem_t *fs) {
+int vfs_mount(const char *path, fs_t *fs) {
   assert(0);
   return 0;
 }
