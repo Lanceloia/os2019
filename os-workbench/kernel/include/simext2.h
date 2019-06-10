@@ -8,6 +8,7 @@
 #define BLK_SIZE (512)
 #define IND_SIZE (sizeof(ind_t))
 #define DIR_SIZE (sizeof(dir_t))
+#define DIR_AMUT (BLK_SIZE / DIR_SIZE)
 #define BLK *512
 #define DISK_START (0 BLK)          // disk offset
 #define GDT_START (1 BLK)           // group_desc table offset
@@ -62,11 +63,16 @@ struct directory {
 
 struct ext2 {
   struct super_block sb;
-  struct group_desc gd;
+  struct group_desc gdt;
   struct inode ind;
-  struct directory dir;
-  unsigned char blockbitmapbuf[512];
-  unsigned char inodebitmapbuf[512];
+  struct directory dir[DIR_AMUT];
+  unsigned char blockbitmapbuf[BLK_SIZE];
+  unsigned char inodebitmapbuf[BLK_SIZE];
+  unsigned char datablockbuf[BLK_SIZE];
+  uint32_t last_alloc_block;
+  uint32_t last_alloc_inode;
+  uint32_t current_dir;
+  uint32_t current_dir_name_len;
   device_t* dev;
 };
 
@@ -75,5 +81,7 @@ typedef struct group_desc gd_t;
 typedef struct inode ind_t;
 typedef struct directory dir_t;
 typedef struct ext2 ext2_t;
+
+enum { TYPE_DIR = 2 };
 
 #endif
