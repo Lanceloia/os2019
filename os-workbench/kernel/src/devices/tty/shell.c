@@ -28,7 +28,7 @@ static void ls_do(device_t *tty, char *dirname) {
 }
 
 extern void ext2_mkdir(ext2_t *ext2, char *dirname, char *out);
-static void mkdir_do(device_t *tty, char dirname) {
+static void mkdir_do(device_t *tty, char *dirname) {
   ext2_mkdir(vfs->get_fs(0)->fs, dirname, bigbuf);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
