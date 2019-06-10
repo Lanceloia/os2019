@@ -2,7 +2,6 @@
 #define __FS_H__
 
 #include <common.h>
-#include <stdint.h>
 
 enum {
   RD_ENABLE = 1,
