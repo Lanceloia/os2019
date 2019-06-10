@@ -313,7 +313,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
         }
       } else if (ext2->dir[k].file_type == 1) {
         ext2_rd_ind(ext2, ext2->dir[k].inode);
-        for (int j = 0; j < 15 - dir[k].name_len; j++)
+        for (int j = 0; j < 15 - ext2->dir[k].name_len; j++)
           offset += sprintf(out + offset, "%c", ' ');
         offset += sprintf(out + offset, " <FILE>");
         switch (ext2->ind.mode & 7) {
