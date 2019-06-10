@@ -3,12 +3,7 @@
 
 #include <devices.h>
 
-#define SB_SIZE (sizeof(sb_t))
-#define GD_SIZE (sizeof(gd_t))
 #define BLK_SIZE (512)
-#define IND_SIZE (sizeof(ind_t))
-#define DIR_SIZE (sizeof(dir_t))
-#define DIR_AMUT (BLK_SIZE / DIR_SIZE)
 #define BLK *512
 #define DISK_START (0 BLK)          // disk offset
 #define GDT_START (1 BLK)           // group_desc table offset
@@ -61,6 +56,17 @@ struct directory {
   char pad[26];
 };
 
+typedef struct super_block sb_t;
+typedef struct group_desc gd_t;
+typedef struct inode ind_t;
+typedef struct directory dir_t;
+
+#define SB_SIZE (sizeof(sb_t))
+#define GD_SIZE (sizeof(gd_t))
+#define IND_SIZE (sizeof(ind_t))
+#define DIR_SIZE (sizeof(dir_t))
+#define DIR_AMUT (BLK_SIZE / DIR_SIZE)
+
 struct ext2 {
   struct super_block sb;
   struct group_desc gdt;
@@ -76,10 +82,6 @@ struct ext2 {
   device_t* dev;
 };
 
-typedef struct super_block sb_t;
-typedef struct group_desc gd_t;
-typedef struct inode ind_t;
-typedef struct directory dir_t;
 typedef struct ext2 ext2_t;
 
 enum { TYPE_DIR = 2 };
