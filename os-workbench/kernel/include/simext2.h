@@ -5,13 +5,19 @@
 
 #define SB_SIZE (sizeof(sb_t))
 #define GD_SIZE (sizeof(gd_t))
+#define BLK_SIZE (512)
 #define IND_SIZE (sizeof(ind_t))
-#define DIR_SIZE (sizeof(dir_entry))
-#define DISK_START (0)                // disk offset
-#define DISK_SIZE (4096 + 512)        // disk size
-#define GDT_START (DISK_START + 512)  // group_desc table offset
-#define EXT2_N_BLOCKS (15)            // ext2 inode blocks
-#define VOLUME_NAME "EXT2FS"          // volume name
+#define DIR_SIZE (sizeof(dir_t))
+#define BLK *512
+#define DISK_START (0 BLK)          // disk offset
+#define GDT_START (1 BLK)           // group_desc table offset
+#define BLK_BITMAP (2 BLK)          // block bitmap offset
+#define IND_BITMAP (3 BLK)          // inode bitmap offset
+#define INDT_START (4 BLK)          // inode table offset
+#define DATA_BLOCK ((4 + 512) BLK)  // data block offset
+// #define DISK_SIZE (4096 + 512)      // disk size(blocks)
+#define EXT2_N_BLOCKS (15)    // ext2 inode blocks
+#define VOLUME_NAME "EXT2FS"  // volume name
 
 struct super_block {
   /* super block, 32 bytes */
@@ -44,7 +50,7 @@ struct inode {
   char pad[14];
 };
 
-struct dirty {
+struct dir {
   /* directory entry, 32 bytes */
   uint32_t inode;
   uint16_t rec_len;
@@ -59,13 +65,15 @@ struct ext2 {
   struct group_desc gd;
   struct inode ind;
   struct dirty dir;
+  unsigned char blockbitmapbuf[512];
+  unsigned char inodebitmapbuf[512];
   device_t* dev;
 };
 
 typedef struct super_block sb_t;
 typedef struct group_desc gd_t;
 typedef struct inode ind_t;
-typedef struct dirty dir_t;
+typedef struct dir dir_t;
 typedef struct ext2 ext2_t;
 
 #endif
