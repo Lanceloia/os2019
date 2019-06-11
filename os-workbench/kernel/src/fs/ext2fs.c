@@ -257,9 +257,13 @@ void ext2_cd(ext2_t* ext2, char* dirname, char* pwd, char* out) {
 }
 
 void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
-  int offset = sprintf(out, "items           type     mode     size\n");
-  uint32_t flag;
+  if (strcmp(dirname, ".")) {
+    sprintf(out, "only support 'ls .'");
+    return;
+  }
   ext2_rd_ind(ext2, ext2->current_dir);
+  uint32_t flag;
+  int offset = sprintf(out, "items           type     mode     size\n");
   for (int i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
     for (int k = 0; k < DIR_AMUT; k++) {
@@ -387,7 +391,6 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
     ext2->ind.size += DIR_SIZE;  // origin 16
     ext2_wr_ind(ext2, ext2->current_dir);
     ext2_dir_prepare(ext2, idx, strlen(dirname), type);
-    offset += sprintf(out + offset, "Fcuk!\n");
   } else {
     if (type == TYPE_FILE)
       offset += sprintf(out + offset, "File existed!\n");
