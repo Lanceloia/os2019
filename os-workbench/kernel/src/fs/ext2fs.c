@@ -417,7 +417,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
     }
     // printf("e");
     ext2->ind.size += DIR_SIZE;  // origin 16
-    ext2_wr_ind(ext2, ext2->current_dir);
+    ext2_wr_ind(ext2, now_current_dir);
     ext2_dir_prepare(ext2, idx, strlen(dirname), type);
   } else {
     if (type == TYPE_FILE)
