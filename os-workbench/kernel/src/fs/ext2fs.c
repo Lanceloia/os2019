@@ -77,6 +77,7 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   ext2_wr_dir(ext2, ext2->ind.block[0]);
 
   /* test */
+  void ext2_mkdir(ext2_t * ext2, char* dirname, int type, char* out);
   ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
 }
 
@@ -481,7 +482,7 @@ void ext2_read(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
       return;
     }
     for (int n = 0; n < ext2->ind.blocks; n++) {
-      ext2_rd_datablock(ext2->ind.block[n]);
+      ext2_rd_datablock(ext2, ext2->ind.block[n]);
       for (int m = 0; m < ext2->ind.size - n * BLK_SIZE; ++m) {
         printf("%c", ext2->datablockbuf[m]);
       }
