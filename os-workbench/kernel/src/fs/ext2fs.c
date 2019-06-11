@@ -149,7 +149,8 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int type, uint32_t* ninode,
     for (uint32_t k = 0; k < DIR_AMUT;) {
       if (!ext2->dir[k].inode || ext2->dir[k].file_type != type ||
           strncmp(ext2->dir[k].name, path, len)) {
-        printf("dir[%d]name: %s\n", k, ext2->dir[k].name);
+        printf("dir[%d]name: %s, %d\n", k, ext2->dir[k].name,
+               strncmp(ext2->dir[k].name, path, 9));
         k++;
       } else {
         ext2->current_dir = *ninode = ext2->dir[k].inode;
