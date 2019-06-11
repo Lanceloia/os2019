@@ -140,18 +140,14 @@ uint32_t ext2_alloc_inode(ext2_t* ext2) {
 
 uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int type, uint32_t* ninode,
                            uint32_t* nblock, uint32_t* ndir) {
-  // printf("name: %s\n", path);
   ext2_rd_ind(ext2, ext2->current_dir);
   for (uint32_t j = 0; j < ext2->ind.blocks; j++) {
     ext2_rd_dir(ext2, ext2->ind.block[j]);
     int len = first_item_len(path);
-    // printf("%d, %d", len, strlen(path));
     for (uint32_t k = 0; k < DIR_AMUT;) {
       if (!ext2->dir[k].inode || ext2->dir[k].file_type != type ||
           strncmp(ext2->dir[k].name, path, len)) {
-        //  printf("dir[%d]name: %s, %d\n", k, ext2->dir[k].name,
-               strncmp(ext2->dir[k].name, path, 9));
-               k++;
+        k++;
       } else {
         ext2->current_dir = *ninode = ext2->dir[k].inode;
         *nblock = j;
