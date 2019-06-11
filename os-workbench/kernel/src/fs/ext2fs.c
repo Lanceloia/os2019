@@ -440,7 +440,7 @@ void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
           ext2_remove_block(ext2, ext2->ind.block[m]);
           ext2->ind.blocks--;
           for (; m < ext2->ind.blocks; m++) {
-            ext2->ind.block[m] = ext2->ind.block[m + 1]
+            ext2->ind.block[m] = ext2->ind.block[m + 1];
           }
         }
       }
