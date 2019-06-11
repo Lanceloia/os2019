@@ -434,7 +434,7 @@ void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
       for (m = 1; cnt < 32 && m < ext2->ind.blocks;) {
         ext2_rd_dir(ext2, ext2->ind.block[m]);
         for (cnt = 0, n = 0; n < 32; n++) {
-          if (!dir[n].inode) cnt++;
+          if (!ext2->dir[n].inode) cnt++;
         }
         if (cnt == 32) {
           ext2_remove_block(ext2, ext2->ind.block[m]);
