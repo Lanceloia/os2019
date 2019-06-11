@@ -35,7 +35,12 @@ static int last_item_offset(const char* path) {
 
 #define ouput(str, ...) offset += sprintf(out + offset, str, ...)
 
-char trash[4096];
+char hello_str = "#include <iostream> \n"
+#"using namespace std;\n"
+#"int main(){\n"
+#"return 0;\n"
+#"}";
+    char trash[4096];
 
 void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   ext2_t* ext2 = (ext2_t*)fs->real_fs;
@@ -79,6 +84,7 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   /* test */
   void ext2_mkdir(ext2_t * ext2, char* dirname, int type, char* out);
   ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
+  ext2_write(ext2, "hellp.cpp", hello_str, strlen(hello_str), trash);
 }
 
 uint32_t ext2_alloc_block(ext2_t* ext2) {
@@ -363,7 +369,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
               offset += sprintf(out + offset, "r_w_x    ");
               break;
           }
-          offset += sprintf(out + offset, "%6d\n", ext2->ind.size);
+          offset += sprintf(out + offset, "%6d", ext2->ind.size);
           offset += sprintf(out + offset, "\n");
         }
       }
