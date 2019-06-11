@@ -136,7 +136,7 @@ int vfs_match_path(const char *path) {
 int vfs_identify_fs(const char *path) {
   int idx = vfs_match_path(path);
   if (idx == -1) {
-    printf("unknown filesystem.\n");
+    printf("unknown filesystem\n");
     return 0;
   }
   int type = vfsdirs[idx].type;
@@ -149,7 +149,7 @@ int vfs_identify_fs(const char *path) {
 void *vfs_get_real_fs(const char *path) {
   int idx = vfs_match_path(path);
   if (idx == -1) {
-    printf("unknown filesystem.\n");
+    printf("unknown filesystem\n");
     return NULL;
   }
   // printf("idx: %d\n", idx);

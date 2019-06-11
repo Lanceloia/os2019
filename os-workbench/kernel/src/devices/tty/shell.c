@@ -118,6 +118,9 @@ void shell_task(void *name) {
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
     readbuf[nread - 1] = '\0';
 
+    if (!strcmp(readbuf, "ls")) strcpy(readbuf, "ls .");
+    if (!strcmp(readbuf, "cd")) strcpy(readbuf, "cd .");
+
     if (!strcmp(readbuf, "pwd"))
       pwd_do(tty, pwd);
     else if (!strncmp(readbuf, "echo ", 5))

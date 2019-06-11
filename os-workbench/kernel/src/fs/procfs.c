@@ -34,7 +34,7 @@ void procfs_schdule(void *proc) {
 }
 
 void procfs_cd(char *dirname, char *pwd, char *out) {
-  sprintf(out, "can't cd here");
+  sprintf(out, "can't cd here\n");
   return;
 }
 
