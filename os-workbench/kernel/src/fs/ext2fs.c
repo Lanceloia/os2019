@@ -357,6 +357,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       return;
     }
     if (ext2->ind.size != ext2->ind.blocks * BLK_SIZE) {
+      printf("mayber wrong1\n");
       // not full
       int i, j;
       for (i = 0; i < ext2->ind.blocks; i++) {
@@ -372,6 +373,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       ext2_wr_dir(ext2, ext2->ind.block[i]);
     } else {
       // full
+      printf("mayber wrong2\n");
       ext2->ind.block[ext2->ind.blocks++] = ext2_alloc_block(ext2);
       ext2_rd_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
       idx = ext2->dir[0].inode = ext2_alloc_inode(ext2);
