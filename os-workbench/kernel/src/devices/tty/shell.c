@@ -108,11 +108,12 @@ extern int vfsdirs_alloc(const char *name, int parent, int type, int fs_idx);
 extern int dev_dir;
 extern int total_dev_cnt;
 
+char pwd[256] = "/";
+
 void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
   vfsdirs_alloc(name, dev_dir, TTY, total_dev_cnt++);
-  char *pwd = pmm->alloc(256);
-  strcpy(pwd, "/");
+
   while (1) {
     sprintf(writebuf, "(%s) $ ", name);
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
