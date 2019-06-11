@@ -417,7 +417,7 @@ void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
   }
   uint32_t i, j, k, n, m, flag;
   int now_current_dir = ext2->current_dir;
-  flag = ext2_reserch_file(ext2, dirname, &i, &j, &k);
+  flag = ext2_reserch_file(ext2, dirname, TYPE_DIR, &i, &j, &k);
   if (flag) {
     ext2_rd_ind(ext2, ext2->dir[k].inode);
     if (ext2->ind.size == 2 * DIR_SIZE) {
