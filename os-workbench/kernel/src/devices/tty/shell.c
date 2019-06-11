@@ -27,7 +27,7 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
       vfs_cd(dirname, pwd, bigbuf);
       break;
     case 2:  // ext2 cd
-      if (!strcmp(dirname, ".") || !strcmp(dirname, ".."))
+      if (type & INTERFACE && !strcmp(dirname, ".") || !strcmp(dirname, ".."))
         vfs_cd(dirname, pwd, bigbuf);
       else
         assert(0);  // ext2_cd(vfs->get_fs(0)->fs, dirname, pwd, bigbuf);

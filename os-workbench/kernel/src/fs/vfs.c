@@ -98,7 +98,7 @@ void vfs_init() {
   vfs_build(0, "ext2fs-ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
             ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir_tmp,
             ext2_rmdir_tmp);
-  vfsdirs_alloc("ramdisk0", dev_dir, EXT2 | INTERFACE);
+  vfsdirs_alloc("ramdisk0", dev_dir, EXT2);
 }
 
 /*
@@ -121,7 +121,11 @@ int vfs_identify_fs(const char *path) {
     printf("unknown filesystem.\n");
     return 0;
   }
-  return vfsdirs[idx].type;
+  int type = vfsdirs[idx].type;
+  if (!strcmp(path, vfsdirs[idx].absolutely_name))  // absolutely_equal
+    return type | INTERFACE;
+  else
+    return type;
 }
 
 int vfs_access(const char *path, int mode) {
