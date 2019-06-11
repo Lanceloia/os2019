@@ -149,7 +149,7 @@ void *vfs_get_real_fs(const char *path) {
     printf("unknown filesystem.\n");
     return NULL;
   }
-  printf("idx: %d\n", idx);
+  // printf("idx: %d\n", idx);
   return vfsdirs[idx].real_fs;
 }
 
