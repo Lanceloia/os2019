@@ -491,6 +491,7 @@ void ext2_read(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
   } else {
     offset += sprintf(out + offset, "File is no exists!\n");
   }
+  ext2->current_dir = now_current_dir;
 }
 
 void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
@@ -528,6 +529,7 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
   } else {
     offset += sprintf(out + offset, "File is no exists!\n");
   }
+  ext2->current_dir = now_current_dir;
 }
 
 void ext2_rd_sb(ext2_t* ext2) {
