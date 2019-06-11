@@ -84,6 +84,20 @@ static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+extern void ext2_rmdir(ext2_t *ext2, char *dirname, char *out);
+static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
+  int type = vfs_identify_fs(pwd);
+  switch (type & ~INTERFACE) {
+    case 2:  // ext2
+      ext2_rmdir(vfs_get_real_fs(pwd), dirname, bigbuf);
+      break;
+    default:
+      sprintf(bigbuf, "can't rmdir here.\n", bigbuf);
+      break;
+  };
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+}
+
 static void cat_do(device_t *tty, char *path) {
   assert(0);
   int fd = vfs->open(path, RD_ENABLE);
@@ -132,6 +146,8 @@ void shell_task(void *name) {
       ls_do(tty, readbuf + 3, pwd);
     else if (!strncmp(readbuf, "mkdir ", 6))
       mkdir_do(tty, readbuf + 6, pwd);
+    else if (!strncmp(readbuf, "rmdir ", 6))
+      rmdir_do(tty, readbuf + 6, pwd);
     else if (!strncmp(readbuf, "cd ", 3))
       cd_do(tty, readbuf + 3, pwd);
     else
