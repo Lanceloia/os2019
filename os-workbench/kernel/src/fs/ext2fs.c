@@ -20,7 +20,7 @@ id_t* ext2_lookup(fs_t* fs, const char* path, int flags) { return NULL; };
 int ext2_close(id_t* id) { return 0; }
 */
 
-static int item_len(const char* path) {
+static int first_item_len(const char* path) {
   int ret = 0;
   for (; path[ret] != '\0' && path[ret] != '/';) ret++;
   return ret;
@@ -125,7 +125,7 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int file_type,
   ext2_rd_ind(ext2, ext2->current_dir);
   for (uint32_t j = 0; j < ext2->ind.blocks; j++) {
     ext2_rd_dir(ext2, ext2->ind.block[j]);
-    int len = item_len(path);
+    int len = first_item_len(path);
     for (uint32_t k = 0; k < DIR_AMUT;) {
       if (!ext2->dir[k].inode || ext2->dir[k].file_type != file_type ||
           strncmp(ext2->dir[k].name, path, len)) {
@@ -248,7 +248,6 @@ void ext2_cd(ext2_t* ext2, char* dirname, char* pwd, char* out) {
   uint32_t i, j, k, flag;
   if (!strcmp(dirname, "../")) dirname[2] = '\0';
   if (!strcmp(dirname, "./")) dirname[1] = '\0';
-
   flag = ext2_reserch_file(ext2, dirname, TYPE_DIR, &i, &j, &k);
   if (flag) {
     ext2->current_dir = i;
@@ -271,6 +270,8 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
     sprintf(out, "only support 'ls .'");
     return;
   }
+  int now_current_dir = ext2->current_dir, i, j, k;
+  ext2_reserch_file(ext2, dirname, TYPE_DIR, &i, &j, &k);
   ext2_rd_ind(ext2, ext2->current_dir);
   uint32_t flag;
   int offset = sprintf(out, "items           type     mode     size\n");
@@ -359,6 +360,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
       }
     }
   }
+  ext2->current_dir = now_current_dir;
 }
 
 void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
