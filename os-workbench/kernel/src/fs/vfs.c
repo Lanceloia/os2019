@@ -25,8 +25,8 @@ extern int ext2_rmdir(const char *dirname);
 id_t *ext2_lookup(fs_t *fs, const char *path, int flags) { return NULL; }
 int ext2_open(id_t *id, int flags) { return 0; }
 int ext2_close(id_t *id) { return 0; }
-int ext2_mkdir(const char *dirname) { return 0; }
-int ext2_rmdir(const char *dirname) { return 0; }
+int ext2_mkdir_tmp(const char *dirname) { return 0; }
+int ext2_rmdir_tmp(const char *dirname) { return 0; }
 
 void vfs_build(int idx, char *name, device_t *dev, size_t size,
                void (*init)(fs_t *, const char *, device_t *),
@@ -94,8 +94,8 @@ void vfs_init() {
   dev_dir = vfsdirs_alloc("dev", 0, VFS);
   proc_dir = vfsdirs_alloc("proc", 0, VFS);
   vfs_build(0, "ext2fs-ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
-            ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir,
-            ext2_rmdir);
+            ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir_tmp,
+            ext2_rmdir_tmp);
   vfsdirs_alloc("ramdisk0", dev_dir, EXT2);
 }
 
