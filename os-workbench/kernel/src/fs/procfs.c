@@ -10,7 +10,7 @@
 proc_t procs[MAX_PROC];
 int procs_size = 0;
 
-void proc_ls(char *dirname, char *out) {
+void procfs_ls(char *dirname, char *out) {
   int offset = sprintf(out, "");
   if (!strcmp(dirname, ".")) {
     offset += sprintf(out + offset, "proc            cpu      schdule times\n");
