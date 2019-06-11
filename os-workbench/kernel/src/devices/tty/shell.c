@@ -18,8 +18,8 @@ static void echo_do(device_t *tty, char *str) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
-void vfs_cd(char *dirname, char *pwd, char *out);
-void ext2_cd(ext2_t *ext2, char *dirname, char *pwd, char *out);
+extern void vfs_cd(char *dirname, char *pwd, char *out);
+extern void ext2_cd(ext2_t *ext2, char *dirname, char *pwd, char *out);
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
   int type = vfs_identify_fs(pwd);
   switch (type & ~INTERFACE) {
@@ -39,12 +39,13 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+extern void vfs_ls(char *dirname, char *pwd, char *out);
 extern void ext2_ls(ext2_t *ext2, char *dirname, char *out);
 static void ls_do(device_t *tty, char *dirname, char *pwd) {
   int type = vfs_identify_fs(pwd);
   switch (type & ~INTERFACE) {
     case 1:  //
-      sprintf(bigbuf, "can't ls in vfs now.\n", bigbuf);
+      vfs_ls(dirname, pwd, bigbuf);
       break;
     case 2:  // ext2
       ext2_ls(vfs_get_realfs(pwd), dirname, bigbuf);
