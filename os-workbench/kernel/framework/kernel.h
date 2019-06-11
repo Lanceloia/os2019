@@ -68,7 +68,7 @@ typedef struct {
   ssize_t (*write)(int fd, void *buf, size_t nbyte);
   off_t (*lseek)(int fd, off_t offset, int whence);
   int (*close)(int fd);
-  // fs_t *(*get_fs)(int idx);
+  fs_t *(*get_fs)(int idx);
 } MODULE(vfs);
 
 #endif

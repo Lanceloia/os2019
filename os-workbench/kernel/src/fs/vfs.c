@@ -204,12 +204,10 @@ int vfs_close(int fd) {
 }
 
 fs_t *vfs_get_fs(int idx) {
-  /*
   if (idx < 0 || idx >= MAX_FS)
     return NULL;
   else
     return &_fs[idx];
-  */
 }
 
 void vfs_cd(char *dirname, char *pwd, char *out) {
