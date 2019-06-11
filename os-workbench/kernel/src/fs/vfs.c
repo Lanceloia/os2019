@@ -47,7 +47,7 @@ struct vfsdir {
   int dot, ddot;
   int next, child, type;
 } vfsdirs[MAX_DIRS] = {};
-int cur_dir;
+int cur_dir, dev_dir, proc_dir;
 
 int vfsdirs_alloc(const char *name, int parent, int type) {
   int idx = -1;
@@ -83,8 +83,8 @@ void vfs_init() {
   vfsdirs[0].dot = vfsdirs[0].ddot = 0;
   vfsdirs[0].next = vfsdirs[0].child = -1;
   vfsdirs[0].type = VFS;
-  int dev = vfsdirs_alloc("dev", 0, VFS);
-  int proc = vfsdirs_alloc("proc", 0, VFS);
+  dev_dir = vfsdirs_alloc("dev", 0, VFS);
+  proc_dir = vfsdirs_alloc("proc", 0, VFS);
   vfs_build(0, "ext2fs-ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
             ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir,
             ext2_rmdir);
