@@ -14,11 +14,13 @@ extern device_t *dev_lookup(const char *name);
 
 typedef struct ext2 ext2_t;
 extern void ext2_init(fs_t *fs, const char *name, device_t *dev);
+/*
 extern id_t *ext2_lookup(fs_t *fs, const char *path, int flags);
 extern int ext2_open(id_t *id, int flags);
 extern int ext2_close(id_t *id);
 extern int ext2_mkdir(const char *dirname);
 extern int ext2_rmdir(const char *dirname);
+*/
 
 id_t *ext2_lookup(fs_t *fs, const char *path, int flags) { return NULL; }
 int ext2_open(id_t *id, int flags) { return 0; }
