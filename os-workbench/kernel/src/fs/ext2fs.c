@@ -444,7 +444,7 @@ void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
           }
         }
       }
-      ext2_wr_ind(now_current_dir);
+      ext2_wr_ind(ext2, now_current_dir);
     } else {
       offset += sprintf(out + offset, "Directory no null!\n");
     }
