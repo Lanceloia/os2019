@@ -41,7 +41,17 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
 
 extern void ext2_ls(ext2_t *ext2, char *dirname, char *out);
 static void ls_do(device_t *tty, char *dirname, char *pwd) {
-  ext2_ls(vfs_get_realfs(pwd), dirname, bigbuf);
+  int type = vfs_identify_fs(pwd);
+  switch (type & ~INTERFACE) {
+    case 1:  //
+      sprintf(bigbuf, "can't ls in vfs now.\n", bigbuf);
+      break;
+    case 2:  // ext2
+      ext2_ls(vfs_get_realfs(pwd), dirname, bigbuf);
+      break;
+    default:
+      assert(0);
+  }
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
