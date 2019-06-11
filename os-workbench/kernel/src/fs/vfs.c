@@ -251,9 +251,6 @@ int vfs_close(int fd) {
 
 void vfs_cd(char *dirname, char *pwd, char *out) {
   int offset = sprintf(out, "");
-  if (!strcmp(dirname, "../")) dirname[2] = '\0';
-  if (!strcmp(dirname, "./")) dirname[1] = '\0';
-
   if (!strcmp(dirname, "."))
     cur_dir = vfsdirs[cur_dir].dot;
   else if (!strcmp(dirname, ".."))
@@ -265,6 +262,22 @@ void vfs_cd(char *dirname, char *pwd, char *out) {
   }
   strcpy(pwd, vfsdirs[cur_dir].absolutely_name);
   offset += sprintf(out + offset, "Current directory: %s\n", pwd);
+}
+
+void vfs_ls(char *dirname, char *pwd, char *out) {
+  int offset = sprintf(out, ""), tmp_dir;
+  if (!strcmp(dirname, "."))
+    tmp_dir = vfsdirs[cur_dir].dot;
+  else if (!strcmp(dirname, ".."))
+    tmp_dir = vfsdirs[cur_dir].ddot;
+  else {
+    for (int i = vfsdirs[cur_dir].child; i != -1; i = vfsdirs[i].next) {
+      if (!strcmp(dirname, vfsdirs[i].name)) tmp_dir = i, i = -1;
+    }
+  }
+  for (int i = vfsdirs[tmp_dir].child; i != -1; i = vfsdirs[i].next) {
+    offset += sprintf(out + offset, "%s\n", vfsdirs[i].absolutely_name);
+  }
 }
 
 MODULE_DEF(vfs){
