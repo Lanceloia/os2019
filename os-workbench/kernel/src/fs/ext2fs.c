@@ -128,7 +128,7 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int file_type,
     int len = item_len(path);
     for (uint32_t k = 0; k < DIR_AMUT;) {
       if (!ext2->dir[k].inode || ext2->dir[k].file_type != file_type ||
-          strncmp(ext2->dir[k].name, name, len)) {
+          strncmp(ext2->dir[k].name, path, len)) {
         k++;
       } else if (len < strlen(path)) {
         return ext2_reserch_file(ext2, path + len, file_type, ninode, nblock,
