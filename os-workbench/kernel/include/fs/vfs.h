@@ -39,7 +39,7 @@ struct inode_desc_ops {
 
 struct file_sys {
   char name[NAME_lENGTH];
-  void *fs;
+  void *real_fs;
   fs_ops_t *ops;
   device_t *dev;
 };
@@ -54,7 +54,7 @@ struct file_sys_ops {
 };
 
 int vfs_identify_fs(const char *path);
-
+void *vfs_get_realfs(const char *path);
 enum { UNKNOW = 0, VFS = 1, EXT2 = 2, INTERFACE = 0x8000 };
 
 #endif

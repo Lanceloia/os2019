@@ -31,7 +31,7 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
           (!strcmp(dirname, ".") || !strcmp(dirname, "..")))
         vfs_cd(dirname, pwd, bigbuf);
       else
-        assert(0);  // ext2_cd(vfs->get_fs(0)->fs, dirname, pwd, bigbuf);
+        ext2_cd(vfs_get_realfs(pwd), dirname, pwd, bigbuf);
       break;
     default:
       assert(0);

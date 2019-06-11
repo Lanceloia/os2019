@@ -54,7 +54,7 @@ struct vfsdir {
   char absolutely_name[256];
   int dot, ddot;
   int next, child, type;
-  fs_t *fs;
+  void *real_fs;
 } vfsdirs[MAX_DIRS] = {};
 int cur_dir, dev_dir, proc_dir;
 
@@ -73,9 +73,9 @@ int vfsdirs_alloc(const char *name, int parent, int type, int fs_idx) {
   vfsdirs[idx].child = -1;
   vfsdirs[idx].type = type;
   if (fs_idx >= 0)
-    vfsdirs[idx].fs = _fs[fs_idx].fs;
+    vfsdirs[idx].real_fs = _fs[fs_idx].real_fs;
   else
-    vfsdirs[idx].fs = NULL;
+    vfsdirs[idx].real_fs = NULL;
 
   if (vfsdirs[parent].child == -1)
     vfsdirs[parent].child = idx;
@@ -112,7 +112,7 @@ void vfsdirs_dfs(const char *path){
 }
 */
 
-int vfs_identify_fs(const char *path) {
+int vfs_match_path(const char *path) {
   int idx = -1, len = 0;
   for (int i = 0; i < MAX_DIRS; i++) {
     int slen = strlen(vfsdirs[i].absolutely_name);
@@ -122,6 +122,11 @@ int vfs_identify_fs(const char *path) {
         len = slen;
       }
   }
+  return idx;
+}
+
+int vfs_identify_fs(const char *path) {
+  int idx = vfs_match_path(path);
   if (idx == -1) {
     printf("unknown filesystem.\n");
     return 0;
@@ -131,6 +136,15 @@ int vfs_identify_fs(const char *path) {
     return type | INTERFACE;
   else
     return type;
+}
+
+void *vfs_get_realfs(const char *path) {
+  int idx = vfs_match_path(path);
+  if (idx == -1) {
+    printf("unknown filesystem.\n");
+    return NULL;
+  }
+  return vfsdirs[idx].real_fs;
 }
 
 int vfs_access(const char *path, int mode) {
@@ -235,13 +249,6 @@ int vfs_close(int fd) {
   return 0;
 }
 
-fs_t *vfs_get_fs(int idx) {
-  if (idx < 0 || idx >= MAX_FS)
-    return NULL;
-  else
-    return &_fs[idx];
-}
-
 void vfs_cd(char *dirname, char *pwd, char *out) {
   int offset = sprintf(out, "");
   if (!strcmp(dirname, "../")) dirname[2] = '\0';
@@ -274,7 +281,7 @@ MODULE_DEF(vfs){
     .write = vfs_write,
     .lseek = vfs_lseek,
     .close = vfs_close,
-    .get_fs = vfs_get_fs,
+    //.get_fs = vfs_get_fs,
 };
 
 #ifdef _LANCELOIA_DEBUG_
