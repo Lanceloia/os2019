@@ -20,6 +20,12 @@ id_t* ext2_lookup(fs_t* fs, const char* path, int flags) { return NULL; };
 int ext2_close(id_t* id) { return 0; }
 */
 
+static int item_len(const char* path) {
+  int ret = 0;
+  for (; path[ret] != '\0' && path[ret] != '/';) ret++;
+  return ret;
+}
+
 #define ouput(str, ...) offset += sprintf(out + offset, str, ...)
 
 void ext2_init(fs_t* fs, const char* name, device_t* dev) {
@@ -114,20 +120,23 @@ uint32_t ext2_alloc_inode(ext2_t* ext2) {
   return ext2->last_alloc_inode;
 }
 
-uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int file_type,
-                           uint32_t* inode_num, uint32_t* block_num,
-                           uint32_t* dir_num) {
+uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int file_type,
+                           uint32_t* ninode, uint32_t* nblock, uint32_t* ndir) {
   ext2_rd_ind(ext2, ext2->current_dir);
   for (uint32_t j = 0; j < ext2->ind.blocks; j++) {
     ext2_rd_dir(ext2, ext2->ind.block[j]);
+    int len = item_len(path);
     for (uint32_t k = 0; k < DIR_AMUT;) {
       if (!ext2->dir[k].inode || ext2->dir[k].file_type != file_type ||
-          strcmp(ext2->dir[k].name, name)) {
+          strncmp(ext2->dir[k].name, name, len)) {
         k++;
+      } else if (len < strlen(path)) {
+        return ext2_reserch_file(ext2, path + len, file_type, ninode, nblock,
+                                 ndir);
       } else {
-        *inode_num = ext2->dir[k].inode;
-        *block_num = j;
-        *dir_num = k;
+        *ninode = ext2->dir[k].inode;
+        *nblock = j;
+        *ndir = k;
         return 1;
       }
     }
