@@ -34,7 +34,8 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
         ext2_cd(vfs_get_real_fs(pwd), dirname, pwd, bigbuf);
       break;
     default:
-      assert(0);
+      sprintf(bigbuf, "can't cd here.\n", bigbuf);
+      break;
   };
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
@@ -55,7 +56,8 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
       procfs_ls(dirname, bigbuf);
       break;
     default:
-      assert(0);
+      sprintf(bigbuf, "can't ls here.\n", bigbuf);
+      break;
   }
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
@@ -64,14 +66,12 @@ extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
   int type = vfs_identify_fs(pwd);
   switch (type & ~INTERFACE) {
-    case 1:  // vfs
-      sprintf(bigbuf, "can't mkdir in vfs.\n", bigbuf);
-      break;
     case 2:  // ext2
       ext2_mkdir(vfs_get_real_fs(pwd), dirname, TYPE_DIR, bigbuf);
       break;
     default:
-      assert(0);
+      sprintf(bigbuf, "can't mkdir here.\n", bigbuf);
+      break;
   };
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
