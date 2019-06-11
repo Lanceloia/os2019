@@ -10,4 +10,8 @@ struct proc {
   uint32_t schduel_times;
 };
 
+typedef proc proc_t;
+
+#define MAX_PROC
+
 #endif
