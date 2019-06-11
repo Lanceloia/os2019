@@ -104,6 +104,11 @@ void vfs_init() {
             ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir_tmp,
             ext2_rmdir_tmp);
   vfsdirs_alloc("ramdisk0", dev_dir, EXT2, 0);
+
+  vfs_build(1, "ext2fs-ramdisk1", dev_lookup("ramdisk1"), sizeof(ext2_t),
+            ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir_tmp,
+            ext2_rmdir_tmp);
+  vfsdirs_alloc("ramdisk1", dev_dir, EXT2, 1);
 }
 
 /*
