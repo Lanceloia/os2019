@@ -525,11 +525,11 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
       } else {
         ext2_rd_datablock(ext2, ext2->ind.block[n]);
         memcpy(ext2->datablockbuf, buf + n * BLK_SIZE, len - n * BLK_SIZE);
-        ext2->ind.size = len;
         ext2_wr_datablock(ext2, ext2->ind.block[n]);
       }
     }
-    ext2_wr_dir(ext2, ext2->dir[k].inode);
+    ext2->ind.size = len;
+    ext2_wr_ind(ext2, ext2->dir[k].inode);
   } else {
     offset += sprintf(out + offset, "File is no exists!\n");
   }
