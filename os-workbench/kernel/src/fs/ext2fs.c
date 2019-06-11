@@ -362,6 +362,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
 void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
   uint32_t idx, ninode, nblock, ndir;
   int offset = sprintf(out, "");
+  int now_current_dir = ext2->current_dir;
   ext2_rd_ind(ext2, ext2->current_dir);
   if (!ext2_reserch_file(ext2, dirname, type, &ninode, &nblock, &ndir)) {
     if (ext2->ind.size == 4096) {  // origin 4096
@@ -405,6 +406,52 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
     else
       offset += sprintf(out + offset, "Directory existed!\n");
   }
+  ext2->current_dir = now_current_dir;
+}
+
+void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
+  int offset = sprintf(out, "");
+  if (!strcmp(dirname, ".") || !strcmp(dirname, "..")) {
+    offset += sprintf(out + offset, "Can remove!\n");
+    return;
+  }
+  uint32_t i, j, k, n, m, flag;
+  int now_current_dir = ext2->current_dir;
+  flag = ext2_reserch_file(ext2, dirname, &i, &j, &k);
+  if (flag) {
+    ext2_rd_ind(ext2, ext2->dir[k].inode);
+    if (ext2->ind.size == 2 * DIR_SIZE) {
+      ext2->ind.size = 0;
+      ext2->ind.blocks = 0;
+      ext2_remove_block(ext2, ext2->ind.block[0]);
+      ext2_rd_ind(ext2, now_current_dir);
+      ext2_rd_dir(ext2, ext2->ind.block[j]);
+      ext2_remove_block(ext2, ext2->dir[k].inode);
+      ext2->dir[k].inode = 0;
+      ext2_wr_dir(ext2, ext2->ind.block[j]);
+      ext2->ind.size -= DIR_SIZE;
+      int cnt = 0;
+      for (m = 1; cnt < 32 && m < ext2->ind.blocks;) {
+        ext2_rd_dir(ext2, ext2->ind.block[m]);
+        for (cnt = 0, n = 0; n < 32; n++) {
+          if (!dir[n].inode) cnt++;
+        }
+        if (cnt == 32) {
+          ext2_remove_block(ext2, ext2->ind.block[m]);
+          ext2->ind.blocks--;
+          for (; m < ext2->ind.i_blocks; m++) {
+            ext2->ind.block[m] = ext2->ind.block[m + 1]
+          }
+        }
+      }
+      ext2_wr_ind(now_current_dir);
+    } else {
+      offset += sprintf(out + offset, "Directory no null!\n");
+    }
+  } else {
+    offset += sprintf(out + offset, "Directory is no exists!\n");
+  }
+  ext2->current_dir = now_current_dir;
 }
 
 void ext2_rd_sb(ext2_t* ext2) {
