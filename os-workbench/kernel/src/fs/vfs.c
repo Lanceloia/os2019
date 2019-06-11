@@ -143,12 +143,13 @@ int vfs_identify_fs(const char *path) {
     return type;
 }
 
-void *vfs_get_realfs(const char *path) {
+void *vfs_get_real_fs(const char *path) {
   int idx = vfs_match_path(path);
   if (idx == -1) {
     printf("unknown filesystem.\n");
     return NULL;
   }
+  printf("idx: %d\n", idx);
   return vfsdirs[idx].real_fs;
 }
 

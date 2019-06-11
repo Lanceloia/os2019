@@ -31,7 +31,7 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
           (!strcmp(dirname, ".") || !strcmp(dirname, "..")))
         vfs_cd(dirname, pwd, bigbuf);
       else
-        ext2_cd(vfs_get_realfs(pwd), dirname, pwd, bigbuf);
+        ext2_cd(vfs_get_real_fs(pwd), dirname, pwd, bigbuf);
       break;
     default:
       assert(0);
@@ -48,7 +48,7 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
       vfs_ls(dirname, pwd, bigbuf);
       break;
     case 2:  // ext2
-      ext2_ls(vfs_get_realfs(pwd), dirname, bigbuf);
+      ext2_ls(vfs_get_real_fs(pwd), dirname, bigbuf);
       break;
     default:
       assert(0);
@@ -64,7 +64,7 @@ static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
       sprintf(bigbuf, "can't mkdir in vfs.\n", bigbuf);
       break;
     case 2:  // ext2
-      ext2_mkdir(vfs_get_realfs(pwd), dirname, TYPE_DIR, bigbuf);
+      ext2_mkdir(vfs_get_real_fs(pwd), dirname, TYPE_DIR, bigbuf);
       break;
     default:
       assert(0);
