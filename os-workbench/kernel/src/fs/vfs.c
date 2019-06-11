@@ -100,14 +100,12 @@ void vfsdirs_dfs(const char *path){
 int vfs_identify_fs(const char *path) {
   int idx = -1, len = 0;
   for (int i = 0; i < MAX_DIRS; i++) {
-    if (!strncmp(path, vfsdirs[i].absolutely_name,
-                 vfsdirs[i].absolutely_name)) {
-      int slen = strlen(vfsdirs[i].absolutely_name);
+    int slen = strlen(vfsdirs[i].absolutely_name);
+    if (!strncmp(path, vfsdirs[i].absolutely_name, slen))
       if (slen > len) {
         idx = i;
         len = slen;
       }
-    }
   }
   if (idx == -1) {
     printf("unknown filesystem.\n");
