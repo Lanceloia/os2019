@@ -140,6 +140,7 @@ uint32_t ext2_alloc_inode(ext2_t* ext2) {
 
 uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int type, uint32_t* ninode,
                            uint32_t* nblock, uint32_t* ndir) {
+  printf("name: %s\n", path);
   ext2_rd_ind(ext2, ext2->current_dir);
   for (uint32_t j = 0; j < ext2->ind.blocks; j++) {
     ext2_rd_dir(ext2, ext2->ind.block[j]);
