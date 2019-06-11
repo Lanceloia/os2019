@@ -45,11 +45,11 @@ struct vfsdir {
   char name[16];
   char absolutely_name[256];
   int dot, ddot;
-  int next, child;
+  int next, child, type;
 } vfsdirs[MAX_DIRS] = {};
 int cur_dir;
 
-int vfsdirs_alloc(const char *name, int parent) {
+int vfsdirs_alloc(const char *name, int parent, int type) {
   int idx = -1;
   for (int i = 0; idx == -1 && i < MAX_DIRS; i++)
     if (strlen(vfsdirs[i].name) == 0) idx = i;
@@ -62,6 +62,7 @@ int vfsdirs_alloc(const char *name, int parent) {
   vfsdirs[idx].ddot = parent;
   vfsdirs[idx].next = -1;
   vfsdirs[idx].child = -1;
+  vfsdirs[idx].type = type;
 
   if (vfsdirs[parent].child == -1)
     vfsdirs[parent].child = idx;
@@ -75,38 +76,52 @@ int vfsdirs_alloc(const char *name, int parent) {
 }
 
 void vfs_init() {
-  vfs_build(0, "ext2fs-ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
-            ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir,
-            ext2_rmdir);
   // vfs_build(1, "tty1", dev_lookup("tty1"));
   cur_dir = 0;
   strcpy(vfsdirs[0].name, "/");
   strcpy(vfsdirs[0].absolutely_name, "/");
   vfsdirs[0].dot = vfsdirs[0].ddot = 0;
   vfsdirs[0].next = vfsdirs[0].child = -1;
-  vfsdirs_alloc("dev", 0);
-  vfsdirs_alloc("proc", 0);
+  vfsdirs[0].type = VFS;
+  int dev = vfsdirs_alloc("dev", 0, VFS);
+  int proc = vfsdirs_alloc("proc", 0, VFS);
+  vfs_build(0, "ext2fs-ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
+            ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir,
+            ext2_rmdir);
+  vfsdirs_alloc("ramdisk0", dev, EXT2);
 }
 
 /*
-int vfs_identify_fs(const char *path) {
-  int idx = -1;
-  for (int i = 0; i < MAX_FS; i++)
-    if (!strncmp(path, _path[i], strlen(_path[i]))) idx = i;
-  if (idx == -1) {
-    printf("unknown filesystem.\n");
-    return -1;
-  }
-  return idx;
+void vfsdirs_dfs(const char *path){
+
 }
 */
+
+int vfs_identify_fs(const char *path) {
+  int idx = -1, len = 0;
+  for (int i = 0; i < MAX_DIRS; i++) {
+    if (!strncmp(path, vfsdirs[i].absolutely_name,
+                 vfsdirs[i].absolutely_name)) {
+      int slen = strlen(vfsdirs[i].absolutely_name);
+      if (slen > len) {
+        idx = i;
+        len = slen;
+      }
+    }
+  }
+  if (idx == -1) {
+    printf("unknown filesystem.\n");
+    return 0;
+  }
+  return vfsdirs[idx].type;
+}
 
 int vfs_access(const char *path, int mode) {
   /*
   int idx = vfs_identify_fs(path);
   // 0 for accessable
-  if (_fs[idx].ops->lookup(&_fs[idx], path + strlen(_path[idx]), mode) == NULL)
-    return 1;
+  if (_fs[idx].ops->lookup(&_fs[idx], path + strlen(_path[idx]), mode) ==
+  NULL) return 1;
   */
   return 0;
 }
