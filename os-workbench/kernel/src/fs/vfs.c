@@ -35,7 +35,7 @@ void vfs_build(int idx, char *name, device_t *dev, size_t size,
                int (*mkdir)(const char *name), int (*rmdir)(const char *name)) {
   strcpy(_fs[idx].name, name);
   // printf("name: %s", name);
-  _fs[idx].fs = pmm->alloc(size);
+  _fs[idx].real_fs = pmm->alloc(size);
   _fs[idx].ops = &_fs_ops[idx];
   _fs[idx].dev = dev;
   _fs_ops[idx].init = init;
