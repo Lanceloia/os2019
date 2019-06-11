@@ -20,11 +20,11 @@ extern int ext2_close(id_t *id);
 extern int ext2_mkdir(const char *dirname);
 extern int ext2_rmdir(const char *dirname);
 
-id_t *ext2_lookup(fs_t *fs, const char *path, int flags) {}
-int ext2_open(id_t *id, int flags) {}
-int ext2_close(id_t *id) {}
-int ext2_mkdir(const char *dirname) {}
-int ext2_rmdir(const char *dirname) {}
+id_t *ext2_lookup(fs_t *fs, const char *path, int flags) { return 0; }
+int ext2_open(id_t *id, int flags) { return 0; }
+int ext2_close(id_t *id) { return 0; }
+int ext2_mkdir(const char *dirname) { return 0; }
+int ext2_rmdir(const char *dirname) { return 0; }
 
 void vfs_build(int idx, char *name, device_t *dev, size_t size,
                void (*init)(fs_t *, const char *, device_t *),
