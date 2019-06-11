@@ -511,7 +511,7 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
         ext2->ind.block[ext2->ind.blocks++] = ext2_alloc_block(ext2);
     } else {
       while (ext2->ind.blocks > need_blocks)
-        ext2_remove_block(ext, ext2->ind.block[--ext2->ind.blocks]);
+        ext2_remove_block(ext2, ext2->ind.block[--ext2->ind.blocks]);
     }
     for (int n = 0; n < need_blocks; n++) {
       if (n != need_blocks - 1) {
