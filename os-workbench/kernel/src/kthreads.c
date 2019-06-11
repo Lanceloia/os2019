@@ -88,8 +88,10 @@ static void kmt_teardown(task_t *task) {
 }
 
 static void kmt_create_wait() {
+  char buf[128];
   for (int i = 0; i < _ncpu(); i++) {
-    kmt_create(&wait[i], "wait", task_wait, NULL);
+    sprintf(buf, "wait-%d", i);
+    kmt_create(&wait[i], buf, task_wait, NULL);
   }
 }
 
