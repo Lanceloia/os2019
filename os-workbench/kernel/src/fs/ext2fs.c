@@ -409,7 +409,7 @@ void ext2_rd_gd(ext2_t* ext2) {
 }
 
 void ext2_wr_gd(ext2_t* ext2) {
-  ext2->dev->ops->read(ext2->dev, GDT_START, &ext2->gdt, GD_SIZE);
+  ext2->dev->ops->write(ext2->dev, GDT_START, &ext2->gdt, GD_SIZE);
 }
 
 void ext2_rd_ind(ext2_t* ext2, uint32_t i) {
