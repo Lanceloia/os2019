@@ -266,10 +266,6 @@ void ext2_cd(ext2_t* ext2, char* dirname, char* pwd, char* out) {
 }
 
 void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
-  if (strcmp(dirname, ".")) {
-    sprintf(out, "only support 'ls .'");
-    return;
-  }
   uint32_t i, j, k;
   int now_current_dir = ext2->current_dir;
   ext2_reserch_file(ext2, dirname, TYPE_DIR, &i, &j, &k);
