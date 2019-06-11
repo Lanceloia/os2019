@@ -87,6 +87,7 @@ void vfs_init() {
   vfsdirs_alloc("proc", 0);
 }
 
+/*
 int vfs_identify_fs(const char *path) {
   int idx = -1;
   for (int i = 0; i < MAX_FS; i++)
@@ -97,25 +98,32 @@ int vfs_identify_fs(const char *path) {
   }
   return idx;
 }
+*/
 
 int vfs_access(const char *path, int mode) {
+  /*
   int idx = vfs_identify_fs(path);
   // 0 for accessable
   if (_fs[idx].ops->lookup(&_fs[idx], path + strlen(_path[idx]), mode) == NULL)
     return 1;
+  */
   return 0;
 }
 
 int vfs_mount(const char *path, fs_t *fs) {
+  /*
   int idx = fs - &_fs[0];
   if (idx < 0 || idx >= MAX_FS) return 1;
   strcpy(_path[idx], path);
+  */
   return 0;
 }
 
 int vfs_unmount(const char *path) {
+  /*
   int idx = vfs_identify_fs(path);
   _path[idx] = "DISABLE_PATH";
+  */
   return 0;
 }
 
@@ -139,13 +147,16 @@ int vfs_unlink(const char *path) {
   return 1;
 }
 
+/*
 static int alloc_fd() {
   for (int i = 0; i < MAX_FD; i++)
     if (fds[i].refcnt == 0) return i;
   return -1;
 }
+*/
 
 int vfs_open(const char *path, int flags) {
+  /*
   assert(0);
   if (vfs_access(path, flags)) return 1;
   int fd = alloc_fd();
@@ -155,19 +166,24 @@ int vfs_open(const char *path, int flags) {
       _fs[idx].ops->lookup(&_fs[idx], path + strlen(_path[idx]), flags);
   fds[fd].offset = 0;
   fds[fd].refcnt++;
+  */
   return 0;
 }
 
 ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
+  /*
   ssize_t cnt = fds[fd].id->ops->read(&fds[fd], buf, nbyte);
   fds[fd].offset += cnt;
+  */
   return cnt;
 }
 
 ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
+  /*
   assert(0);
   ssize_t cnt = fds[fd].id->ops->write(&fds[fd], buf, nbyte);
   fds[fd].offset += cnt;
+  */
   return cnt;
 }
 
@@ -177,19 +193,23 @@ off_t vfs_lseek(int fd, off_t offset, int whence) {
 }
 
 int vfs_close(int fd) {
+  /*
   if (!(--fds[fd].refcnt)) {
     fds[fd].id = NULL;
     fds[fd].offset = 0;
   }
+  */
   return 0;
 }
 
+/*
 fs_t *vfs_get_fs(int idx) {
   if (idx < 0 || idx >= MAX_FS)
     return NULL;
   else
     return &_fs[idx];
 }
+*/
 
 void vfs_cd(char *dirname, char *pwd, char *out) {
   int offset = sprintf(out, "");
