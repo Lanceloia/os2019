@@ -26,6 +26,13 @@ static int first_item_len(const char* path) {
   return ret;
 }
 
+static int last_item_offset(const char* path) {
+  int offset = 0, ret = 0;
+  for (; path[offset] != '\0'; offset++)
+    if (path[offset] == '/') ret = offset + 1;
+  return ret;
+}
+
 #define ouput(str, ...) offset += sprintf(out + offset, str, ...)
 
 void ext2_init(fs_t* fs, const char* name, device_t* dev) {
@@ -380,9 +387,10 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       }
     End:
       idx = ext2->dir[j].inode = ext2_alloc_inode(ext2);
-      ext2->dir[j].name_len = strlen(dirname);
+      int last_offset = last_item_offset(dirname);
+      ext2->dir[j].name_len = strlen(dirname + last_offset);
       ext2->dir[j].file_type = type;
-      strcpy(ext2->dir[j].name, dirname);
+      strcpy(ext2->dir[j].name, dirname + last_offset);
       ext2_wr_dir(ext2, ext2->ind.block[i]);
     } else {
       // full
@@ -390,9 +398,10 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       ext2->ind.block[ext2->ind.blocks++] = ext2_alloc_block(ext2);
       ext2_rd_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
       idx = ext2->dir[0].inode = ext2_alloc_inode(ext2);
-      ext2->dir[0].name_len = strlen(dirname);
+      int last_offset = last_item_offset(dirname);
+      ext2->dir[0].name_len = strlen(dirname + last_offset);
       ext2->dir[0].file_type = type;
-      strcpy(ext2->dir[0].name, dirname);
+      strcpy(ext2->dir[0].name, dirname + last_offset);
       for (int i = 1; i < DIR_AMUT; i++) ext2->dir[i].inode = 0;
       ext2_wr_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
     }
