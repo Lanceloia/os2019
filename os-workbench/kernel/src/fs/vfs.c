@@ -88,7 +88,7 @@ void vfs_init() {
   vfs_build(0, "ext2fs-ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
             ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir,
             ext2_rmdir);
-  vfsdirs_alloc("ramdisk0", dev, EXT2);
+  vfsdirs_alloc("ramdisk0", dev_dir, EXT2);
 }
 
 /*
