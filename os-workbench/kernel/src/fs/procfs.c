@@ -21,7 +21,6 @@ int procfs_get_idx() {
 
 void *procfs_add(const char *procname) {
   int idx = procfs_get_idx();
-  if (idx == -1) return;
   strcpy(procs[idx].name, procname);
   procs[idx].cpu_number = -1;
   procs[idx].schduel_times = 0;
