@@ -20,7 +20,7 @@ extern int ext2_close(id_t *id);
 extern int ext2_mkdir(const char *dirname);
 extern int ext2_rmdir(const char *dirname);
 
-id_t *ext2_lookup(fs_t *fs, const char *path, int flags) { return 0; }
+id_t *ext2_lookup(fs_t *fs, const char *path, int flags) { return NULL; }
 int ext2_open(id_t *id, int flags) { return 0; }
 int ext2_close(id_t *id) { return 0; }
 int ext2_mkdir(const char *dirname) { return 0; }
