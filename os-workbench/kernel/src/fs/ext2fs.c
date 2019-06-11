@@ -502,6 +502,7 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
   uint32_t i, j, k, flag, need_blocks = (len + (BLK_SIZE - 1)) / BLK_SIZE;
   int now_current_dir = ext2->current_dir;
   int offset = sprintf(out, "");
+  printf("fuck: %s", buf);
   flag = ext2_reserch_file(ext2, path, TYPE_FILE, &i, &j, &k);
   if (flag) {
     // don't need open
