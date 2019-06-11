@@ -433,7 +433,7 @@ void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
       ext2->ind.size = 0;
       ext2->ind.blocks = 0;
       ext2_remove_block(ext2, ext2->ind.block[0]);
-      ext2_rd_ind(ext2, now_current_dir);
+      ext2_rd_ind(ext2, ext2->current_dir);
       ext2_rd_dir(ext2, ext2->ind.block[j]);
       ext2_remove_block(ext2, ext2->dir[k].inode);
       ext2->dir[k].inode = 0;
@@ -453,7 +453,7 @@ void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
           }
         }
       }
-      ext2_wr_ind(ext2, now_current_dir);
+      ext2_wr_ind(ext2, ext2->current_dir);
     } else {
       offset += sprintf(out + offset, "Directory no null!\n");
     }
