@@ -504,6 +504,7 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
   int now_current_dir = ext2->current_dir;
   int offset = sprintf(out, "");
   flag = ext2_reserch_file(ext2, path, TYPE_FILE, &i, &j, &k);
+  printf("writeflag: %d\n", flag);
   if (flag) {
     // don't need open
     ext2_rd_ind(ext2, ext2->dir[k].inode);
