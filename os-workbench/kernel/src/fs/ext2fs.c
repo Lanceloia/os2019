@@ -160,6 +160,7 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int type, uint32_t* ninode,
       }
     }
   }
+  printf("zero!\n");
   return 0;
 }
 
