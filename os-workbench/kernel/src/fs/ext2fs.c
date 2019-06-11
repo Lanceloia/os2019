@@ -23,7 +23,7 @@ int ext2_close(id_t* id) { return 0; }
 #define ouput(str, ...) offset += sprintf(out + offset, str, ...)
 
 void ext2_init(fs_t* fs, const char* name, device_t* dev) {
-  ext2_t* ext2 = (ext2_t*)fs->fs;
+  ext2_t* ext2 = (ext2_t*)fs->real_fs;
   memset(ext2, 0x00, sizeof(ext2_t));
   ext2->dev = dev;
   printf("Creating ext2fs\n");
