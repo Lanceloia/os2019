@@ -175,7 +175,7 @@ ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
   ssize_t cnt = fds[fd].id->ops->read(&fds[fd], buf, nbyte);
   fds[fd].offset += cnt;
   */
-  return cnt;
+  return 0;
 }
 
 ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
@@ -184,7 +184,7 @@ ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
   ssize_t cnt = fds[fd].id->ops->write(&fds[fd], buf, nbyte);
   fds[fd].offset += cnt;
   */
-  return cnt;
+  return 0;
 }
 
 off_t vfs_lseek(int fd, off_t offset, int whence) {
@@ -202,14 +202,14 @@ int vfs_close(int fd) {
   return 0;
 }
 
-/*
 fs_t *vfs_get_fs(int idx) {
+  /*
   if (idx < 0 || idx >= MAX_FS)
     return NULL;
   else
     return &_fs[idx];
+  */
 }
-*/
 
 void vfs_cd(char *dirname, char *pwd, char *out) {
   int offset = sprintf(out, "");
