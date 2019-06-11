@@ -463,6 +463,30 @@ void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
   ext2->current_dir = now_current_dir;
 }
 
+void ext2_read(ext2_t* ext2, char* path, char* out) {
+  uint32_t i, j, k, flag;
+  int now_current_dir = ext2->current_dir;
+  int offset = sprintf(out, "");
+  flag = ext2_reserch_file(ext2, path, TYPE_FILE, &i, &j, &k);
+  if (flag) {
+    // don't need open
+    ext2_rd_ind(ext2, ext2->dir[k].inode);
+    if (!ext2->ind.mode & 0x4) {
+      offset += sprintf(out + offset, "File can't be read!\n");
+      return;
+    }
+    for (int n = 0; n < ext2->ind.blocks; n++) {
+      ext2_rd_datablock(ext2->ind.block[n]);
+      for (int m = 0; m < ext2->ind.size - n * BLK_SIZE; ++m) {
+        printf("%c", ext2->datablockbuf[m]);
+      }
+    }
+    printf("\n");
+  } else {
+    offset += sprintf(out + offset, "File is no exists!\n");
+  }
+}
+
 void ext2_rd_sb(ext2_t* ext2) {
   ext2->dev->ops->read(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
 }
