@@ -83,7 +83,7 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   void ext2_write(ext2_t*, char*, char*, uint32_t, char*);
   ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
   // ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
-  ext2_write(ext2, "hellp.cpp", hello_str, strlen(hello_str), trash);
+  ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str), trash);
 }
 
 uint32_t ext2_alloc_block(ext2_t* ext2) {
@@ -140,18 +140,18 @@ uint32_t ext2_alloc_inode(ext2_t* ext2) {
 
 uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int type, uint32_t* ninode,
                            uint32_t* nblock, uint32_t* ndir) {
-  printf("name: %s\n", path);
+  // printf("name: %s\n", path);
   ext2_rd_ind(ext2, ext2->current_dir);
   for (uint32_t j = 0; j < ext2->ind.blocks; j++) {
     ext2_rd_dir(ext2, ext2->ind.block[j]);
     int len = first_item_len(path);
-    printf("%d, %d", len, strlen(path));
+    // printf("%d, %d", len, strlen(path));
     for (uint32_t k = 0; k < DIR_AMUT;) {
       if (!ext2->dir[k].inode || ext2->dir[k].file_type != type ||
           strncmp(ext2->dir[k].name, path, len)) {
-        printf("dir[%d]name: %s, %d\n", k, ext2->dir[k].name,
+        //  printf("dir[%d]name: %s, %d\n", k, ext2->dir[k].name,
                strncmp(ext2->dir[k].name, path, 9));
-        k++;
+               k++;
       } else {
         ext2->current_dir = *ninode = ext2->dir[k].inode;
         *nblock = j;
