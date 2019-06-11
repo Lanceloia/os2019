@@ -35,7 +35,7 @@ static int last_item_offset(const char* path) {
 
 #define ouput(str, ...) offset += sprintf(out + offset, str, ...)
 
-char* trash[4096];
+char trash[4096];
 
 void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   ext2_t* ext2 = (ext2_t*)fs->real_fs;
