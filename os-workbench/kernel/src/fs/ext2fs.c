@@ -380,7 +380,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
   uint32_t idx, ninode, nblock, ndir;
   int offset = sprintf(out, "");
   int now_current_dir = ext2->current_dir;
-  ext2_rd_ind(ext2, ext2->current_dir);
+  ext2_rd_ind(ext2, now_current_dir);
   if (!ext2_reserch_file(ext2, dirname, type, &ninode, &nblock, &ndir)) {
     if (ext2->ind.size == 4096) {  // origin 4096
       offset += sprintf(out + offset, "No room to make directory!\n");
@@ -418,7 +418,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
     // printf("e");
     ext2->ind.size += DIR_SIZE;  // origin 16
     ext2_wr_ind(ext2, now_current_dir);
-    ext2_dir_prepare(ext2, idx, strlen(dirname), type);
+    if (type == TYPE_DIR) ext2_dir_prepare(ext2, idx, strlen(dirname), type);
   } else {
     if (type == TYPE_FILE)
       offset += sprintf(out + offset, "File existed!\n");
