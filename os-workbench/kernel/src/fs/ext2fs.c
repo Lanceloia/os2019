@@ -335,37 +335,37 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
           else
             offset += sprintf(out + offset, "%6d", ext2->ind.size);
           offset += sprintf(out + offset, "\n");
+        } else if (ext2->dir[k].file_type == TYPE_FILE) {
+          ext2_rd_ind(ext2, ext2->dir[k].inode);
+          for (int j = 0; j < 15 - ext2->dir[k].name_len; j++)
+            offset += sprintf(out + offset, "%c", ' ');
+          offset += sprintf(out + offset, " <FILE>   ");
+          switch (ext2->ind.mode & 7) {
+            case 1:
+              offset += sprintf(out + offset, "____x    ");
+              break;
+            case 2:
+              offset += sprintf(out + offset, "__w__    ");
+              break;
+            case 3:
+              offset += sprintf(out + offset, "__w_x    ");
+              break;
+            case 4:
+              offset += sprintf(out + offset, "r____    ");
+              break;
+            case 5:
+              offset += sprintf(out + offset, "r___x    ");
+              break;
+            case 6:
+              offset += sprintf(out + offset, "r_w__    ");
+              break;
+            case 7:
+              offset += sprintf(out + offset, "r_w_x    ");
+              break;
+          }
+          offset += sprintf(out + offset, "%6d\n", ext2->ind.size);
+          offset += sprintf(out + offset, "\n");
         }
-      } else if (ext2->dir[k].file_type == 1) {
-        ext2_rd_ind(ext2, ext2->dir[k].inode);
-        for (int j = 0; j < 15 - ext2->dir[k].name_len; j++)
-          offset += sprintf(out + offset, "%c", ' ');
-        offset += sprintf(out + offset, " <FILE>   ");
-        switch (ext2->ind.mode & 7) {
-          case 1:
-            offset += sprintf(out + offset, "____x    ");
-            break;
-          case 2:
-            offset += sprintf(out + offset, "__w__    ");
-            break;
-          case 3:
-            offset += sprintf(out + offset, "__w_x    ");
-            break;
-          case 4:
-            offset += sprintf(out + offset, "r____    ");
-            break;
-          case 5:
-            offset += sprintf(out + offset, "r___x    ");
-            break;
-          case 6:
-            offset += sprintf(out + offset, "r_w__    ");
-            break;
-          case 7:
-            offset += sprintf(out + offset, "r_w_x    ");
-            break;
-        }
-        offset += sprintf(out + offset, "%6d\n", ext2->ind.size);
-        offset += sprintf(out + offset, "\n");
       }
     }
   }
