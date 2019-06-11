@@ -35,7 +35,7 @@ static int last_item_offset(const char* path) {
 
 #define ouput(str, ...) offset += sprintf(out + offset, str, ...)
 
-char hello_str =
+char* hello_str =
     "#include <iostream> \nusing namespace std;\nint main(){\n  return 0;\n}";
 char trash[4096];
 
