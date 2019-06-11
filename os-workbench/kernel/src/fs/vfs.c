@@ -242,9 +242,11 @@ void vfs_cd(char *dirname, char *pwd, char *out) {
     cur_dir = vfsdirs[cur_dir].dot;
   else if (!strcmp(dirname, ".."))
     cur_dir = vfsdirs[cur_dir].ddot;
-  else
-    assert(0);
-
+  else {
+    for (int i = vfsdirs[cur_dir].child; i != -1; i = vfsdirs[i].next) {
+      if (!strcmp(dirname, vfsdirs[i].name)) cur_dir = i, i = -1;
+    }
+  }
   strcpy(pwd, vfsdirs[cur_dir].absolutely_name);
   offset += sprintf(out + offset, "Current directory: %s\n", pwd);
 }
