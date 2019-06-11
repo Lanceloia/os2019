@@ -36,7 +36,7 @@ static int last_item_offset(const char* path) {
 #define ouput(str, ...) offset += sprintf(out + offset, str, ...)
 
 char* hello_str =
-    "#include <iostream> \nusing namespace std;\nint main(){\n  return 0;\n}";
+    "#include <iostream> \nusing namespace std;\nint main(){\n  return 0;\n}\n";
 char trash[4096];
 
 void ext2_init(fs_t* fs, const char* name, device_t* dev) {
@@ -502,7 +502,6 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
   uint32_t i, j, k, flag, need_blocks = (len + (BLK_SIZE - 1)) / BLK_SIZE;
   int now_current_dir = ext2->current_dir;
   int offset = sprintf(out, "");
-  printf("fuck: %s", buf);
   flag = ext2_reserch_file(ext2, path, TYPE_FILE, &i, &j, &k);
   if (flag) {
     // don't need open
@@ -535,6 +534,7 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
     offset += sprintf(out + offset, "File is no exists!\n");
   }
   ext2->current_dir = now_current_dir;
+  ext2_read(ext2, path, buf, len, out);
 }
 
 void ext2_rd_sb(ext2_t* ext2) {
