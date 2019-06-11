@@ -531,6 +531,7 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
     ext2->ind.size = len;
     ext2_wr_ind(ext2, ext2->dir[k].inode);
   } else {
+    printf("fuck");
     offset += sprintf(out + offset, "File is no exists!\n");
   }
   ext2->current_dir = now_current_dir;
