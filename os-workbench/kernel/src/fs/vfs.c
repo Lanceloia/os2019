@@ -20,7 +20,7 @@ extern int ext2_close(id_t *id);
 extern int ext2_mkdir(const char *dirname);
 extern int ext2_rmdir(const char *dirname);
 
-void vfs_build(int idx, char *name, char *path, device_t *dev, size_t size,
+void vfs_build(int idx, char *name, device_t *dev, size_t size,
                void (*init)(fs_t *, const char *, device_t *),
                id_t *(*lookup)(fs_t *fs, const char *path, int flags),
                int (*open)(id_t *id, int flags), int (*close)(id_t *id),
@@ -37,28 +37,54 @@ void vfs_build(int idx, char *name, char *path, device_t *dev, size_t size,
   _fs_ops[idx].mkdir = mkdir;
   _fs_ops[idx].rmdir = rmdir;
   _fs_ops[idx].init(&_fs[idx], name, dev);
-  _path[idx] = path;
 }
 
-#define MAX_FD 32
+#define MAX_DIRS 256
 
-fd_t fds[MAX_FD];
-id_t ids[32];
-
-/*
-struct node {
-  char *name;
+struct vfsdir {
+  char name[16];
+  char absolutely_name[256];
   int dot, ddot;
   int next, child;
-} nodes[256] = {
-    {"/", 0, 0, -1, 1}, {"/dev/", 1, 0, 2, -1}, {"/proc/", 2, 0, -1, -1}};
-    */
+} vfsdirs[MAX_DIRS] = {};
+int cur_dir;
+
+int vfsdirs_alloc(const char *name, int parent) {
+  int idx = -1;
+  for (int i = 0; idx == -1 && i < MAX_DIRS; i++)
+    if (strlen(vfsdirs[i].name) == 0) idx = i;
+  if (idx == -1) assert(0);
+  strcpy(vfsdirs[idx].name, name);
+  strcpy(vfsdirs[idx].absolutely_name, vfsdirs[parent].absolutely_name);
+  strcat(vfsdirs[idx].absolutely_name, name);
+  strcat(vfsdirs[idx].absolutely_name, "/");
+  vfsdirs[idx].dot = idx;
+  vfsdirs[idx].ddot = parent;
+  vfsdirs[idx].next = -1;
+  vfsdirs[idx].child = -1;
+
+  if (vfsdirs[parent].child == -1)
+    vfsdirs[parent].child = idx;
+  else {
+    for (int i = vfsdirs[parent].child; vfsdirs[i] != -1; i = vfsdirs[i].next) {
+      if (vfsdirs[i] == -1) vfsdirs[i] = idx;
+    }
+  }
+  return idx;
+}
 
 void vfs_init() {
-  vfs_build(0, "ext2fs-ramdisk0", "/dev/ramdisk0", dev_lookup("ramdisk0"),
-            sizeof(ext2_t), ext2_init, ext2_lookup, ext2_open, ext2_close,
-            ext2_mkdir, ext2_rmdir);
+  vfs_build(0, "ext2fs-ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
+            ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir,
+            ext2_rmdir);
   // vfs_build(1, "tty1", dev_lookup("tty1"));
+  cur_dir = 0;
+  strcpy(vfsdirs[0].name, "/");
+  strcpy(vfsdirs[0].absolutely_name, "/");
+  vfsdirs[0].dot = vfsdirs[0].ddot = 0;
+  vfsdirs[0].next = vfsdirs[0].child = -1;
+  vfsdirs_alloc("dev", 0);
+  vfsdirs_alloc("proc", 0);
 }
 
 int vfs_identify_fs(const char *path) {
@@ -170,17 +196,14 @@ void vfs_cd(char *dirname, char *pwd, char *out) {
   if (!strcmp(dirname, "../")) dirname[2] = '\0';
   if (!strcmp(dirname, "./")) dirname[1] = '\0';
 
-  int idx = 0;
-  for (; strcmp(nodes[idx].name, pwd);) idx++;
+  if (!strcmp(dirname, "."))
+    cur_dir = vfsdirs[cur_dir].dot;
+  else if (!strcmp(dirname, ".."))
+    cur_dir = vfsdirs[cur_dir].ddot;
+  else
+    assert(0);
 
-  if (!strcmp(dirname, ".."))
-    strcpy(pwd, nodes[nodes[idx].ddot].name);
-  else if (!strcmp(dirname, "."))
-    ;
-  else {
-    strcat(pwd, dirname);
-    strcat(pwd, "/");
-  }
+  strcpy(pwd, vfsdirs[cur_dir].absolutely_name);
   offset += sprintf(out + offset, "Current directory: %s\n", pwd);
 }
 
