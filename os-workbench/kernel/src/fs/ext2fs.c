@@ -534,6 +534,7 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
     offset += sprintf(out + offset, "File is no exists!\n");
   }
   ext2->current_dir = now_current_dir;
+  printf("len: %d", len);
   ext2_read(ext2, path, buf, len, out);
 }
 
