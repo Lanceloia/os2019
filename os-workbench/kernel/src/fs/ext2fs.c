@@ -131,6 +131,7 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int file_type,
           strncmp(ext2->dir[k].name, path, len)) {
         k++;
       } else if (len < strlen(path)) {
+        ext2->current_dir = ext2->dir[k].inode;
         return ext2_reserch_file(ext2, path + len + 1, file_type, ninode,
                                  nblock, ndir);
       } else {
