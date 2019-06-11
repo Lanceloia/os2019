@@ -23,10 +23,10 @@ void ext2_cd(ext2_t *ext2, char *dirname, char *pwd, char *out);
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
   int type = vfs_identify_fs(pwd);
   switch (type & ~INTERFACE) {
-    case 1:  // vfs cd
+    case 1:  // vfs
       vfs_cd(dirname, pwd, bigbuf);
       break;
-    case 2:  // ext2 cd
+    case 2:  // ext2
       if ((type & INTERFACE) &&
           (!strcmp(dirname, ".") || !strcmp(dirname, "..")))
         vfs_cd(dirname, pwd, bigbuf);
@@ -35,7 +35,6 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
       break;
     default:
       assert(0);
-      break;
   };
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
@@ -48,14 +47,22 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
 
 extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
-  int type = TYPE_DIR, name_len = strlen(dirname);
-  for (int i = 0; i < name_len; i++)
-    if (dirname[i] == '.') type = TYPE_FILE;  // point
-  ext2_mkdir(vfs_get_realfs(pwd), dirname, type, bigbuf);
+  int type = vfs_identify_fs(pwd);
+  switch (type & ~INTERFACE) {
+    case 1:  // vfs
+      sprintf(bigbuf, "can't mkdir in vfs.\n", bigbuf);
+      break;
+    case 2:  // ext2
+      ext2_mkdir(vfs_get_realfs(pwd), dirname, TYPE_DIR, bigbuf);
+      break;
+    default:
+      assert(0);
+  };
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
 static void cat_do(device_t *tty, char *path) {
+  assert(0);
   int fd = vfs->open(path, RD_ENABLE);
   if (fd == -1) {
     panic("error");
