@@ -81,8 +81,8 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   /* test */
   void ext2_mkdir(ext2_t*, char*, int, char*);
   void ext2_write(ext2_t*, char*, char*, uint32_t, char*);
-  // ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
-  // ext2_write(ext2, "hellp.cpp", hello_str, strlen(hello_str), trash);
+  ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
+  ext2_write(ext2, "hellp.cpp", hello_str, strlen(hello_str), trash);
 }
 
 uint32_t ext2_alloc_block(ext2_t* ext2) {
@@ -531,11 +531,11 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
     ext2->ind.size = len;
     ext2_wr_ind(ext2, ext2->dir[k].inode);
   } else {
-    printf("fuck");
+    // printf("fuck");
     offset += sprintf(out + offset, "File is no exists!\n");
   }
   ext2->current_dir = now_current_dir;
-  printf("len: %d", len);
+  // printf("len: %d", len);
   ext2_read(ext2, path, buf, len, out);
 }
 
