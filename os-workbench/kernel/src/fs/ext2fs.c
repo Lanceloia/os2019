@@ -26,7 +26,7 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   ext2_t* ext2 = (ext2_t*)fs->real_fs;
   memset(ext2, 0x00, sizeof(ext2_t));
   ext2->dev = dev;
-  printf("Creating ext2fs\n");
+  printf("Creating ext2: %s\n", name);
   ext2->last_alloc_inode = 1;
   ext2->last_alloc_block = 0;
   for (int i = 0; i < MAX_OPEN_FILE_AMUT; i++) ext2->file_open_table[i] = 0;
