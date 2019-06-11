@@ -265,7 +265,7 @@ void vfs_cd(char *dirname, char *pwd, char *out) {
 }
 
 void vfs_ls(char *dirname, char *pwd, char *out) {
-  int offset = sprintf(out, ""), tmp_dir;
+  int offset = sprintf(out, ""), tmp_dir = -1;
   if (!strcmp(dirname, "."))
     tmp_dir = vfsdirs[cur_dir].dot;
   else if (!strcmp(dirname, ".."))
@@ -275,9 +275,11 @@ void vfs_ls(char *dirname, char *pwd, char *out) {
       if (!strcmp(dirname, vfsdirs[i].name)) tmp_dir = i, i = -1;
     }
   }
-  for (int i = vfsdirs[tmp_dir].child; i != -1; i = vfsdirs[i].next) {
-    offset += sprintf(out + offset, "%s\n", vfsdirs[i].absolutely_name);
-  }
+  if (tmp_dir == -1)
+    offset += sprintf(out + offset, "No such directory.\n");
+  else
+    for (int i = vfsdirs[tmp_dir].child; i != -1; i = vfsdirs[i].next)
+      offset += sprintf(out + offset, "%s\n", vfsdirs[i].absolutely_name);
 }
 
 MODULE_DEF(vfs){
