@@ -20,18 +20,26 @@ static void echo_do(device_t *tty, char *str) {
 
 extern void vfs_cd(char *dirname, char *pwd, char *out);
 extern void ext2_cd(ext2_t *ext2, char *dirname, char *pwd, char *out);
+extern void procfs_cd(char *dirname, char *pwd, char *out);
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
   int type = vfs_identify_fs(pwd);
   switch (type & ~INTERFACE) {
-    case 1:  // vfs
+    case VFS:  // vfs
       vfs_cd(dirname, pwd, bigbuf);
       break;
-    case 2:  // ext2
+    case EXT2:  // ext2
       if ((type & INTERFACE) &&
           (!strcmp(dirname, ".") || !strcmp(dirname, "..")))
         vfs_cd(dirname, pwd, bigbuf);
       else
         ext2_cd(vfs_get_real_fs(pwd), dirname, pwd, bigbuf);
+      break;
+    case PROCFS:
+      if ((type & INTERFACE) &&
+          (!strcmp(dirname, ".") || !strcmp(dirname, "..")))
+        vfs_cd(dirname, pwd, bigbuf);
+      else
+        procfs_cd(dirname, pwd, bigbuf);
       break;
     default:
       sprintf(bigbuf, "can't cd here.\n", bigbuf);

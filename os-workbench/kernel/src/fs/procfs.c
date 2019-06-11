@@ -33,7 +33,10 @@ void procfs_schdule(void *proc) {
   _proc->schduel_times++;
 }
 
-void procfs_cd(char *dirname, char *out) {}
+void procfs_cd(char *dirname, char *pwd, char *out) {
+  int offset = sprintf(out, "can't cd here");
+  return;
+}
 
 void procfs_ls(char *dirname, char *out) {
   int offset = sprintf(out, "");
