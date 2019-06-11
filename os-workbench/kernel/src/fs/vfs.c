@@ -15,12 +15,16 @@ extern device_t *dev_lookup(const char *name);
 typedef struct ext2 ext2_t;
 extern void ext2_init(fs_t *fs, const char *name, device_t *dev);
 extern id_t *ext2_lookup(fs_t *fs, const char *path, int flags);
+extern int ext2_open(id_t *id, int flags);
 extern int ext2_close(id_t *id);
+extern int ext2_mkdir(const char *dirname);
+extern int ext2_rmdir(const char *dirname);
 
 void vfs_build(int idx, char *name, char *path, device_t *dev, size_t size,
                void (*init)(fs_t *, const char *, device_t *),
                id_t *(*lookup)(fs_t *fs, const char *path, int flags),
-               int (*close)(id_t *id)) {
+               int (*open)(id_t *id, int flags), int (*close)(id_t *id),
+               int (*mkdir)(const char *name), int (*rmdir)(const char *name)) {
   strcpy(_fs[idx].name, name);
   // printf("name: %s", name);
   _fs[idx].fs = pmm->alloc(size);
@@ -28,7 +32,10 @@ void vfs_build(int idx, char *name, char *path, device_t *dev, size_t size,
   _fs[idx].dev = dev;
   _fs_ops[idx].init = init;
   _fs_ops[idx].lookup = lookup;
+  _fs_ops[idx].open = open;
   _fs_ops[idx].close = close;
+  _fs_ops[idx].mkdir = mkdir;
+  _fs_ops[idx].rmdir = rmdir;
   _fs_ops[idx].init(&_fs[idx], name, dev);
   _path[idx] = path;
 }
@@ -38,16 +45,19 @@ void vfs_build(int idx, char *name, char *path, device_t *dev, size_t size,
 fd_t fds[MAX_FD];
 id_t ids[32];
 
+/*
 struct node {
   char *name;
   int dot, ddot;
   int next, child;
 } nodes[256] = {
     {"/", 0, 0, -1, 1}, {"/dev/", 1, 0, 2, -1}, {"/proc/", 2, 0, -1, -1}};
+    */
 
 void vfs_init() {
   vfs_build(0, "ext2fs-ramdisk0", "/dev/ramdisk0", dev_lookup("ramdisk0"),
-            sizeof(ext2_t), ext2_init, ext2_lookup, ext2_close);
+            sizeof(ext2_t), ext2_init, ext2_lookup, ext2_open, ext2_close,
+            ext2_mkdir, ext2_rmdir);
   // vfs_build(1, "tty1", dev_lookup("tty1"));
 }
 

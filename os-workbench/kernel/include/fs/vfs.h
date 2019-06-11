@@ -33,10 +33,8 @@ struct inode_desc_ops {
   ssize_t (*read)(fd_t *file, char *buf, size_t size);
   ssize_t (*write)(fd_t *file, const char *buf, size_t size);
   off_t (*lseek)(fd_t *file, off_t offset, int whence);
-  int (*mkdir)(const char *name);
-  int (*rmdir)(const char *name);
-  int (*link)(const char *name, id_t *id);
-  int (*unlink)(const char *name);
+  // int (*link)(const char *name, id_t *id);
+  // int (*unlink)(const char *name);
 };
 
 struct file_sys {
@@ -49,7 +47,10 @@ struct file_sys {
 struct file_sys_ops {
   void (*init)(fs_t *fs, const char *name, device_t *dev);
   id_t *(*lookup)(fs_t *fs, const char *path, int flags);
+  int (*open)(id_t *id, int flags);
   int (*close)(id_t *id);
+  int (*mkdir)(const char *name);
+  int (*rmdir)(const char *name);
 };
 
 int vfs_identify_fs(const char *path);
