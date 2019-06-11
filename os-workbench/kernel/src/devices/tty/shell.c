@@ -102,7 +102,7 @@ static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
 }
 
 extern void ext2_cat(ext2_t *ext2, char *dirname, char *out);
-static void cat_do(device_t *tty, char *path, char *pwd) {
+static void cat_do(device_t *tty, char *dirname, char *pwd) {
   int type = vfs_identify_fs(pwd);
   switch (type & ~INTERFACE) {
     case 2:  // ext2
