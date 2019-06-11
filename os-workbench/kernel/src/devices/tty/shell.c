@@ -93,7 +93,7 @@ static void default_do(device_t *tty) {
 
 void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
-  char pwd[256] = "/dev/ramdisk0";
+  char pwd[256] = "/";
   while (1) {
     sprintf(writebuf, "(%s) $ ", name);
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
