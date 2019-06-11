@@ -101,19 +101,18 @@ static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+extern void ext2_cat(ext2_t *ext2, char *dirname, char *out);
 static void cat_do(device_t *tty, char *path) {
-  assert(0);
-  int fd = vfs->open(path, RD_ENABLE);
-  if (fd == -1) {
-    panic("error");
-    return;
-  }
-  while (vfs->read(fd, bigbuf, 1024))
-    tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
-  if (vfs->close(fd)) {
-    panic("error");
-    return;
-  }
+  int type = vfs_identify_fs(pwd);
+  switch (type & ~INTERFACE) {
+    case 2:  // ext2
+      ext2_cat(vfs_get_real_fs(pwd), dirname, bigbuf);
+      break;
+    default:
+      sprintf(bigbuf, "can't cat here.\n", bigbuf);
+      break;
+  };
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
 static void default_do(device_t *tty) {
