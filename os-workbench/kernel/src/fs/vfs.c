@@ -66,8 +66,9 @@ int vfsdirs_alloc(const char *name, int parent) {
   if (vfsdirs[parent].child == -1)
     vfsdirs[parent].child = idx;
   else {
-    for (int i = vfsdirs[parent].child; vfsdirs[i] != -1; i = vfsdirs[i].next) {
-      if (vfsdirs[i] == -1) vfsdirs[i] = idx;
+    for (int i = vfsdirs[parent].child; i != -1;) {
+      if (vfsdirs[i].next == -1) vfsdirs[i].next = idx;
+      i = vfsdirs[i].next;
     }
   }
   return idx;
