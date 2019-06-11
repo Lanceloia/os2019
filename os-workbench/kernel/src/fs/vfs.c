@@ -280,7 +280,7 @@ void vfs_ls(char *dirname, char *pwd, char *out) {
   else {
     offset += sprintf(out + offset, "items           type     path\n");
     for (int i = vfsdirs[tmp_dir].child; i != -1; i = vfsdirs[i].next) {
-      offset += sprintf(out + offset, "%s", vfsdirs[i].absolutely_name);
+      offset += sprintf(out + offset, "%s", vfsdirs[i].name);
       for (int j = 0; j < 15 - strlen(vfsdirs[i].name); j++)
         offset += sprintf(out + offset, "%c", ' ');
       offset += sprintf(out + offset, " <DIR>    ");
