@@ -21,12 +21,16 @@ static void echo_do(device_t *tty, char *str) {
 void vfs_cd(char *dirname, char *pwd, char *out);
 void ext2_cd(ext2_t *ext2, char *dirname, char *pwd, char *out);
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
-  switch (vfs_identify_fs(pwd)) {
+  int type = vfs_identify_fs(pwd);
+  switch (type & ~INTERFACE) {
     case 1:  // vfs cd
       vfs_cd(dirname, pwd, bigbuf);
       break;
-    case 2:       // ext2 cd
-      assert(0);  // ext2_cd(vfs->get_fs(0)->fs, dirname, pwd, bigbuf);
+    case 2:  // ext2 cd
+      if (!strcmp(dirname, ".") || !strcmp(dirname, ".."))
+        vfs_cd(dirname, pwd, bigbuf);
+      else
+        assert(0);  // ext2_cd(vfs->get_fs(0)->fs, dirname, pwd, bigbuf);
       break;
     default:
       assert(0);

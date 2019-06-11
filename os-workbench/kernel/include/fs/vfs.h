@@ -55,6 +55,6 @@ struct file_sys_ops {
 
 int vfs_identify_fs(const char *path);
 
-enum { UNKNOW = 0, VFS = 1, EXT2 = 2 };
+enum { UNKNOW = 0, VFS = 1, EXT2 = 2, INTERFACE = 0x8000 };
 
 #endif
