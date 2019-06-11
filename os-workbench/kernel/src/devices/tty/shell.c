@@ -73,12 +73,13 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
 extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
   int type = vfs_identify_fs(pwd);
+  int type2 = TYPE_DIR;
+  for (int i = 0; i < strlen(dirname); i++)
+    if (dirname[i] == '.') type2 = TYPE_FILE;
   switch (type & ~INTERFACE) {
     case 2:  // ext2
-      int type = TYPE_DIR;
-      for (int i = 0; i < strlen(dirname); i++)
-        if (dirname[i] == '.') type = TYPE_FILE;
-      ext2_mkdir(vfs_get_real_fs(pwd), dirname, type, bigbuf);
+
+      ext2_mkdir(vfs_get_real_fs(pwd), dirname, type2, bigbuf);
       break;
     default:
       sprintf(bigbuf, "can't mkdir here.\n", bigbuf);
