@@ -111,7 +111,8 @@ extern int total_dev_cnt;
 void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
   vfsdirs_alloc(name, dev_dir, TTY, total_dev_cnt++);
-  char pwd[256] = "/";
+  char *pwd = pmm->alloc(256);
+  strcpy(pwd, "/");
   while (1) {
     sprintf(writebuf, "(%s) $ ", name);
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
