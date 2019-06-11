@@ -102,12 +102,12 @@ void vfs_init() {
   dev_dir = vfsdirs_alloc("dev", 0, VFS, -1);
   proc_dir = vfsdirs_alloc("proc", 0, PROCFS, -1);
   vfs_device(0, "ext2fs", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,
-             ext2_lookup_tmp, ext2_open_, ext2_close_tmp, ext2_mkdir_tmp,
+             ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp, ext2_mkdir_tmp,
              ext2_rmdir_tmp);
   vfsdirs_alloc("ramdisk0", dev_dir, EXT2, 0);
 
   vfs_device(1, "ext2fs", dev_lookup("ramdisk1"), sizeof(ext2_t), ext2_init,
-             ext2_lookup_tmp, ext2_open_, ext2_close_tmp, ext2_mkdir_tmp,
+             ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp, ext2_mkdir_tmp,
              ext2_rmdir_tmp);
   vfsdirs_alloc("ramdisk1", dev_dir, EXT2, 1);
 }
