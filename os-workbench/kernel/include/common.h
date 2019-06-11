@@ -21,6 +21,7 @@ enum { NONE_CPU = -1 };
 struct task {
   int idx;
   int state;
+  void *proc;
   _Context ctx;
   _Area stk;
   struct file *files[MAX_FILE];

@@ -20,6 +20,8 @@ static task_t *current_tasks[MAX_CPU];
 
 #define current (current_tasks[_cpu()])
 
+extern void procfs_schdule(void *proc);
+
 static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
   if (current) current->ctx = *ctx;
 
@@ -33,6 +35,9 @@ static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
   }
   current = tasks[idx];
   current->state = RUNNING;
+
+  procfs_schdule(current->proc);
+
   return &current->ctx;
 }
 
@@ -66,6 +71,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg),
   task->stk.start = task->stack;
   task->stk.end = task->stk.start + STK_SIZE;
   task->ctx = *(_kcontext(task->stk, entry, arg));
+  task->proc = procfs_add(name);
   tasks_insert(task);
 #ifdef _LANCELOIA_DEBUG_
   printf("[task] created [%s] [%d]\n", task->name, task->idx);
