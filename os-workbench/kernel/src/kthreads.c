@@ -20,7 +20,7 @@ static task_t *current_tasks[MAX_CPU];
 
 #define current (current_tasks[_cpu()])
 
-extern void *procfs_add(char *procname);
+extern void *procfs_add(const char *procname);
 extern void procfs_schdule(void *proc);
 
 static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {

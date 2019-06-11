@@ -19,7 +19,7 @@ int procfs_get_idx() {
   return idx;
 }
 
-void *procfs_add(char *procname) {
+void *procfs_add(const char *procname) {
   int idx = procfs_get_idx();
   if (idx == -1) return;
   strcpy(procs[idx].name, procname);
