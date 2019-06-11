@@ -102,7 +102,7 @@ static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
 }
 
 extern void ext2_cat(ext2_t *ext2, char *dirname, char *out);
-static void cat_do(device_t *tty, char *path) {
+static void cat_do(device_t *tty, char *path, char *pwd) {
   int type = vfs_identify_fs(pwd);
   switch (type & ~INTERFACE) {
     case 2:  // ext2
@@ -143,7 +143,7 @@ void shell_task(void *name) {
     else if (!strncmp(readbuf, "echo ", 5))
       echo_do(tty, readbuf + 5);
     else if (!strncmp(readbuf, "cat ", 4))
-      cat_do(tty, readbuf + 4);
+      cat_do(tty, readbuf + 4, pwd);
     else if (!strncmp(readbuf, "ls ", 3))
       ls_do(tty, readbuf + 3, pwd);
     else if (!strncmp(readbuf, "mkdir ", 6))
