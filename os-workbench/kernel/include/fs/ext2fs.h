@@ -1,5 +1,5 @@
-#ifndef __SIMEXT2_H__
-#define __SIMEXT2_H__
+#ifndef __EXT2FS_H__
+#define __EXT2FS_H__
 
 #include <devices.h>
 
