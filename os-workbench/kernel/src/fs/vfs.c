@@ -22,17 +22,18 @@ extern int ext2_mkdir(const char *dirname);
 extern int ext2_rmdir(const char *dirname);
 */
 
-id_t *ext2_lookup(fs_t *fs, const char *path, int flags) { return NULL; }
-int ext2_open(id_t *id, int flags) { return 0; }
-int ext2_close(id_t *id) { return 0; }
+id_t *ext2_lookup_tmp(fs_t *fs, const char *path, int flags) { return NULL; }
+int ext2_open_tmp(id_t *id, int flags) { return 0; }
+int ext2_close_tmp(id_t *id) { return 0; }
 int ext2_mkdir_tmp(const char *dirname) { return 0; }
 int ext2_rmdir_tmp(const char *dirname) { return 0; }
 
-void vfs_build(int idx, char *name, device_t *dev, size_t size,
-               void (*init)(fs_t *, const char *, device_t *),
-               id_t *(*lookup)(fs_t *fs, const char *path, int flags),
-               int (*open)(id_t *id, int flags), int (*close)(id_t *id),
-               int (*mkdir)(const char *name), int (*rmdir)(const char *name)) {
+void vfs_device(int idx, char *name, device_t *dev, size_t size,
+                void (*init)(fs_t *, const char *, device_t *),
+                id_t *(*lookup)(fs_t *fs, const char *path, int flags),
+                int (*open)(id_t *id, int flags), int (*close)(id_t *id),
+                int (*mkdir)(const char *name),
+                int (*rmdir)(const char *name)) {
   strcpy(_fs[idx].name, name);
   // printf("name: %s", name);
   _fs[idx].real_fs = pmm->alloc(size);
@@ -91,7 +92,7 @@ int vfsdirs_alloc(const char *name, int parent, int type, int fs_idx) {
 }
 
 void vfs_init() {
-  // vfs_build(1, "tty1", dev_lookup("tty1"));
+  // vfs_device(1, "tty1", dev_lookup("tty1"));
   cur_dir = 0;
   strcpy(vfsdirs[0].name, "/");
   strcpy(vfsdirs[0].absolutely_name, "/");
@@ -99,15 +100,15 @@ void vfs_init() {
   vfsdirs[0].next = vfsdirs[0].child = -1;
   vfsdirs[0].type = VFS;
   dev_dir = vfsdirs_alloc("dev", 0, VFS, -1);
-  proc_dir = vfsdirs_alloc("proc", 0, VFS, -1);
-  vfs_build(0, "ext2fs-ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
-            ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir_tmp,
-            ext2_rmdir_tmp);
+  proc_dir = vfsdirs_alloc("proc", 0, PROCFS, -1);
+  vfs_device(0, "ext2fs", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,
+             ext2_lookup_tmp, ext2_open_, ext2_close_tmp, ext2_mkdir_tmp,
+             ext2_rmdir_tmp);
   vfsdirs_alloc("ramdisk0", dev_dir, EXT2, 0);
 
-  vfs_build(1, "ext2fs-ramdisk1", dev_lookup("ramdisk1"), sizeof(ext2_t),
-            ext2_init, ext2_lookup, ext2_open, ext2_close, ext2_mkdir_tmp,
-            ext2_rmdir_tmp);
+  vfs_device(1, "ext2fs", dev_lookup("ramdisk1"), sizeof(ext2_t), ext2_init,
+             ext2_lookup_tmp, ext2_open_, ext2_close_tmp, ext2_mkdir_tmp,
+             ext2_rmdir_tmp);
   vfsdirs_alloc("ramdisk1", dev_dir, EXT2, 1);
 }
 
