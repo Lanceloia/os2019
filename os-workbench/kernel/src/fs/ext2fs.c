@@ -79,7 +79,8 @@ void ext2_init(fs_t* fs, const char* name, device_t* dev) {
   ext2_wr_dir(ext2, ext2->ind.block[0]);
 
   /* test */
-  void ext2_mkdir(ext2_t * ext2, char* dirname, int type, char* out);
+  void ext2_mkdir(ext2_t*, char*, int, char*);
+  void ext2_write(ext2_t*, char*, char*, uint32_t, char*);
   ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
   ext2_write(ext2, "hellp.cpp", hello_str, strlen(hello_str), trash);
 }
