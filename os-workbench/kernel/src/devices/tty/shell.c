@@ -75,7 +75,10 @@ static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
   int type = vfs_identify_fs(pwd);
   switch (type & ~INTERFACE) {
     case 2:  // ext2
-      ext2_mkdir(vfs_get_real_fs(pwd), dirname, TYPE_DIR, bigbuf);
+      int type = TYPE_DIR;
+      for (int i = 0; i < strlen(dirname); i++)
+        if (dirname[i] == '.') type = TYPE_FILE;
+      ext2_mkdir(vfs_get_real_fs(pwd), dirname, type, bigbuf);
       break;
     default:
       sprintf(bigbuf, "can't mkdir here.\n", bigbuf);
