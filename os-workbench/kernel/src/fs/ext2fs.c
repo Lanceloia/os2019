@@ -431,12 +431,12 @@ void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
       ext2_wr_dir(ext2, ext2->ind.block[j]);
       ext2->ind.size -= DIR_SIZE;
       int cnt = 0;
-      for (m = 1; cnt < 32 && m < ext2->ind.blocks;) {
+      for (m = 1; cnt < DIR_AMUT && m < ext2->ind.blocks;) {
         ext2_rd_dir(ext2, ext2->ind.block[m]);
-        for (cnt = 0, n = 0; n < 32; n++) {
+        for (cnt = 0, n = 0; n < DIR_AMUT; n++) {
           if (ext2->dir[n].inode == 0) cnt++;
         }
-        if (cnt == 32) {
+        if (cnt == DIR_AMUT) {
           ext2_remove_block(ext2, ext2->ind.block[m]);
           ext2->ind.blocks--;
           for (; m < ext2->ind.blocks; m++) {
