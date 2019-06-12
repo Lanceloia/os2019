@@ -99,6 +99,7 @@ static void vfs_init_device(const char *name, device_t *dev, size_t size,
   filesys[idx].init = init;
   filesys[idx].lookup = lookup;
   filesys[idx].readdir = readdir;
+  filesys[idx].init(&filesys[idx], name, dev);
 }
 
 int vinodes_build(int idx, const char *name, char *path, int parent, int mode,
