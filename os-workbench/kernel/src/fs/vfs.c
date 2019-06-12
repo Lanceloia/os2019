@@ -75,6 +75,7 @@ static int lookup_auto(char *path) {
     ret = vinodes[idx].fs->readdir(vinodes[idx].fs, vinodes[idx].rinode_idx,
                                    ++kth, &vinodes[newidx].rinode_idx,
                                    vinodes[newidx].name);
+    if (ret) vinodes[newidx].mode = 1;
     printf("newidx: %d, rinode_idx: %d, name %s\n", newidx,
            vinodes[newidx].rinode_idx, vinodes[newidx].name);
   } while (ret);
