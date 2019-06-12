@@ -97,8 +97,27 @@ static void vfs_init_device(const char *name, device_t *dev, size_t size,
 void vinodes_build(int idx, const char *name, char *path, int parent,
                    int mode) {
   strcpy(vinodes[idx].name, name);
-  strcpy(vinodes[idx].path, "");
+  strcpy(vinodes[idx].path, path);
   vinodes[idx].dot = idx;
+  vinodes[idx].ddot = parent;
+  vinodes[idx].mode = mode;
+  vinodes[idx].next = vinodes[idx].child = -1;
+  vinodes[idx].prev_link = vinodes[idx].next_link = idx;
+  vinodes[idx].linkcnt = 1;
+}
+
+void vinodes_mount(const char *name, int parent, int mode) {
+  int idx = vinodes_alloc();
+  strcpy(vinodes[idx].name, name);
+  strcpy(vinodes[idx].path, vinodes[parent].path);
+  strcat(Vinodes[idx].path, name);
+  int k = vinodes[parent].child;
+  if (k == -1)
+    vinodes[parent].child = idx;
+  else {
+    while (vinodes[k].next != -1) k = vinodes[k].next;
+    vinodes[k].next = idx;
+  }
   vinodes[idx].ddot = parent;
   vinodes[idx].mode = mode;
   vinodes[idx].next = vinodes[idx].child = -1;
