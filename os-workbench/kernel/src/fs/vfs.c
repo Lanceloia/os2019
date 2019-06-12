@@ -70,7 +70,7 @@ static int lookup_auto(char *path) {
 
   if (flag == 1) return idx;
 
-  int kth = 0, oldidx = idx, newidx, ret;
+  int kth = 0, oldidx = -1, newidx, ret;
   do {
     newidx = vinodes_alloc();
     if (newidx == -1) assert(0);
@@ -78,7 +78,10 @@ static int lookup_auto(char *path) {
                                    ++kth, &vinodes[newidx].rinode_idx,
                                    vinodes[newidx].name);
     if (ret) {
-      vinodes[oldidx].next = newidx;
+      if (oldidx == -1)
+        vinodes[idx].child = newidx;
+      else
+        vinodes[oldidx].next = newidx;
       vinodes[newidx].mode = 1;
       vinodes[newidx].next = -1;
       oldidx = newidx;
