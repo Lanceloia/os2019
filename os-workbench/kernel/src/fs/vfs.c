@@ -80,12 +80,17 @@ static int filesys_alloc() {
 
 static void filesys_free(int idx) { strcpy(filesys[idx].name, ""); }
 
-static void vfs_init_device(char *name, device_t *dev, size_t size) {
+static void vfs_init_device(char *name, device_t *dev, size_t size,
+                            void (*init)(filesystem_t *, char *, device_t *),
+                            int (*lookup)(filesystem_t *, char *, int),
+                            int (*readdir)(filesystem_t *, int)) {
   int idx = filesys_alloc();
   strcpy(filesys[idx].name, name);
   filesys[idx].rfs = pmm->alloc(size);
   filesys[idx].dev = dev;
-  filesys[idx].init(&filesys[idx], name, dev);
+  filesys[idx].init = init;
+  filesys[idx].lookup = lookup;
+  filesys[idx].readdir = readdir;
 }
 
 void vinodes_build(int idx, const char *name, char *path, int parent,
