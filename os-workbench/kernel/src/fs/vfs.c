@@ -51,7 +51,7 @@ static int lookup_cur(char *path, int *pflag, int cur) {
   }
 
   char *newpath = path + strlen(vinodes[k].name) + 1;
-  printf("new: %s\n", newpath);
+  printf("old: %s, new: %s\n", path, newpath);
   return lookup_cur(newpath, pflag, k);
 }
 
