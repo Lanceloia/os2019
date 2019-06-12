@@ -108,8 +108,8 @@ void vinodes_build(int idx, const char *name, char *path, int parent,
 
 typedef struct ext2 ext2_t;
 extern void ext2_init(filesystem_t *fs, char *name, device_t *dev);
-extern int ext2_lookup(filesystem_t *fs, const char *path, int flags);
-extern int ext2_readdir(id_t *id, int flags);
+extern int ext2_lookup(filesystem_t *fs, const char *path, int mode);
+extern int ext2_readdir(filesystem_t *fs, int vinode_idx);
 
 int vfs_init() {
   vfs_init_device("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,

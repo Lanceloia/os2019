@@ -90,7 +90,7 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 }
 
 int ext2_lookup(filesystem_t* fs, const char* path, int flags);
-int ext2_readdir(id_t* id, int flags);
+int ext2_readdir(int vinode_idx, int flags);
 
 uint32_t ext2_alloc_block(ext2_t* ext2) {
   uint32_t cur = ext2->last_alloc_block / 8;
