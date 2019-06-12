@@ -43,8 +43,8 @@ char* hello_str =
     "#include <iostream> \nusing namespace std;\nint main(){\n  return 0;\n}\n";
 char trash[4096];
 
-void ext2_init(fs_t* fs, const char* name, device_t* dev) {
-  ext2_t* ext2 = (ext2_t*)fs->real_fs;
+void ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
+  ext2_t* ext2 = (ext2_t*)fs->rfs;
   memset(ext2, 0x00, sizeof(ext2_t));
   ext2->dev = dev;
   printf("Creating ext2: %s\n", name);
