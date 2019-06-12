@@ -177,8 +177,8 @@ int vfs_init() {
 
   printf("%s  %d\n", "/", lookup_auto("/"));
   // printf("%s  %d\n", "/dev/", lookup_auto("/dev/"));
-  printf("%s  %d\n", "/dev\0\0", lookup_auto("/dev\0\0"));
-  printf("%s  %d\n", "/dev/r", lookup_auto("/dev/r"));
+  printf("%s  %d\n", "/dev/", lookup_auto("/dev/"));
+  printf("%s  %d\n", "/dev/ramdisk0/", lookup_auto("/dev/ramdisk0/"));
   return 0;
 }
 
