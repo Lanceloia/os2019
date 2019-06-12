@@ -48,7 +48,7 @@ static int lookup_cur(const char *path, int *pflag, int cur) {
     return cur;
   }
 
-  char *newpath = path + strlen(vinodes[k].name) + 1;
+  const char *newpath = path + strlen(vinodes[k].name) + 1;
   return lookup_cur(newpath, pflag, k);
 }
 
