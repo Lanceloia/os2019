@@ -78,15 +78,19 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
 
 char absolutely_path[256];
 
-static void ls_do(device_t *tty, char *dirname, char *pwd) {
-  extern void vfs_ls(char *dirname);
+static void build_absolutely_path(char *dirname, char *pwd) {
   if (dirname[0] != '/') {
     strcpy(absolutely_path, pwd);
     strcat(absolutely_path, dirname);
-    vfs_ls(absolutely_path);
   } else {
-    vfs_ls(dirname);
+    strcpy(absolutely_path, dirname);
   }
+}
+
+static void ls_do(device_t *tty, char *dirname, char *pwd) {
+  extern void vfs_ls(char *path);
+  build_absolutely_path(dirname, pwd);
+  vfs_ls(absolutely_path);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 

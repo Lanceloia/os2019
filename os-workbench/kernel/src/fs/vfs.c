@@ -8,6 +8,8 @@
 #define VFS_ROOT 0
 
 #define pidx (&vinodes[idx])
+#define pdot (&vinodes[dot])
+#define pddot(&vinodes[ddot])
 
 filesystem_t filesys[MAX_FILESYSTEM];
 vinode_t vinodes[MAX_VINODE];
@@ -54,9 +56,12 @@ static int lookup_cur(char *path, int *pflag, int cur) {
     return cur;
   }
 
+  int next = k;
+  while (vinodes[next].mode & TYPE_LINK) next = vinodes[next].next_link;
+
   char *newpath = path + strlen(vinodes[k].name);
   // printf("old: %s, new: %s, name: %s\n", path, newpath, vinodes[k].name);
-  return lookup_cur(newpath, pflag, k);
+  return lookup_cur(newpath, pflag, next);
 }
 
 static int lookup_root(char *path, int *pflag) {
@@ -99,12 +104,12 @@ static int filesys_alloc() {
 
 static void filesys_free(int idx) { strcpy(filesys[idx].name, ""); }
 
-static void vfs_init_device(const char *name, device_t *dev, size_t size,
-                            void (*init)(filesystem_t *, const char *,
-                                         device_t *),
-                            int (*lookup)(filesystem_t *, char *, int),
-                            int (*readdir)(filesystem_t *, int, int,
-                                           vinode_t *)) {
+static void vfs_init_devfs(const char *name, device_t *dev, size_t size,
+                           void (*init)(filesystem_t *, const char *,
+                                        device_t *),
+                           int (*lookup)(filesystem_t *, char *, int),
+                           int (*readdir)(filesystem_t *, int, int,
+                                          vinode_t *)) {
   int idx = filesys_alloc();
   strcpy(filesys[idx].name, name);
   filesys[idx].rfs = pmm->alloc(size);
@@ -115,25 +120,37 @@ static void vfs_init_device(const char *name, device_t *dev, size_t size,
   filesys[idx].init(&filesys[idx], name, dev);
 }
 
-int vinodes_build(int idx, const char *name, char *path, int parent, int mode,
+int vinodes_build(const char *name, char *path, int parent, int mode,
                   filesystem_t *fs) {
-  strcpy(vinodes[idx].name, name);
-  strcpy(vinodes[idx].path, path);
-  vinodes[idx].dot = idx;
-  vinodes[idx].ddot = parent;
-  vinodes[idx].mode = mode;
-  vinodes[idx].next = vinodes[idx].child = -1;
-  vinodes[idx].prev_link = vinodes[idx].next_link = idx;
-  vinodes[idx].linkcnt = 1;
-  vinodes[idx].fs = fs;
+  int idx = vinodes_alloc();
+  int dot = vinodes_alloc();
+  int ddot = vinodes_alloc();
+  strcpy(pidx->name, name);
+  strcpy(pidx->path, path);
+  pidx->dot = idx, pidx->ddot = parent;
+  pidx->next = -1, pidx->child = dot;
+  pidx->prev_link = pidx->next_link = idx;
+  pidx->linkcnt = 1;
+  pidx->mode = mode;
+  pidx->fs = fs;
+
+  strcpy(pdot->name, ".");
+  pdot->mode = TYPE_LINK;
+  pdot->next = pddot;
+  vinode_add_link(idx, pdot);
+
+  strcpy(pddot->name, "..");
+  pddot->mode = TYPE_LINK;
+  pddot->next = -1;
+  vinode_add_link(parent, pddot);
   return idx;
 }
 
 int vinodes_mount(const char *name, int parent, int mode, filesystem_t *fs) {
   int idx = vinodes_alloc();
-  strcpy(vinodes[idx].name, name);
-  strcpy(vinodes[idx].path, vinodes[parent].path);
-  strcat(vinodes[idx].path, name);
+  strcpy(pidx->name, name);
+  strcpy(pidx->path, vinodes[parent].path);
+  strcat(pidx->path, name);
   int k = vinodes[parent].child;
   if (k == -1)
     vinodes[parent].child = idx;
@@ -141,12 +158,12 @@ int vinodes_mount(const char *name, int parent, int mode, filesystem_t *fs) {
     while (vinodes[k].next != -1) k = vinodes[k].next;
     vinodes[k].next = idx;
   }
-  vinodes[idx].ddot = parent;
-  vinodes[idx].mode = mode;
-  vinodes[idx].next = vinodes[idx].child = -1;
-  vinodes[idx].prev_link = vinodes[idx].next_link = idx;
-  vinodes[idx].linkcnt = 1;
-  vinodes[idx].fs = fs;
+  pidx->ddot = parent;
+  pidx->mode = mode;
+  pidx->next = pidx->child = -1;
+  pidx->prev_link = pidx->next_link = idx;
+  pidx->linkcnt = 1;
+  pidx->fs = fs;
   return idx;
 }
 
@@ -169,8 +186,8 @@ int vfs_init() {
   idx = vinodes_build(VFS_ROOT, "/", "/", VFS_ROOT,
                       TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
   idx = vinodes_mount("dev/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
-  vfs_init_device("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,
-                  ext2_lookup, ext2_readdir);
+  vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,
+                 ext2_lookup, ext2_readdir);
   idx = vinodes_mount("ramdisk0/", idx, TYPE_DIR | RD_ABLE | WR_ABLE,
                       &filesys[0]);
   vinodes[idx].rinode_idx = 1;
@@ -398,3 +415,11 @@ sizeof(ext2_t), ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
   vfsdirs_alloc("ramdisk1", dev_dir, EXT2, total_dev_cnt++);
 }
 */
+
+int vinode_add_link(int oidx, int nidx) {
+  int next_link = vinodes[oidx].next_link;
+  vinodes[oidx].next_link = nidx;
+  vinodes[nidx].prev_link = oidx;
+  vinodes[nidx].next_link = next_link;
+  vinodes[next_link].prev_link = nidx;
+}
