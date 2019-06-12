@@ -50,7 +50,9 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
   };
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
+*/
 
+/*
 extern void vfs_ls(char *dirname, char *pwd, char *out);
 extern void ext2_ls(ext2_t *ext2, char *dirname, char *out);
 extern void procfs_ls(char *dirname, char *out);
@@ -72,7 +74,15 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
   }
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
+*/
 
+static void ls_do(device_t *tty, char *dirname, char *pwd) {
+  extern void vfs_ls(int idx);
+  vfs_ls(0);
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+}
+
+/*
 extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
   int type = vfs_identify_fs(pwd);
