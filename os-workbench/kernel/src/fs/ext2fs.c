@@ -106,11 +106,13 @@ int ext2_readdir(filesystem_t* fs, char* path, int kth, int* rinode_idx,
         if (cnt == kth) {
           strcpy(namebuf, ext2->dir[k].name);
           *rinode_idx = ext2->dir[k].inode;
-          cnt++;
+          ext2->current_dir = now_current_dir;
+          return 1;
         }
       }
   }
   ext2->current_dir = now_current_dir;
+  return 0;
 }
 
 uint32_t ext2_alloc_block(ext2_t* ext2) {
