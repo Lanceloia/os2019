@@ -80,7 +80,7 @@ static int filesys_alloc() {
 
 static void filesys_free(int idx) { strcpy(filesys[idx].name, ""); }
 
-static void vfs_init_device(char *name, device_t *dev, size_t size,
+static void vfs_init_device(const char *name, device_t *dev, size_t size,
                             void (*init)(filesystem_t *, const char *,
                                          device_t *),
                             int (*lookup)(filesystem_t *, char *, int),
