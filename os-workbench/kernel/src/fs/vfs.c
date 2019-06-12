@@ -69,7 +69,7 @@ static int lookup_auto(char *path) {
   int cnt = 0, k = 0, newidx = vinodes_alloc();
   while (vinodes[idx].fs->readdir(vinodes[idx].fs, idx, k,
                                   &vinodes[newidx].rinode_idx,
-                                  &vinodes[newidx].name))
+                                  vinodes[newidx].name))
     k++;
   return lookup_auto(path);
 }
