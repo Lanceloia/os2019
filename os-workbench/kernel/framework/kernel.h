@@ -53,11 +53,11 @@ typedef struct {
 } MODULE(dev);
 
 /* created by leungjyufung2019@outlook.com */
-typedef struct file_sys fs_t;
+typedef struct filesystem filesystem_t;
 typedef struct {
   int (*init)();
   int (*access)(const char *path, int mode);
-  int (*mount)(const char *path, fs_t *fs);
+  int (*mount)(const char *path, filesystem_t *fs);
   int (*unmount)(const char *path);
   int (*mkdir)(const char *path);
   int (*rmdir)(const char *path);
