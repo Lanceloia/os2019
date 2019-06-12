@@ -30,7 +30,7 @@ static void vinodes_free(int idx) { vinodes[idx].mode = UNUSED; }
 static int first_item_namelen(const char *path) {
   int ret = 0;
   for (; path[ret] && path[ret] != '/';) ret++;
-  return ret + 1;
+  return ret;
 }
 
 static int lookup_cur(char *path, int *pflag, int cur) {
