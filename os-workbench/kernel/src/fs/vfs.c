@@ -136,7 +136,7 @@ int vinodes_build(const char *name, char *path, int parent, int mode,
 
   strcpy(pdot->name, ".");
   pdot->mode = TYPE_LINK;
-  pdot->next = pddot;
+  pdot->next = ddot;
   vinode_add_link(idx, pdot);
 
   strcpy(pddot->name, "..");
