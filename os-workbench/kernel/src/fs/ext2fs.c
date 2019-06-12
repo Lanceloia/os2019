@@ -94,7 +94,7 @@ int ext2_lookup(filesystem_t* fs, const char* path, int mode) { return 0; }
 int ext2_readdir(filesystem_t* fs, int old_rinode_idx, int kth,
                  int* p_new_rinode_idx, char* namebuf) {
   ext2_t* ext2 = (ext2_t*)fs->rfs;
-  int cnt;
+  int cnt = 0;
   ext2_rd_ind(ext2, old_rinode_idx);
   for (int i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
