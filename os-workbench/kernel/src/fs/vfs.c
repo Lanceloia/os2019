@@ -106,6 +106,7 @@ void vinodes_build(int idx, const char *name, char *path, int parent,
 }
 
 int vfs_init() {
+  /*
   strcpy(vfsdirs[0].name, "/");
   strcpy(vfsdirs[0].absolutely_name, "/");
   vfsdirs[0].dot = vfsdirs[0].ddot = 0;
@@ -122,6 +123,7 @@ int vfs_init() {
              ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
              ext2_mkdir_tmp, ext2_rmdir_tmp);
   vfsdirs_alloc("ramdisk1", dev_dir, EXT2, total_dev_cnt++);
+  */
   return 0;
 }
 
