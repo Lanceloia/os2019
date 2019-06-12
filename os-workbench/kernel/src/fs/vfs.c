@@ -101,7 +101,8 @@ static void vfs_init_device(const char *name, device_t *dev, size_t size,
   filesys[idx].readdir = readdir;
 }
 
-int vinodes_build(int idx, const char *name, char *path, int parent, int mode) {
+int vinodes_build(int idx, const char *name, char *path, int parent, int mode,
+                  filesystem_t *fs) {
   strcpy(vinodes[idx].name, name);
   strcpy(vinodes[idx].path, path);
   vinodes[idx].dot = idx;
@@ -110,10 +111,11 @@ int vinodes_build(int idx, const char *name, char *path, int parent, int mode) {
   vinodes[idx].next = vinodes[idx].child = -1;
   vinodes[idx].prev_link = vinodes[idx].next_link = idx;
   vinodes[idx].linkcnt = 1;
+  vinodes[idx].fs = fs;
   return idx;
 }
 
-int vinodes_mount(const char *name, int parent, int mode) {
+int vinodes_mount(const char *name, int parent, int mode, filesystem_t *fs) {
   int idx = vinodes_alloc();
   strcpy(vinodes[idx].name, name);
   strcpy(vinodes[idx].path, vinodes[parent].path);
@@ -130,7 +132,7 @@ int vinodes_mount(const char *name, int parent, int mode) {
   vinodes[idx].next = vinodes[idx].child = -1;
   vinodes[idx].prev_link = vinodes[idx].next_link = idx;
   vinodes[idx].linkcnt = 1;
-
+  vinodes[idx].fs = fs;
   return idx;
 }
 
@@ -150,12 +152,13 @@ int fuck() {
 
 int vfs_init() {
   int idx;
-  idx =
-      vinodes_build(VFS_ROOT, "/", "/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE);
-  idx = vinodes_mount("dev/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE);
-  idx = vinodes_mount("ramdisk0/", idx, TYPE_DIR | RD_ABLE | WR_ABLE);
+  idx = vinodes_build(VFS_ROOT, "/", "/", VFS_ROOT,
+                      TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
+  idx = vinodes_mount("dev/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
   vfs_init_device("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,
                   ext2_lookup, ext2_readdir);
+  idx = vinodes_mount("ramdisk0/", idx, TYPE_DIR | RD_ABLE | WR_ABLE,
+                      &filesys[0]);
   /*
   strcpy(vfsdirs[0].name, "/");
   strcpy(vfsdirs[0].absolutely_name, "/");
