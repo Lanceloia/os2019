@@ -91,12 +91,12 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 }
 
 int ext2_lookup(filesystem_t* fs, const char* path, int mode) { return 0; }
-int ext2_readdir(filesystem_t* fs, int vinode_idx, int kth, int* rinode_idx,
+int ext2_readdir(filesystem_t* fs, const char* path, int kth, int* rinode_idx,
                  char* namebuf) {
   ext2_t* ext2 = (ext2_t*)fs->rfs;
   uint32_t ninode, nblock, ndir, cnt;
   int now_current_dir = ext2->current_dir;
-  ext2_reserch_file(ext2, dirname, TYPE_DIR, &ninode, &nblock, &ndir);
+  ext2_reserch_file(ext2, path, TYPE_DIR, &ninode, &nblock, &ndir);
   ext2_rd_ind(ext2, ext2->current_dir);
   for (int i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
