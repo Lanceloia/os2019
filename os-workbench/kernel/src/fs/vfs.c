@@ -33,9 +33,9 @@ static int first_item_namelen(const char *path) {
   return ret;
 }
 
-static int lookup_cur(const char *path, int *flag, int cur) {
+static int lookup_cur(const char *path, int *pflag, int cur) {
   if (!strlen(path)) {
-    flag = 1;
+    *pflag = 1;
     return cur;
   }
 
@@ -44,16 +44,16 @@ static int lookup_cur(const char *path, int *flag, int cur) {
     if (!strncmp(vinodes[k].name, path, len)) break;
 
   if (k == -1) {
-    flag = 0;
+    *pflag = 0;
     return cur;
   }
 
   char *newpath = path + strlen(vinodes[k].name) + 1;
-  return lookup_cur(newpath, flag, k);
+  return lookup_cur(newpath, pflag, k);
 }
 
-static int lookup_root(const char *path, int *flag) {
-  return lookup_cur(path + 1, flag, VFS_ROOT);
+static int lookup_root(const char *path, int *pflag) {
+  return lookup_cur(path + 1, pflag, VFS_ROOT);
 }
 
 static int lookup_auto(const char *path) {
@@ -61,7 +61,8 @@ static int lookup_auto(const char *path) {
   if (path[len - 1] != '/') strcat(path, "/");
 
   int flag;
-  int idx = (path[0] == '/') ? lookup_root(path, flag) : lookup_cur(path, flag);
+  int idx =
+      (path[0] == '/') ? lookup_root(path, &flag) : lookup_cur(path, &flag);
 
   if (flag == 1)
     return idx;
