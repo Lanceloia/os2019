@@ -30,7 +30,7 @@ static void vinodes_free(int idx) { vinodes[idx].mode = UNUSED; }
 static int first_item_namelen(const char *path) {
   int ret = 0;
   for (; path[ret] && path[ret] != '/';) ret++;
-  return ret;
+  return ret + 1;
 }
 
 static int lookup_cur(char *path, int *pflag, int cur) {
@@ -41,7 +41,7 @@ static int lookup_cur(char *path, int *pflag, int cur) {
 
   int k, len = first_item_namelen(path);
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
-    printf("%s  %d\n", vinodes[k].name, len);
+    //  printf("%s  %d\n", vinodes[k].name, len);
     if (!strncmp(vinodes[k].name, path, len)) break;
   }
 
@@ -51,7 +51,7 @@ static int lookup_cur(char *path, int *pflag, int cur) {
   }
 
   char *newpath = path + strlen(vinodes[k].name);
-  printf("old: %s, new: %s, name: %s\n", path, newpath, vinodes[k].name);
+  // printf("old: %s, new: %s, name: %s\n", path, newpath, vinodes[k].name);
   return lookup_cur(newpath, pflag, k);
 }
 
