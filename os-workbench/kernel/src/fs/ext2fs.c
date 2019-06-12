@@ -96,7 +96,7 @@ int ext2_readdir(filesystem_t* fs, int old_rinode_idx, int kth,
   printf("fuck\n");
   ext2_t* ext2 = (ext2_t*)fs->rfs;
   int cnt = 0;
-  ext2_rd_ind(ext2, old_rinode_idx);
+  ext2_rd_ind(ext2, 1);
 
   for (int i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
