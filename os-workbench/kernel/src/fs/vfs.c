@@ -3,14 +3,121 @@
 #include "../../include/fs/ext2fs.h"
 #include "../../include/fs/vfs.h"
 
+#define MAX_VINODE 1024
 #define MAX_FILESYSTEM 16
-
+#define VFS_ROOT 0
 filesystem_t filesys[MAX_FILESYSTEM];
+vinode_t vinodes[MAX_VINODE];
 
 typedef struct device device_t;
 extern device_t *dev_lookup(const char *name);
 
-int vfs_init() { return 0; }
+// helper
+static int vinodes_alloc();
+static void vinodes_free(int idx);
+static int lookup_cur(const char *path, int *flag, int cur);
+static int lookup_root(const char *path, int *flag);
+static int lookup_auto(const char *path);
+
+static int vinodes_alloc() {
+  for (int i = 0; i < MAX_VINODE; i++)
+    if (vinodes[i].mode == UNUSED) return i;
+  return -1;
+}
+
+static void vinodes_free(int idx) { vinodes[idx].mode = UNUSED; }
+
+static int first_item_namelen(const char *path) {
+  int ret = 0;
+  for (; path[ret] && path[ret] != '/';) ret++;
+  return ret;
+}
+
+static int lookup_cur(const char *path, int *flag, int cur) {
+  if (!strlen(path)) {
+    flag = 1;
+    return cur;
+  }
+
+  int k, len = first_item_namelen(path);
+  for (k = vinodes[cur].child; k != -1; k = vinodes[k].next)
+    if (!strncmp(vinodes[k].name, path, len)) break;
+
+  if (k == -1) {
+    flag = 0;
+    return cur;
+  }
+
+  char *newpath = path + strlen(vinodes[k].name) + 1;
+  return lookup_cur(newpath, flag, k);
+}
+
+static int lookup_root(const char *path, int *flag) {
+  return lookup_cur(path + 1, flag, VFS_ROOT);
+}
+
+static int lookup_auto(const char *path) {
+  int len = strlen(path);
+  if (path[len - 1] != '/') strcat(path, "/");
+
+  int flag;
+  int idx = (path[0] == '/') ? lookup_root(path, flag) : lookup_cur(path, flag);
+
+  if (flag == 1)
+    return idx;
+  else if (vinodes[idx].fs->readdir(vinodes[idx].fs, idx))
+    lookup_auto(path);
+  else
+    return -1;
+}
+
+static int filesys_alloc() {
+  for (int i = 0; i < MAX_FILESYSTEM; i++)
+    if (!strlen(filesys[i].name)) return i;
+  return -1;
+}
+
+static void filesys_free(int idx) { strcpy(filesys[idx].name, ""); }
+
+static void vfs_init_device(char *name, device_t *dev, size_t size) {
+  int idx = filesys_alloc();
+  strcpy(filesys[idx].name, name);
+  filesys[idx].rfs = pmm->alloc(size);
+  filesys[idx].dev = dev;
+  filesys[idx].init(&filesys[idx], name, dev);
+}
+
+void vinodes_build(int idx, const char *name, char *path, int parent,
+                   int mode) {
+  strcpy(vinodes[idx].name, name);
+  strcpy(vinodes[idx].path, "");
+  vinodes[idx].dot = idx;
+  vinodes[idx].ddot = parent;
+  vinodes[idx].mode = mode;
+  vinodes[idx].next = vinodes[idx].child = -1;
+  vinodes[idx].prev_link = vinodes[idx].next_link = idx;
+  vinodes[idx].linkcnt = 1;
+}
+
+int vfs_init() {
+  strcpy(vfsdirs[0].name, "/");
+  strcpy(vfsdirs[0].absolutely_name, "/");
+  vfsdirs[0].dot = vfsdirs[0].ddot = 0;
+  vfsdirs[0].next = vfsdirs[0].child = -1;
+  vfsdirs[0].type = VFS;
+  dev_dir = vfsdirs_alloc("dev", 0, VFS, -1);
+  proc_dir = vfsdirs_alloc("proc", 0, PROCFS, -1);
+  vfs_device(total_dev_cnt, "ext2fs", dev_lookup("ramdisk0"), sizeof(ext2_t),
+             ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
+             ext2_mkdir_tmp, ext2_rmdir_tmp);
+  vfsdirs_alloc("ramdisk0", dev_dir, EXT2, total_dev_cnt++);
+
+  vfs_device(total_dev_cnt, "ext2fs", dev_lookup("ramdisk1"), sizeof(ext2_t),
+             ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
+             ext2_mkdir_tmp, ext2_rmdir_tmp);
+  vfsdirs_alloc("ramdisk1", dev_dir, EXT2, total_dev_cnt++);
+  return 0;
+}
 
 int vfs_access(const char *path, int mode) { return 0; }
 
@@ -126,18 +233,18 @@ void vfs_device(int idx, char *name, device_t *dev, size_t size,
                 int (*open)(id_t *id, int flags), int (*close)(id_t *id),
                 int (*mkdir)(const char *name),
                 int (*rmdir)(const char *name)) {
-  strcpy(_fs[idx].name, name);
+  strcpy(filesys[idx].name, name);
   // printf("name: %s", name);
-  _fs[idx].real_fs = pmm->alloc(size);
-  _fs[idx].ops = &_fs_ops[idx];
-  _fs[idx].dev = dev;
-  _fs_ops[idx].init = init;
-  _fs_ops[idx].lookup = lookup;
-  _fs_ops[idx].open = open;
-  _fs_ops[idx].close = close;
-  _fs_ops[idx].mkdir = mkdir;
-  _fs_ops[idx].rmdir = rmdir;
-  _fs_ops[idx].init(&_fs[idx], name, dev);
+  filesys[idx].realfilesys = pmm->alloc(size);
+  filesys[idx].ops = &filesys_ops[idx];
+  filesys[idx].dev = dev;
+  filesys_ops[idx].init = init;
+  filesys_ops[idx].lookup = lookup;
+  filesys_ops[idx].open = open;
+  filesys_ops[idx].close = close;
+  filesys_ops[idx].mkdir = mkdir;
+  filesys_ops[idx].rmdir = rmdir;
+  filesys_ops[idx].init(&filesys[idx], name, dev);
 }
 */
 
@@ -157,9 +264,9 @@ int vfsdirs_alloc(const char *name, int parent, int type, int fs_idx) {
   vfsdirs[idx].child = -1;
   vfsdirs[idx].type = type;
   if (fs_idx >= 0)
-    vfsdirs[idx].real_fs = _fs[fs_idx].real_fs;
+    vfsdirs[idx].realfilesys = filesys[fs_idx].realfilesys;
   else
-    vfsdirs[idx].real_fs = NULL;
+    vfsdirs[idx].realfilesys = NULL;
 
   if (vfsdirs[parent].child == -1)
     vfsdirs[parent].child = idx;

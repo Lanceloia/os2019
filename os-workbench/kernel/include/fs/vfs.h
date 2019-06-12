@@ -3,6 +3,7 @@
 
 #include <common.h>
 
+#define UNUSED 0x00
 #define EX_ABLE 0x01
 #define WR_ABLE 0x02
 #define RD_ABLE 0x04
@@ -29,40 +30,36 @@ typedef struct vinode {
 
   int mode;          // TYPE, RWX_MODE
   int linkcnt;       // link cnt
+  int rinode_idx;    // read inode idx
   filesystem_t *fs;  // filesystem pointer
 
   int prev_link, next_link;  // prev or next link
 
-  // file operation
-  int (*open)(int vinode_idx, int mode);
-  int (*close)(int fd);
-  ssize_t (*read)(int fd, char *buf, size_t size);
-  ssize_t (*write)(int fd, const char *buf, size_t size);
-  off_t (*lseek)(int fd, off_t offset, int whence);
-
-  // vinode operation
-  int (*add_link)(int old_vinode_idx, int new_vinode_idx);
-  int (*rm_link)(int vinode_idx);
-  int (*mkdir)(int vinode, const char *name);
-  int (*rmdir)(int vinode, const char *name);
 } vinode_t;
+
+// file operation
+int vinode_open(int vinode_idx, int mode);
+int vinode_close(int fd);
+ssize_t vinode_read(int fd, char *buf, size_t size);
+ssize_t vinode_write(int fd, const char *buf, size_t size);
+off_t vinode_lseek(int fd, off_t offset, int whence);
+
+// vinode operation
+int vinode_add_link(int old_vinode_idx, int new_vinode_idx);
+int vinode_rm_link(int vinode_idx);
+int vinode_mkdir(int vinode, const char *name);
+int vinode_rmdir(int vinode, const char *name);
 
 struct filesystem {
   char name[NAME_lENGTH];
   void *rfs;
   device_t *dev;
-
-  void (*init)(filesystem_t *fs, const char *name, device_t *dev);
-  int (*lookup)(filesystem_t *fs, const char *path, int mode);
-  int (*close)(int vinode_idx);
 };
 
-// helper
-int vinode_alloc();
-void vinode_free(int idx);
-int lookup_cur(const char *path, int *flag, int cur);
-int lookup_root(const char *path, int *flag);
-int lookup_auto(const char *path);
+void filesystem_init(filesystem_t *fs, const char *name, device_t *dev);
+int filesystem_lookup(filesystem_t *fs, const char *path, int mode);
+int filesystem_readdir(filesystem_t *fs, int vinode_idx);
+int filesystem_close(filesystem_t *fs, int vinode_idx);
 
 // interface
 int vfs_init();
