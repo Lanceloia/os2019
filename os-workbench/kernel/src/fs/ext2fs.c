@@ -107,7 +107,7 @@ int ext2_readdir(filesystem_t* fs, int old_rinode_idx, int kth,
           *p_new_rinode_idx = ext2->dir[k].inode;
           return 1;
         }
-      printf("fuck2\n");
+      printf("fuck2: %d %s\n", k, ext2->dir[k].name);
     }
   }
   return 0;
