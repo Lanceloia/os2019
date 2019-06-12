@@ -226,7 +226,8 @@ off_t vfs_lseek(int fd, off_t offset, int whence) { return 0; }
 
 int vfs_close(int fd) { return 0; }
 
-void vfs_ls(int idx) {
+void vfs_ls(char *dirname) {
+  int idx = lookup_auto(dirname);
   printf("       index       name        path\n");
   printf("cur:   %4d        %8s    %s\n", idx, vinodes[idx].name,
          vinodes[idx].path);

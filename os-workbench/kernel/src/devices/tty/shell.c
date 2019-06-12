@@ -77,8 +77,8 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
 */
 
 static void ls_do(device_t *tty, char *dirname, char *pwd) {
-  extern void vfs_ls(int idx);
-  vfs_ls(0);
+  extern void vfs_ls(char *dirname);
+  vfs_ls(dirname);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
