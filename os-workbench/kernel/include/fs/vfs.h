@@ -10,6 +10,7 @@
 #define TYPE_FILE 0x10
 #define TYPE_DIR 0x20
 #define TYPE_LINK 0x40
+#define ALLOCED 0x80
 
 #define MAX_PATH_LENGTH 256
 #define MAX_NAME_LENGTH 32
