@@ -75,5 +75,8 @@ int vfs_mkdir(const char *path);
 int vfs_rmdir(const char *path);
 int vfs_link(const char *oldpath, const char *newpath);
 int vfs_open(const char *path, int mode);
+ssize_t vfs_read(int fd, char *buf, size_t nbytes);
+ssize_t vfs_write(int fs, char *buf, size_t nbytes);
+int vfs_close(int fd);
 
 #endif
