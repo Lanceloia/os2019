@@ -34,6 +34,7 @@ static int first_item_namelen(const char *path) {
 }
 
 static int lookup_cur(char *path, int *pflag, int cur) {
+  printf("path == %s\n", path);
   if (!strlen(path)) {
     *pflag = 1;
     return cur;
@@ -60,7 +61,6 @@ static int lookup_root(char *path, int *pflag) {
 }
 
 static int lookup_auto(char *path) {
-  printf("path == %s\n", path);
   int len = strlen(path);
   if (path[len - 1] != '/') strcat(path, "/");
 
