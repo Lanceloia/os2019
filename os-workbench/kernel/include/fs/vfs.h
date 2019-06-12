@@ -56,7 +56,7 @@ struct filesystem {
   device_t *dev;
   void (*init)(filesystem_t *fs, const char *name, device_t *dev);
   int (*lookup)(filesystem_t *fs, char *path, int mode);
-  int (*readdir)(filesystem_t *fs, char *path, int k, int *rinode_idx,
+  int (*readdir)(filesystem_t *fs, int vinode_idx, int kth, int *p_rinode_idx,
                  char *namebuf);
   // int filesystem_close(filesystem_t *fs, int vinode_idx);
 };
