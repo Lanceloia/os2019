@@ -42,7 +42,7 @@ static int first_item_namelen(const char *path) {
 }
 
 static int lookup_cur(char *path, int *pflag, int cur) {
-  printf("path == %s\n", path);
+  // printf("path == %s\n", path);
   if (!strlen(path)) {
     *pflag = 1;
     return cur;
@@ -50,7 +50,7 @@ static int lookup_cur(char *path, int *pflag, int cur) {
 
   int k, len = first_item_namelen(path);
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
-    printf("lookup cur %s  %d\n", vinodes[k].name, len);
+    // printf("lookup cur %s  %d\n", vinodes[k].name, len);
     if (!strncmp(vinodes[k].name, path, len)) break;
   }
 
@@ -110,12 +110,12 @@ static int filesys_alloc() {
 
 static void filesys_free(int idx) { strcpy(filesys[idx].name, ""); }
 
-static void vfs_init_devfs(const char *name, device_t *dev, size_t size,
-                           void (*init)(filesystem_t *, const char *,
-                                        device_t *),
-                           int (*lookup)(filesystem_t *, char *, int),
-                           int (*readdir)(filesystem_t *, int, int,
-                                          vinode_t *)) {
+static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
+                          void (*init)(filesystem_t *, const char *,
+                                       device_t *),
+                          int (*lookup)(filesystem_t *, char *, int),
+                          int (*readdir)(filesystem_t *, int, int,
+                                         vinode_t *)) {
   int idx = filesys_alloc();
   strcpy(filesys[idx].name, name);
   filesys[idx].rfs = pmm->alloc(size);
@@ -124,6 +124,7 @@ static void vfs_init_devfs(const char *name, device_t *dev, size_t size,
   filesys[idx].lookup = lookup;
   filesys[idx].readdir = readdir;
   filesys[idx].init(&filesys[idx], name, dev);
+  return idx;
 }
 
 int vinodes_build(const char *name, char *path, int parent, int mode,
@@ -133,6 +134,33 @@ int vinodes_build(const char *name, char *path, int parent, int mode,
   int ddot = vinodes_alloc();
   strcpy(pidx->name, name);
   strcpy(pidx->path, path);
+  pidx->dot = idx, pidx->ddot = parent;
+  pidx->next = -1, pidx->child = dot;
+  pidx->prev_link = pidx->next_link = idx;
+  pidx->linkcnt = 1;
+  pidx->mode = mode;
+  pidx->fs = fs;
+
+  strcpy(pdot->name, ".");
+  pdot->mode = TYPE_LINK;
+  pdot->next = ddot;
+  vinode_add_link(idx, dot);
+
+  strcpy(pddot->name, "..");
+  pddot->mode = TYPE_LINK;
+  pddot->next = -1;
+  vinode_add_link(parent, ddot);
+  return idx;
+}
+
+int vinodes_build_nopath(const char *name, int parent, int mode,
+                         filesystem_t *fs) {
+  int idx = vinodes_alloc();
+  int dot = vinodes_alloc();
+  int ddot = vinodes_alloc();
+  strcpy(pidx->name, name);
+  strcpy(pidx->path, vinodes[parent].path);
+  strcat(pidx->path, name);
   pidx->dot = idx, pidx->ddot = parent;
   pidx->next = -1, pidx->child = dot;
   pidx->prev_link = pidx->next_link = idx;
@@ -188,13 +216,13 @@ int fuck() {
 }
 
 int vfs_init() {
-  int idx;
+  int idx, fs;
   idx = vinodes_build("/", "/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
-  idx = vinodes_mount("dev/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
-  vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,
-                 ext2_lookup, ext2_readdir);
+  idx = vinodes_build_nopath("dev/", idx, TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
+  fs = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
+                      ext2_init, ext2_lookup, ext2_readdir);
   idx = vinodes_mount("ramdisk0/", idx, TYPE_DIR | RD_ABLE | WR_ABLE,
-                      &filesys[0]);
+                      &filesys[fs]);
   vinodes[idx].rinode_idx = 1;
   /*
   strcpy(vfsdirs[0].name, "/");
@@ -251,7 +279,7 @@ int vfs_close(int fd) { return 0; }
 void vfs_ls(char *dirname) {
   int idx = lookup_auto(dirname);
   printf("       index       name        path\n");
-  printf("cur:   %4d        %8s    %s\n", idx, vinodes[idx].name,
+  printf("cur:   %4d        %8s    %s\n\n", idx, vinodes[idx].name,
          vinodes[idx].path);
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {
     printf("child: %4d        %8s    %s\n", k, vinodes[k].name,
