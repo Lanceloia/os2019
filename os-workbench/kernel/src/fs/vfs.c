@@ -87,7 +87,7 @@ static void vfs_init_device(const char *name, device_t *dev, size_t size,
                             void (*init)(filesystem_t *, const char *,
                                          device_t *),
                             int (*lookup)(filesystem_t *, char *, int),
-                            int (*readdir)(filesystem_t *, int, int, int *,
+                            int (*readdir)(filesystem_t *, char *, int, int *,
                                            char *)) {
   int idx = filesys_alloc();
   strcpy(filesys[idx].name, name);
@@ -132,8 +132,8 @@ void vinodes_mount(const char *name, int parent, int mode) {
 typedef struct ext2 ext2_t;
 extern void ext2_init(filesystem_t *fs, const char *name, device_t *dev);
 extern int ext2_lookup(filesystem_t *fs, char *path, int mode);
-extern int ext2_readdir(filesystem_t *fs, int vinode_idx, int k,
-                        int *rinode_idx, char *namebuf);
+extern int ext2_readdir(filesystem_t *fs, char *path, int kth, int *rinode_idx,
+                        char *namebuf);
 
 int fuck() {
   lookup_auto("/");
