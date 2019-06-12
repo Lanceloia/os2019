@@ -60,6 +60,7 @@ static int lookup_root(char *path, int *pflag) {
 }
 
 static int lookup_auto(char *path) {
+  printf("path == %s\n", path);
   int len = strlen(path);
   if (path[len - 1] != '/') strcat(path, "/");
 
