@@ -61,7 +61,7 @@ static int lookup_root(char *path, int *pflag) {
 
 static int lookup_auto(char *path) {
   int len = strlen(path);
-  if (path[len] != '/') strcat(path, "/");
+  if (path[len - 1] != '/') strcat(path, "/");
 
   int flag;
   int idx = (path[0] == '/') ? lookup_root(path, &flag)
