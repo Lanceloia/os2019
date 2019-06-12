@@ -33,7 +33,7 @@ static int first_item_namelen(const char *path) {
   return ret;
 }
 
-static int lookup_cur(const char *path, int *pflag, int cur) {
+static int lookup_cur(char *path, int *pflag, int cur) {
   if (!strlen(path)) {
     *pflag = 1;
     return cur;
@@ -48,15 +48,15 @@ static int lookup_cur(const char *path, int *pflag, int cur) {
     return cur;
   }
 
-  const char *newpath = path + strlen(vinodes[k].name) + 1;
+  char *newpath = path + strlen(vinodes[k].name) + 1;
   return lookup_cur(newpath, pflag, k);
 }
 
-static int lookup_root(const char *path, int *pflag) {
+static int lookup_root(char *path, int *pflag) {
   return lookup_cur(path + 1, pflag, VFS_ROOT);
 }
 
-static int lookup_auto(const char *path) {
+static int lookup_auto(char *path) {
   int len = strlen(path);
   if (path[len - 1] != '/') strcat(path, "/");
 
