@@ -162,6 +162,7 @@ void shell_task(void *name) {
     else if (!strncmp(readbuf, "cat ", 4))
       cat_do(tty, readbuf + 4, pwd);
     */
+    if (!strncmp(readbuf, "echo ", 5)) echo_do(tty, readbuf + 5);
     if (!strncmp(readbuf, "ls ", 3)) ls_do(tty, readbuf + 3, pwd);
     /*
     else if (!strncmp(readbuf, "mkdir ", 6))
