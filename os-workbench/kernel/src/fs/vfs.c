@@ -6,6 +6,9 @@
 #define MAX_VINODE 1024
 #define MAX_FILESYSTEM 16
 #define VFS_ROOT 0
+
+#define pidx (&vinodes[idx])
+
 filesystem_t filesys[MAX_FILESYSTEM];
 vinode_t vinodes[MAX_VINODE];
 
@@ -70,25 +73,21 @@ static int lookup_auto(char *path) {
 
   if (flag == 1) return idx;
 
-  int kth = 0, oldidx = -1, newidx, ret;
-  do {
-    newidx = vinodes_alloc();
-    if (newidx == -1) assert(0);
-    ret = vinodes[idx].fs->readdir(vinodes[idx].fs, vinodes[idx].rinode_idx,
-                                   ++kth, &vinodes[newidx].rinode_idx,
-                                   vinodes[newidx].name);
-    if (ret) {
-      if (oldidx == -1)
-        vinodes[idx].child = newidx;
-      else
-        vinodes[oldidx].next = newidx;
-      vinodes[newidx].mode = 1;
-      vinodes[newidx].next = -1;
-      oldidx = newidx;
-    }
-    printf("newidx: %d, rinode_idx: %d, name %s\n", newidx,
-           vinodes[newidx].rinode_idx, vinodes[newidx].name);
-  } while (ret);
+  vinode_t buf;
+  int kth = 0, oidx = -1, nidx, ret;
+  while (ret = pidx->fs->readdir(pidx->fs, pidx.rinode_idx, ++kth, &buf)) {
+    if ((nidx = vinodes_alloc()) == -1) assert(0);
+    vinodes[nidx] = buf;
+    if (oidx == -1)
+      pidx->child = nidx;
+    else
+      vinodes[oidx].next = nidx;
+    vinodes[nidx].next = -1;
+    oidx = nidx;
+
+    printf("newidx: %d, rinode_idx: %d, name %s\n", nidx,
+           vinodes[nidx].rinode_idx, vinodes[nidx].name);
+  }
   return lookup_auto(path);
 }
 
@@ -104,8 +103,8 @@ static void vfs_init_device(const char *name, device_t *dev, size_t size,
                             void (*init)(filesystem_t *, const char *,
                                          device_t *),
                             int (*lookup)(filesystem_t *, char *, int),
-                            int (*readdir)(filesystem_t *, int, int, int *,
-                                           char *)) {
+                            int (*readdir)(filesystem_t *, int, int,
+                                           vinode_t *)) {
   int idx = filesys_alloc();
   strcpy(filesys[idx].name, name);
   filesys[idx].rfs = pmm->alloc(size);

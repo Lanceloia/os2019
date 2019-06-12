@@ -91,20 +91,19 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 }
 
 int ext2_lookup(filesystem_t* fs, const char* path, int mode) { return 0; }
-int ext2_readdir(filesystem_t* fs, int old_rinode_idx, int kth,
-                 int* p_new_rinode_idx, char* namebuf) {
+int ext2_readdir(filesystem_t* fs, int rinode_idx, int kth, vinode_t* buf) {
   // printf("fuck: kth == %d\n", kth);
   ext2_t* ext2 = (ext2_t*)fs->rfs;
   int cnt = 0;
-  ext2_rd_ind(ext2, old_rinode_idx);
-
+  ext2_rd_ind(ext2, rinode_idx);
   for (int i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
     for (int k = 0; k < DIR_AMUT; k++) {
       if (ext2->dir[k].inode)
         if (++cnt == kth) {
-          strcpy(namebuf, ext2->dir[k].name);
-          *p_new_rinode_idx = ext2->dir[k].inode;
+          strcpy(buf->name, ext2->dir[k].name);
+          buf->rinode_idx = ext2->dir[k].inode;
+          buf->mode = ext2->dir[k].file_type;
           return 1;
         }
       // printf("fuck2: %d %s\n", k, ext2->dir[k].name);
@@ -204,11 +203,11 @@ void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t len, int type) {
     strcpy(ext2->dir[0].name, ".");
     strcpy(ext2->dir[1].name, "..");
     ext2_wr_dir(ext2, ext2->ind.block[0]);
-    ext2->ind.mode = 01006; /* drwxrwxrwx: ? */
+    ext2->ind.mode = 0x26; /* drwxrwxrwx: ? */
   } else {
     ext2->ind.size = 0;
     ext2->ind.blocks = 0;
-    ext2->ind.mode = 00407; /* drwxrwxrwx: ? */
+    ext2->ind.mode = 0x17; /* drwxrwxrwx: ? */
   }
   ext2_wr_ind(ext2, idx);
 }
