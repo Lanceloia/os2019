@@ -166,6 +166,10 @@ int vfs_init() {
              ext2_mkdir_tmp, ext2_rmdir_tmp);
   vfsdirs_alloc("ramdisk1", dev_dir, EXT2, total_dev_cnt++);
   */
+
+  printf("%s  %d\n", "/", lookup_auto("/"));
+  printf("%s  %d\n", "dev", lookup_auto("dev"));
+  printf("%s  %d\n", "dev/", lookup_auto("dev/"));
   return 0;
 }
 
