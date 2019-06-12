@@ -89,8 +89,6 @@ struct ext2 {
 
 typedef struct ext2 ext2_t;
 
-enum { TYPE_FILE = 1, TYPE_DIR = 2 };
-
 void ext2_rd_sb(ext2_t* ext2);
 void ext2_wr_sb(ext2_t* ext2);
 void ext2_rd_gd(ext2_t* ext2);
