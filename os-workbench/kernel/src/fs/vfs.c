@@ -64,12 +64,14 @@ static int lookup_auto(char *path) {
   int idx = (path[0] == '/') ? lookup_root(path, &flag)
                              : lookup_cur(path, &flag, VFS_ROOT);
 
-  if (flag == 1)
-    return idx;
-  else if (vinodes[idx].fs->readdir(vinodes[idx].fs, idx))
-    return lookup_auto(path);
-  else
-    return -1;
+  if (flag == 1) return idx;
+
+  int cnt = 0, k = 0, newidx = vinodes_alloc();
+  while (vinodes[idx].fs->readdir(vinodes[idx].fs, idx, k,
+                                  &vinodes[newidx].rinode_idx,
+                                  &vinodes[newidx].name))
+    k++;
+  return lookup_auto(path);
 }
 
 static int filesys_alloc() {
