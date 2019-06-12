@@ -3,13 +3,13 @@
 
 #include <common.h>
 
-enum {
-  EX_ABLE = 0x0001H,
-  WR_ABLE = 0x0002H,
-  RD_ABLE = 0x0004H,
-  TYPE_FILE = 0x0100H,
-  TYPE_DIR = 0x0200H,
-  TYPE_LINK = 0x0400H
+short enum {
+  EX_ABLE = 0x0001,
+  WR_ABLE = 0x0002,
+  RD_ABLE = 0x0004,
+  TYPE_FILE = 0x0100,
+  TYPE_DIR = 0x0200,
+  TYPE_LINK = 0x0400
 };
 
 #define MAX_PATH_LENGTH 256
