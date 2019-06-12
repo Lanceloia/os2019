@@ -84,8 +84,8 @@ static void vfs_init_device(const char *name, device_t *dev, size_t size,
                             void (*init)(filesystem_t *, const char *,
                                          device_t *),
                             int (*lookup)(filesystem_t *, char *, int),
-                            int (*readdir)(filesystem_t *, int, int,
-                                           int *char *)) {
+                            int (*readdir)(filesystem_t *, int, int, int *,
+                                           char *)) {
   int idx = filesys_alloc();
   strcpy(filesys[idx].name, name);
   filesys[idx].rfs = pmm->alloc(size);
