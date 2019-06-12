@@ -42,7 +42,7 @@ static int lookup_cur(char *path, int *pflag, int cur) {
 
   int k, len = first_item_namelen(path);
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
-    //  printf("%s  %d\n", vinodes[k].name, len);
+    printf("lookup cur %s  %d\n", vinodes[k].name, len);
     if (!strncmp(vinodes[k].name, path, len)) break;
   }
 
