@@ -3,12 +3,12 @@
 
 #include <common.h>
 
-#define EX_ABLE 0x0001
-#define WR_ABLE 0x0002
-#define RD_ABLE 0x0004
-#define TYPE_FILE 0x0100
-#define TYPE_DIR 0x0200
-#define TYPE_LINK 0x0400
+#define EX_ABLE int16_t(0x0001)
+#define WR_ABLE int16_t(0x0002)
+#define RD_ABLE int16_t(0x0004)
+#define TYPE_FILE int16_t(0x0100)
+#define TYPE_DIR int16_t(0x0200)
+#define TYPE_LINK int16_t(0x0400)
 
 #define MAX_PATH_LENGTH 256
 #define MAX_NAME_LENGTH 32
