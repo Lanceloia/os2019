@@ -110,7 +110,7 @@ void vinodes_mount(const char *name, int parent, int mode) {
   int idx = vinodes_alloc();
   strcpy(vinodes[idx].name, name);
   strcpy(vinodes[idx].path, vinodes[parent].path);
-  strcat(Vinodes[idx].path, name);
+  strcat(vinodes[idx].path, name);
   int k = vinodes[parent].child;
   if (k == -1)
     vinodes[parent].child = idx;
@@ -140,8 +140,7 @@ int fuck() {
 
 int vfs_init() {
   vinodes_build(VFS_ROOT, "/", "/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE);
-  vinodes_build(vinodes_alloc(), "dev/", "/dev/", VFS_ROOT,
-                TYPE_DIR | RD_ABLE | WR_ABLE);
+  vinodes_mount("dev/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE);
   vfs_init_device("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,
                   ext2_lookup, ext2_readdir);
   /*
