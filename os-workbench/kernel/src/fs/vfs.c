@@ -67,7 +67,7 @@ static int lookup_auto(char *path) {
   if (flag == 1)
     return idx;
   else if (vinodes[idx].fs->readdir(vinodes[idx].fs, idx))
-    lookup_auto(path);
+    return lookup_auto(path);
   else
     return -1;
 }
