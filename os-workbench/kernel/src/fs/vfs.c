@@ -421,4 +421,5 @@ int vinode_add_link(int oidx, int nidx) {
   vinodes[nidx].prev_link = oidx;
   vinodes[nidx].next_link = next_link;
   vinodes[next_link].prev_link = nidx;
+  return 0;
 }
