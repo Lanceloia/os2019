@@ -168,8 +168,8 @@ int vfs_init() {
   */
 
   printf("%s  %d\n", "/", lookup_auto("/"));
-  printf("%s  %d\n", "dev", lookup_auto("dev"));
-  printf("%s  %d\n", "dev/", lookup_auto("dev/"));
+  printf("%s  %d\n", "/dev", lookup_auto("/dev"));
+  printf("%s  %d\n", "/dev/", lookup_auto("/dev/"));
   return 0;
 }
 
