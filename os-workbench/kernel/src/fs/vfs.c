@@ -183,8 +183,7 @@ int fuck() {
 
 int vfs_init() {
   int idx;
-  idx = vinodes_build(VFS_ROOT, "/", "/", VFS_ROOT,
-                      TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
+  idx = vinodes_build("/", "/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
   idx = vinodes_mount("dev/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
   vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,
                  ext2_lookup, ext2_readdir);
