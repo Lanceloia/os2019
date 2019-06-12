@@ -9,7 +9,7 @@
 
 #define pidx (&vinodes[idx])
 #define pdot (&vinodes[dot])
-#define pddot(&vinodes[ddot])
+#define pddot (&vinodes[ddot])
 
 filesystem_t filesys[MAX_FILESYSTEM];
 vinode_t vinodes[MAX_VINODE];
