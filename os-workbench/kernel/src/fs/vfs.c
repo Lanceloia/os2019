@@ -419,10 +419,10 @@ sizeof(ext2_t), ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
 */
 
 int vinode_add_link(int oidx, int nidx) {
-  int next_link = vinodes[oidx].next_link;
-  vinodes[oidx].next_link = nidx;
+  int n_link = vinodes[oidx].next_link;
+  vinodes[nidx].next_link = n_link;
   vinodes[nidx].prev_link = oidx;
-  vinodes[nidx].next_link = next_link;
-  vinodes[next_link].prev_link = nidx;
+  vinodes[oidx].next_link = nidx;
+  vinodes[n_link].prev_link = nidx;
   return 0;
 }
