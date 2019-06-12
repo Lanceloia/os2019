@@ -5,7 +5,7 @@
 
 #define MAX_FILESYSTEM 16
 
-filesystem_t filesys[MAX_FS];
+filesystem_t filesys[MAX_FILESYSTEM];
 
 typedef struct device device_t;
 extern device_t *dev_lookup(const char *name);
