@@ -128,7 +128,8 @@ void vinodes_mount(const char *name, int parent, int mode) {
 typedef struct ext2 ext2_t;
 extern void ext2_init(filesystem_t *fs, const char *name, device_t *dev);
 extern int ext2_lookup(filesystem_t *fs, char *path, int mode);
-extern int ext2_readdir(filesystem_t *fs, int vinode_idx);
+extern int ext2_readdir(filesystem_t *fs, int vinode_idx, int k,
+                        int *rinode_idx, char *namebuf);
 
 int fuck() {
   lookup_auto("/");
