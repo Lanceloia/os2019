@@ -91,7 +91,7 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 }
 
 int ext2_lookup(filesystem_t* fs, const char* path, int mode) { return 0; }
-int ext2_readdir(filesystem_t* fs, const char* path, int kth, int* rinode_idx,
+int ext2_readdir(filesystem_t* fs, char* path, int kth, int* rinode_idx,
                  char* namebuf) {
   ext2_t* ext2 = (ext2_t*)fs->rfs;
   uint32_t ninode, nblock, ndir, cnt;
