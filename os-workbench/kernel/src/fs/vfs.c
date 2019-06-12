@@ -70,13 +70,18 @@ static int lookup_auto(char *path) {
 
   if (flag == 1) return idx;
 
-  int kth = 0, newidx, ret;
+  int kth = 0, oldidx = idx, newidx, ret;
   do {
     newidx = vinodes_alloc();
     ret = vinodes[idx].fs->readdir(vinodes[idx].fs, vinodes[idx].rinode_idx,
                                    ++kth, &vinodes[newidx].rinode_idx,
                                    vinodes[newidx].name);
-    if (ret) vinodes[newidx].mode = 1;
+    if (ret) {
+      vinodes[oldidx].next = newidx;
+      vinodes[newidx].mode = 1;
+      vinodes[newidx].next = -1;
+      old = newidx;
+    }
     printf("newidx: %d, rinode_idx: %d, name %s\n", newidx,
            vinodes[newidx].rinode_idx, vinodes[newidx].name);
   } while (ret);
