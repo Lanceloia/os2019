@@ -73,6 +73,7 @@ static int lookup_auto(char *path) {
   int kth = 0, oldidx = idx, newidx, ret;
   do {
     newidx = vinodes_alloc();
+    if (newidx == -1) exit(1);
     ret = vinodes[idx].fs->readdir(vinodes[idx].fs, vinodes[idx].rinode_idx,
                                    ++kth, &vinodes[newidx].rinode_idx,
                                    vinodes[newidx].name);
