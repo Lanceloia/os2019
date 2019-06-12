@@ -105,7 +105,7 @@ int ext2_readdir(filesystem_t* fs, int vinode_idx, int kth, int* rinode_idx,
         cnt++;
         if (cnt == kth) {
           strcpy(namebuf, ext2->dir[k].name);
-          rinode_idx = ith;
+          rinode_idx = ext2->dir[k].inode;
           cnt++;
         }
       }
