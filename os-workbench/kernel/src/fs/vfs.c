@@ -69,12 +69,15 @@ static int lookup_auto(char *path) {
 
   if (flag == 1) return idx;
 
-  int kth = 0, newidx = vinodes_alloc();
-  while (vinodes[idx].fs->readdir(vinodes[idx].fs, vinodes[idx].rinode_idx,
-                                  ++kth, &vinodes[newidx].rinode_idx,
-                                  vinodes[newidx].name))
+  int kth = 0, newidx, ret;
+  do {
+    newidx = vinodes_alloc();
+    ret = vinodes[idx].fs->readdir(vinodes[idx].fs, vinodes[idx].rinode_idx,
+                                   ++kth, &vinodes[newidx].rinode_idx,
+                                   vinodes[newidx].name);
     printf("newidx: %d, rinode_idx: %d, name %s\n", newidx,
            vinodes[newidx].rinode_idx, vinodes[newidx].name);
+  } while (ret);
   return lookup_auto(path);
 }
 
