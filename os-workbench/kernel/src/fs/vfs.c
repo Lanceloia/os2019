@@ -160,7 +160,7 @@ int vfs_init() {
                   ext2_lookup, ext2_readdir);
   idx = vinodes_mount("ramdisk0/", idx, TYPE_DIR | RD_ABLE | WR_ABLE,
                       &filesys[0]);
-  vinodes[idx].rinode_idx = 0;
+  vinodes[idx].rinode_idx = 1;
   /*
   strcpy(vfsdirs[0].name, "/");
   strcpy(vfsdirs[0].absolutely_name, "/");
