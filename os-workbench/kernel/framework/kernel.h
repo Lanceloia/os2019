@@ -55,7 +55,7 @@ typedef struct {
 /* created by leungjyufung2019@outlook.com */
 typedef struct file_sys fs_t;
 typedef struct {
-  void (*init)();
+  int (*init)();
   int (*access)(const char *path, int mode);
   int (*mount)(const char *path, fs_t *fs);
   int (*unmount)(const char *path);
@@ -64,8 +64,8 @@ typedef struct {
   int (*link)(const char *oldpath, const char *newpath);
   int (*unlink)(const char *path);
   int (*open)(const char *path, int flags);
-  ssize_t (*read)(int fd, void *buf, size_t nbyte);
-  ssize_t (*write)(int fd, void *buf, size_t nbyte);
+  ssize_t (*read)(int fd, char *buf, size_t nbyte);
+  ssize_t (*write)(int fd, char *buf, size_t nbyte);
   off_t (*lseek)(int fd, off_t offset, int whence);
   int (*close)(int fd);
   // fs_t *(*get_fs)(int idx);
