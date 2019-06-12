@@ -184,7 +184,8 @@ int vfs_init() {
   // printf("%s  %d\n", "/dev/", lookup_auto("/dev/"));
   printf("%s  %d\n", "/dev/", lookup_auto("/dev/"));
   printf("%s  %d\n", "/dev/ramdisk0/", lookup_auto("/dev/ramdisk0/"));
-  printf("%s  %d\n", "/dev/ramdisk0/../", lookup_auto("/dev/ramdisk0/../"));
+  printf("%s  %d\n", "/dev/ramdisk0/hello.cpp/",
+         lookup_auto("/dev/ramdisk0/hello.cpp/"));
   return 0;
 }
 
