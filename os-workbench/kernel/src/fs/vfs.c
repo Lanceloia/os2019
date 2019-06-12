@@ -154,7 +154,7 @@ typedef struct ext2 ext2_t;
 extern void ext2_init(filesystem_t *fs, const char *name, device_t *dev);
 extern int ext2_lookup(filesystem_t *fs, char *path, int mode);
 extern int ext2_readdir(filesystem_t *fs, int vinode_idx, int kth,
-                        int *p_rinode_idx, char *namebuf);
+                        vinode_t *buf);
 
 int fuck() {
   lookup_auto("/");
