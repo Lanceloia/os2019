@@ -8,16 +8,19 @@ char bigbuf[2048] = {};
 
 /* shell command */
 
+/*
 static void pwd_do(device_t *tty, char *pwd) {
   sprintf(bigbuf, "%s\n", pwd);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
+*/
 
 static void echo_do(device_t *tty, char *str) {
   sprintf(bigbuf, "%s\n", str);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+/*
 extern void vfs_cd(char *dirname, char *pwd, char *out);
 extern void ext2_cd(ext2_t *ext2, char *dirname, char *pwd, char *out);
 extern void procfs_cd(char *dirname, char *pwd, char *out);
@@ -121,38 +124,44 @@ static void default_do(device_t *tty) {
 }
 
 extern int vfsdirs_alloc(const char *name, int parent, int type, int fs_idx);
-extern int dev_dir;
-extern int total_dev_cnt;
 
-char pwd[256] = "/";
+*/
+
+// extern int dev_dir;
+// extern int total_dev_cnt;
+
+// char pwd[256] = "/";
 
 void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
-  vfsdirs_alloc(name, dev_dir, TTY, total_dev_cnt++);
+  // vfsdirs_alloc(name, dev_dir, TTY, total_dev_cnt++);
   while (1) {
     sprintf(writebuf, "(%s) $ ", name);
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
     readbuf[nread - 1] = '\0';
 
-    if (!strcmp(readbuf, "ls")) strcpy(readbuf, "ls .");
-    if (!strcmp(readbuf, "cd")) strcpy(readbuf, "cd .");
+    echo_do(tty, readbuf);
+    /*
+        if (!strcmp(readbuf, "ls")) strcpy(readbuf, "ls .");
+        if (!strcmp(readbuf, "cd")) strcpy(readbuf, "cd .");
 
-    if (!strcmp(readbuf, "pwd"))
-      pwd_do(tty, pwd);
-    else if (!strncmp(readbuf, "echo ", 5))
-      echo_do(tty, readbuf + 5);
-    else if (!strncmp(readbuf, "cat ", 4))
-      cat_do(tty, readbuf + 4, pwd);
-    else if (!strncmp(readbuf, "ls ", 3))
-      ls_do(tty, readbuf + 3, pwd);
-    else if (!strncmp(readbuf, "mkdir ", 6))
-      mkdir_do(tty, readbuf + 6, pwd);
-    else if (!strncmp(readbuf, "rmdir ", 6))
-      rmdir_do(tty, readbuf + 6, pwd);
-    else if (!strncmp(readbuf, "cd ", 3))
-      cd_do(tty, readbuf + 3, pwd);
-    else
-      default_do(tty);
+        if (!strcmp(readbuf, "pwd"))
+          pwd_do(tty, pwd);
+        else if (!strncmp(readbuf, "echo ", 5))
+          echo_do(tty, readbuf + 5);
+        else if (!strncmp(readbuf, "cat ", 4))
+          cat_do(tty, readbuf + 4, pwd);
+        else if (!strncmp(readbuf, "ls ", 3))
+          ls_do(tty, readbuf + 3, pwd);
+        else if (!strncmp(readbuf, "mkdir ", 6))
+          mkdir_do(tty, readbuf + 6, pwd);
+        else if (!strncmp(readbuf, "rmdir ", 6))
+          rmdir_do(tty, readbuf + 6, pwd);
+        else if (!strncmp(readbuf, "cd ", 3))
+          cd_do(tty, readbuf + 3, pwd);
+        else
+          default_do(tty);
+      }
+    */
   }
-}
