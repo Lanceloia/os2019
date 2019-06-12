@@ -101,8 +101,7 @@ static void vfs_init_device(const char *name, device_t *dev, size_t size,
   filesys[idx].readdir = readdir;
 }
 
-void vinodes_build(int idx, const char *name, char *path, int parent,
-                   int mode) {
+int vinodes_build(int idx, const char *name, char *path, int parent, int mode) {
   strcpy(vinodes[idx].name, name);
   strcpy(vinodes[idx].path, path);
   vinodes[idx].dot = idx;
@@ -111,9 +110,10 @@ void vinodes_build(int idx, const char *name, char *path, int parent,
   vinodes[idx].next = vinodes[idx].child = -1;
   vinodes[idx].prev_link = vinodes[idx].next_link = idx;
   vinodes[idx].linkcnt = 1;
+  return idx;
 }
 
-void vinodes_mount(const char *name, int parent, int mode) {
+int vinodes_mount(const char *name, int parent, int mode) {
   int idx = vinodes_alloc();
   strcpy(vinodes[idx].name, name);
   strcpy(vinodes[idx].path, vinodes[parent].path);
@@ -130,6 +130,8 @@ void vinodes_mount(const char *name, int parent, int mode) {
   vinodes[idx].next = vinodes[idx].child = -1;
   vinodes[idx].prev_link = vinodes[idx].next_link = idx;
   vinodes[idx].linkcnt = 1;
+
+  return idx;
 }
 
 typedef struct ext2 ext2_t;
@@ -147,8 +149,11 @@ int fuck() {
 }
 
 int vfs_init() {
-  vinodes_build(VFS_ROOT, "/", "/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE);
-  vinodes_mount("dev/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE);
+  int idx;
+  idx =
+      vinodes_build(VFS_ROOT, "/", "/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE);
+  idx = vinodes_mount("dev/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE);
+  idx = vinodes_mount("ramdisk0", idx, TYPE_DIR | RD_ABLE | WR_ABLE);
   vfs_init_device("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,
                   ext2_lookup, ext2_readdir);
   /*
