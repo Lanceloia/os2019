@@ -153,7 +153,7 @@ int vfs_init() {
   idx =
       vinodes_build(VFS_ROOT, "/", "/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE);
   idx = vinodes_mount("dev/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE);
-  idx = vinodes_mount("ramdisk0", idx, TYPE_DIR | RD_ABLE | WR_ABLE);
+  idx = vinodes_mount("ramdisk0/", idx, TYPE_DIR | RD_ABLE | WR_ABLE);
   vfs_init_device("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,
                   ext2_lookup, ext2_readdir);
   /*
