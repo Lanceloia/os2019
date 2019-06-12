@@ -190,7 +190,7 @@ int vfs_close(int fd) { return 0; }
 
 void vfs_ls(int idx) {
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {
-    printf("id:%-8d    name:%-8s\n", k, vinodes[k].name);
+    printf("id:%8d    name:%8s\n", k, vinodes[k].name);
   }
 }
 
