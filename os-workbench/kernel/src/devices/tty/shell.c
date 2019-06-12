@@ -162,6 +162,7 @@ void shell_task(void *name) {
           cd_do(tty, readbuf + 3, pwd);
         else
           default_do(tty);
-      }
+
     */
   }
+}
