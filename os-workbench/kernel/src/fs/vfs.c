@@ -226,7 +226,7 @@ int fuck() {
 int vfs_init() {
   int idx, fs;
   idx = vinodes_build("/", "/", VFS_ROOT, TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
-  idx = vinodes_build_nopath("dev/", idx, TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
+  idx = vinodes_build_append("dev/", idx, TYPE_DIR | RD_ABLE | WR_ABLE, NULL);
   fs = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
                       ext2_init, ext2_lookup, ext2_readdir);
   idx = vinodes_mount("ramdisk0/", idx, TYPE_DIR | RD_ABLE | WR_ABLE,
