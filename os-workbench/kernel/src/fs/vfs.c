@@ -153,7 +153,7 @@ int vinodes_build(const char *name, char *path, int parent, int mode,
   return idx;
 }
 
-int vinodes_build_nopath(const char *name, int parent, int mode,
+int vinodes_build_append(const char *name, int parent, int mode,
                          filesystem_t *fs) {
   int idx = vinodes_alloc();
   int dot = vinodes_alloc();
@@ -167,6 +167,14 @@ int vinodes_build_nopath(const char *name, int parent, int mode,
   pidx->linkcnt = 1;
   pidx->mode = mode;
   pidx->fs = fs;
+
+  int k = vinodes[parent].child;
+  if (k == -1)
+    vinodes[parent].child = idx;
+  else {
+    while (vinodes[k].next != -1) k = vinodes[k].next;
+    vinodes[k].next = idx;
+  }
 
   strcpy(pdot->name, ".");
   pdot->mode = TYPE_LINK;
