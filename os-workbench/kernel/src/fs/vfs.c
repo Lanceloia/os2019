@@ -114,8 +114,8 @@ extern int ext2_readdir(filesystem_t *fs, int vinode_idx);
 int fuck() {
   lookup_auto("/");
   filesys_free(2);
-  vfs_alloc();
-  vfs_free(0);
+  vinodes_alloc();
+  vinodes_free(0);
   return 0;
 }
 
