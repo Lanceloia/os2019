@@ -81,7 +81,8 @@ static int filesys_alloc() {
 static void filesys_free(int idx) { strcpy(filesys[idx].name, ""); }
 
 static void vfs_init_device(char *name, device_t *dev, size_t size,
-                            void (*init)(filesystem_t *, char *, device_t *),
+                            void (*init)(filesystem_t *, const char *,
+                                         device_t *),
                             int (*lookup)(filesystem_t *, char *, int),
                             int (*readdir)(filesystem_t *, int)) {
   int idx = filesys_alloc();
@@ -105,7 +106,14 @@ void vinodes_build(int idx, const char *name, char *path, int parent,
   vinodes[idx].linkcnt = 1;
 }
 
+typedef struct ext2 ext2_t;
+extern void ext2_init(filesystem_t *fs, char *name, device_t *dev);
+extern int ext2_lookup(filesystem_t *fs, const char *path, int flags);
+extern int ext2_readdir(id_t *id, int flags);
+
 int vfs_init() {
+  vfs_init_device("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t), ext2_init,
+                  ext2_lookup, ext2_readdir);
   /*
   strcpy(vfsdirs[0].name, "/");
   strcpy(vfsdirs[0].absolutely_name, "/");
@@ -114,13 +122,13 @@ int vfs_init() {
   vfsdirs[0].type = VFS;
   dev_dir = vfsdirs_alloc("dev", 0, VFS, -1);
   proc_dir = vfsdirs_alloc("proc", 0, PROCFS, -1);
-  vfs_device(total_dev_cnt, "ext2fs", dev_lookup("ramdisk0"), sizeof(ext2_t),
-             ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
+  vfs_device(total_dev_cnt, "ext2fs", dev_lookup("ramdisk0"),
+  sizeof(ext2_t), ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
              ext2_mkdir_tmp, ext2_rmdir_tmp);
   vfsdirs_alloc("ramdisk0", dev_dir, EXT2, total_dev_cnt++);
 
-  vfs_device(total_dev_cnt, "ext2fs", dev_lookup("ramdisk1"), sizeof(ext2_t),
-             ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
+  vfs_device(total_dev_cnt, "ext2fs", dev_lookup("ramdisk1"),
+  sizeof(ext2_t), ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
              ext2_mkdir_tmp, ext2_rmdir_tmp);
   vfsdirs_alloc("ramdisk1", dev_dir, EXT2, total_dev_cnt++);
   */

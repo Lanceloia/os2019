@@ -43,7 +43,7 @@ char* hello_str =
     "#include <iostream> \nusing namespace std;\nint main(){\n  return 0;\n}\n";
 char trash[4096];
 
-void ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
+int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2_t* ext2 = (ext2_t*)fs->rfs;
   memset(ext2, 0x00, sizeof(ext2_t));
   ext2->dev = dev;
@@ -88,6 +88,9 @@ void ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   // ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
   ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str), trash);
 }
+
+int ext2_lookup(filesystem_t* fs, const char* path, int flags);
+int ext2_readdir(id_t* id, int flags);
 
 uint32_t ext2_alloc_block(ext2_t* ext2) {
   uint32_t cur = ext2->last_alloc_block / 8;
