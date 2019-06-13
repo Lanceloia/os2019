@@ -438,6 +438,7 @@ ssize_t vfs_write(int fd, char *buf, size_t nbyte) {
       break;
   }
   files[fd].offset += ret;
+  return ret;
 }
 
 off_t vfs_lseek(int fd, off_t offset, int whence) { return 0; }
