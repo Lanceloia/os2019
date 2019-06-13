@@ -329,8 +329,9 @@ ssize_t ext2_read(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
 
 ssize_t ext2_write2(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
                     uint32_t len) {
-  int skip_blocks = offset / BLK_SIZE;
+  int skip_blocks = (offset + BLK_SIZE - 1) / BLK_SIZE;
   int first_offset = offset - skip_blocks * BLK_SIZE;
+
   int need_blocks = (len + offset + (BLK_SIZE - 1)) / BLK_SIZE;
 
   ssize_t ret = 0;
@@ -367,7 +368,9 @@ ssize_t ext2_write2(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
     }
   }
 
-  assert(ret == len);
+  if (ret != len) {
+    printf("ret == %d, len == %d\n", ret, len);
+  }
   ext2->ind.size = len;
   ext2_wr_ind(ext2, rinode_idx);
 
