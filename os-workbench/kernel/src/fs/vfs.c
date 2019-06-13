@@ -118,7 +118,7 @@ static int lookup_auto(char *path) {
 
       strcpy(pnidx->name, "..");
       strcpy(pnidx->path, "(LINK)");
-      pnidx->dot = oidx, pnidx->ddot = nidx;
+      pnidx->dot = oidx, pnidx->ddot = idx;
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
       pnidx->mode = TYPE_LINK, vinode_add_link(pidx->ddot, nidx);
