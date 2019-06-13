@@ -403,18 +403,14 @@ off_t vfs_lseek(int fd, off_t offset, int whence) { return 0; }
 int vfs_close(int fd) { return 0; }
 
 void vfs_ls(char *dirname) {
-  int idx = lookup_auto(dirname);
-  if (vinodes[idx].mode & TYPE_DIR && vinodes[idx].child == -1) {
-    strcat(dirname, "/.");
-    printf("try reach: %s\n", dirname);
-    lookup_auto(dirname);
-  }
+  printf("\n");
+  if (!lookup_auto(dirname)) return;
 
   printf("<     index       name                  path       >\n");
-  printf("      %4d        %12s          %s\n", idx, vinodes[idx].name,
+  printf(" >    %4d        %12s          %s\n", idx, vinodes[idx].name,
          vinodes[idx].path);
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {
-    printf("      %4d        %12s          %s\n", k, vinodes[k].name,
+    printf(" >    %4d        %12s          %s\n", k, vinodes[k].name,
            vinodes[k].path);
   }
 }
