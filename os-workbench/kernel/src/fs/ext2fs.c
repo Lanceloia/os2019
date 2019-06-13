@@ -329,54 +329,48 @@ ssize_t ext2_read(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
 
 ssize_t ext2_write(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
                    uint32_t len) {
-  uint32_t i, j, k, flag;
   int skip_blocks = offset / BLK_SIZE;
   int first_offset = offset - skip_blocks * BLK_SIZE;
   int need_blocks = (len + offset + (BLK_SIZE - 1)) / BLK_SIZE;
 
   ssize_t ret = 0;
-  if (flag) {
-    ext2_rd_ind(ext2, rinode_idx);
-    if ((ext2->ind.mode & WR_ABLE) == 0) {
-      printf("File can't be writed!\n");
-      return 0;
-    }
+  ext2_rd_ind(ext2, rinode_idx);
+  if ((ext2->ind.mode & WR_ABLE) == 0) {
+    printf("File can't be writed!\n");
+    return 0;
+  }
 
-    if (ext2->ind.blocks <= need_blocks) {
-      while (ext2->ind.blocks < need_blocks)
-        ext2->ind.block[ext2->ind.blocks++] = ext2_alloc_block(ext2);
+  if (ext2->ind.blocks <= need_blocks) {
+    while (ext2->ind.blocks < need_blocks)
+      ext2->ind.block[ext2->ind.blocks++] = ext2_alloc_block(ext2);
+  } else {
+    while (ext2->ind.blocks > need_blocks)
+      ext2_remove_block(ext2, ext2->ind.block[--ext2->ind.blocks]);
+  }
+
+  for (int n = skip_blocks; n < need_blocks; n++) {
+    if (n == skip_blocks) {
+      ext2_rd_datablock(ext2, ext2->ind.block[n]);
+      for (int k = first_offset; k < BLK_SIZE; k++, ret++)
+        ext2->datablockbuf[k] = buf[ret];
+      ext2_wr_datablock(ext2, ext2->ind.block[n]);
+    } else if (n != need_blocks - 1) {
+      ext2_rd_datablock(ext2, ext2->ind.block[n]);
+      for (int k = 0; k < BLK_SIZE; k++, ret++)
+        ext2->datablockbuf[k] = buf[ret];
+      ext2_wr_datablock(ext2, ext2->ind.block[n]);
     } else {
-      while (ext2->ind.blocks > need_blocks)
-        ext2_remove_block(ext2, ext2->ind.block[--ext2->ind.blocks]);
+      ext2_rd_datablock(ext2, ext2->ind.block[n]);
+      for (int k = 0; k < len - n * BLK_SIZE; k++, ret++)
+        ext2->datablockbuf[k] = buf[ret];
+      ext2_wr_datablock(ext2, ext2->ind.block[n]);
     }
-
-    for (int n = skip_blocks; n < need_blocks; n++) {
-      if (n == skip_blocks) {
-        ext2_rd_datablock(ext2, ext2->ind.block[n]);
-        for (int k = first_offset; k < BLK_SIZE; k++, ret++)
-          ext2->datablockbuf[k] = buf[ret];
-        ext2_wr_datablock(ext2, ext2->ind.block[n]);
-      } else if (n != need_blocks - 1) {
-        ext2_rd_datablock(ext2, ext2->ind.block[n]);
-        for (int k = 0; k < BLK_SIZE; k++, ret++)
-          ext2->datablockbuf[k] = buf[ret];
-        ext2_wr_datablock(ext2, ext2->ind.block[n]);
-      } else {
-        ext2_rd_datablock(ext2, ext2->ind.block[n]);
-        for (int k = 0; k < len - n * BLK_SIZE; k++, ret++)
-          ext2->datablockbuf[k] = buf[ret];
-        ext2_wr_datablock(ext2, ext2->ind.block[n]);
-      }
-    }
-
-    assert(ret == len);
-    ext2->ind.size = len;
-    ext2_wr_ind(ext2, rinode_idx);
   }
 
-  else {
-    printf("File is no exists!\n");
-  }
+  assert(ret == len);
+  ext2->ind.size = len;
+  ext2_wr_ind(ext2, rinode_idx);
+
   return ret;
 }
 
