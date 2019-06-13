@@ -315,13 +315,13 @@ ssize_t ext2_read(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
     ext2_rd_datablock(ext2, ext2->ind.block[i]);
     if (i == skip_blocks)
       for (int j = 0; j < ext2->ind.size - i * BLK_SIZE; ++j) {
-        ret += sprintf(buf + ret, "%c", ext2->datablockbuf[j + first_offset]);
         if (ret == len || ret + offset == ext2->ind.size) return ret;
+        ret += sprintf(buf + ret, "%c", ext2->datablockbuf[j + first_offset]);
       }
     else
       for (int j = 0; j < ext2->ind.size - i * BLK_SIZE; ++j) {
-        ret += sprintf(buf + ret, "%c", ext2->datablockbuf[j]);
         if (ret == len || ret + offset == ext2->ind.size) return ret;
+        ret += sprintf(buf + ret, "%c", ext2->datablockbuf[j]);
       }
   }
   return ret;
