@@ -205,7 +205,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     pddot->prev_link = pddot->next_link = ddot, pddot->linkcnt = 1; \
     pddot->mode = TYPE_LINK, vinode_add_link(PARENT), ddot);        \
     pddot->fs = FS;                                                 \
-    printf("link %d <-> %d", PARENT);                               \
+    printf("link %d <-> %d", PARENT, ddot);                         \
   } while (0)
 
 #define build_general_dir(IDX, DOT, DDOT, NAME, FS)        \
