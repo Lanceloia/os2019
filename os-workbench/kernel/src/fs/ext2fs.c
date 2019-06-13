@@ -357,7 +357,7 @@ ssize_t ext2_write2(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
       ext2_wr_datablock(ext2, ext2->ind.block[n]);
     } else if (n != need_blocks - 1) {
       ext2_rd_datablock(ext2, ext2->ind.block[n]);
-      for (int k = 0; k < ret < len && BLK_SIZE; k++, ret++)
+      for (int k = 0; ret < len && k < BLK_SIZE; k++, ret++)
         ext2->datablockbuf[k] = buf[ret];
       ext2_wr_datablock(ext2, ext2->ind.block[n]);
     } else {
