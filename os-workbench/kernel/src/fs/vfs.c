@@ -185,26 +185,26 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
   return idx;
 }
 
-#define build_dot(CUR, FS)                                          \
-  do {                                                              \
-    strcpy(pdot->name, ".");                                        \
-    strcpy(pdot->path, vinodes[CUR].path);                          \
-    pdot->dot = -1, pdot->ddot = ddot;                              \
-    pdot->next = ddot, pdot->child = CUR;                           \
-    pdot->prev_link = pdot->next_link = dot, pdot->linkcnt = 1;     \
-    pdot->mode = TYPE_LINK, vinode_add_link(vinodes[CUR].dot, dot); \
-    pdot->fs = FS;                                                  \
+#define build_dot(CUR, FS)                                      \
+  do {                                                          \
+    strcpy(pdot->name, ".");                                    \
+    strcpy(pdot->path, vinodes[CUR].path);                      \
+    pdot->dot = -1, pdot->ddot = ddot;                          \
+    pdot->next = ddot, pdot->child = -1;                        \
+    pdot->prev_link = pdot->next_link = dot, pdot->linkcnt = 1; \
+    pdot->mode = TYPE_LINK, vinode_add_link(CUR, dot);          \
+    pdot->fs = FS;                                              \
   } while (0)
 
-#define build_ddot(PARENT, FS)                                           \
-  do {                                                                   \
-    strcpy(pddot->name, "..");                                           \
-    strcpy(pddot->path, vinodes[PARENT].path);                           \
-    pddot->dot = dot, pddot->ddot = -1;                                  \
-    pddot->next = -1, pddot->child = PARENT;                             \
-    pddot->prev_link = pddot->next_link = ddot, pddot->linkcnt = 1;      \
-    pddot->mode = TYPE_LINK, vinode_add_link(vinodes[PARENT].dot, ddot); \
-    pddot->fs = FS;                                                      \
+#define build_ddot(PARENT, FS)                                      \
+  do {                                                              \
+    strcpy(pddot->name, "..");                                      \
+    strcpy(pddot->path, vinodes[PARENT].path);                      \
+    pddot->dot = dot, pddot->ddot = -1;                             \
+    pddot->next = -1, pddot->child = -1;                            \
+    pddot->prev_link = pddot->next_link = ddot, pddot->linkcnt = 1; \
+    pddot->mode = TYPE_LINK, vinode_add_link(PARENT, ddot);         \
+    pddot->fs = FS;                                                 \
   } while (0)
 
 #define build_general_dir(IDX, DOT, DDOT, NAME, FS)        \
