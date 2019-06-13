@@ -88,9 +88,9 @@ static int lookup_auto(char *path) {
   int kth = 0, oidx = -1, nidx, ret;
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
-    strcpy(buf.path, pidx->path);
-    buf.next = -1;
     vinodes[nidx] = buf;
+    strcpy(vinodes[nidx].path, pidx->path);
+    vinodes[nidx].next = -1;
     if (oidx == -1)
       pidx->child = nidx;
     else
@@ -102,6 +102,8 @@ static int lookup_auto(char *path) {
     } else if (!strcmp(vinodes[nidx].name, "..")) {
       vinodes[nidx].mode = TYPE_LINK;
       vinode_add_link(vinodes[idx].ddot, nidx);
+    } else {
+      strcat(vinodes[nidx].path, vinodes[nidx].name);
     }
 
     oidx = nidx;
