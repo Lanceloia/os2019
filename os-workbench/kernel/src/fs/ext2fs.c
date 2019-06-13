@@ -15,6 +15,7 @@ void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t len, int type);
 void ext2_remove_block(ext2_t* ext2, uint32_t del_num);
 int ext2_search_file(ext2_t* ext2, uint32_t idx);
 
+void ext2_cd(ext2_t* ext2, char* dirname, char* out);
 void ext2_mkdir(ext2_t*, char*, int, char*);
 void ext2_read(ext2_t*, char*, char*, uint32_t, char*);
 void ext2_write(ext2_t*, char*, char*, uint32_t, char*);
