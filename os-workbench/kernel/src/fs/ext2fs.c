@@ -453,44 +453,6 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len) {
   ext2->current_dir = now_current_dir;
 }
 
-void ext2_write2(ext2_t* ext2, int rinode_idx, char* buf, uint32_t len) {
-  uint32_t i, j, k, flag, need_blocks = (len + (BLK_SIZE - 1)) / BLK_SIZE;
-  int now_current_dir = ext2->current_dir;
-  flag = ext2_reserch_file(ext2, path, TYPE_FILE, &i, &j, &k);
-  printf("writeflag: %d\n", flag);
-  if (flag) {
-    // don't need open
-    ext2_rd_ind(ext2, ext2->dir[k].inode);
-    if ((ext2->ind.mode & 0x2) == 0) {
-      printf("File can't be writed!\n");
-      return;
-    }
-    if (ext2->ind.blocks <= need_blocks) {
-      while (ext2->ind.blocks < need_blocks)
-        ext2->ind.block[ext2->ind.blocks++] = ext2_alloc_block(ext2);
-    } else {
-      while (ext2->ind.blocks > need_blocks)
-        ext2_remove_block(ext2, ext2->ind.block[--ext2->ind.blocks]);
-    }
-    for (int n = 0; n < need_blocks; n++) {
-      if (n != need_blocks - 1) {
-        ext2_rd_datablock(ext2, ext2->ind.block[n]);
-        memcpy(ext2->datablockbuf, buf + n * BLK_SIZE, BLK_SIZE);
-        ext2_wr_datablock(ext2, ext2->ind.block[n]);
-      } else {
-        ext2_rd_datablock(ext2, ext2->ind.block[n]);
-        memcpy(ext2->datablockbuf, buf + n * BLK_SIZE, len - n * BLK_SIZE);
-        ext2_wr_datablock(ext2, ext2->ind.block[n]);
-      }
-    }
-    ext2->ind.size = len;
-    ext2_wr_ind(ext2, ext2->dir[k].inode);
-  } else {
-    printf("File is no exists!\n");
-  }
-  ext2->current_dir = now_current_dir;
-}
-
 void ext2_mkdir(ext2_t* ext2, char* dirname, int mode) {
   uint32_t idx, ninode, nblock, ndir;
   int now_current_dir = ext2->current_dir;
