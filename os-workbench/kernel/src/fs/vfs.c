@@ -88,12 +88,21 @@ static int lookup_auto(char *path) {
   int kth = 0, oidx = -1, nidx, ret;
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
+    buf.next = -1;
     vinodes[nidx] = buf;
     if (oidx == -1)
       pidx->child = nidx;
     else
       vinodes[oidx].next = nidx;
-    vinodes[nidx].next = -1;
+
+    if (!strcmp(vinodes[nidx].name, ".")) {
+      vinodes[nidx].mode = TYPE_LINK;
+      vinode_add_link(idx, nidx);
+    } else if (!strcmp(vinodes[nidx].name, "..")) {
+      vinodes[nidx].mode = TYPE_LINK;
+      vinode_add_link(vinodes[idx].ddot, nidx);
+    }
+
     oidx = nidx;
 
     printf("newidx: %d, rinode_idx: %d, name %s\n", nidx,
@@ -206,6 +215,8 @@ int vinodes_mount(const char *name, int parent, int mode, filesystem_t *fs) {
   pidx->prev_link = pidx->next_link = idx;
   pidx->linkcnt = 1;
   pidx->fs = fs;
+
+  pidx->rinode_idx = 1;  // the root of ext2
   return idx;
 }
 
@@ -231,7 +242,7 @@ int vfs_init() {
                       ext2_init, ext2_lookup, ext2_readdir);
   idx = vinodes_mount("ramdisk0/", idx, TYPE_DIR | RD_ABLE | WR_ABLE,
                       &filesys[fs]);
-  vinodes[idx].rinode_idx = 1;
+
   /*
   strcpy(vfsdirs[0].name, "/");
   strcpy(vfsdirs[0].absolutely_name, "/");
