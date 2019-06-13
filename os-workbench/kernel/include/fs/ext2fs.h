@@ -41,21 +41,21 @@ struct group_desc {
 
 struct inode {
   /* inode, 64 bytes */
-  uint16_t mode;                  // the mode of file
+  uint32_t mode;                  // the mode of file
   uint32_t blocks;                // the size of file (blks)
   uint32_t size;                  // the size of file (bytes)
   uint32_t block[EXT2_N_BLOCKS];  // direct or indirect blocks
-  char pad[6];
+  char pad[2];
 };
 
 struct directory {
   /* directory entry, 32 bytes */
   uint32_t inode;
+  uint32_t mode;
   uint16_t rec_len;
-  uint16_t mode;
   char name[16];
   uint8_t name_len;
-  char pad[7];
+  char pad[5];
 };
 
 typedef struct super_block sb_t;
