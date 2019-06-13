@@ -65,7 +65,7 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 
   ext2_rd_blockbitmap(ext2);
   ext2_rd_inodebitmap(ext2);
-  ext2->ind.mode = 01006;
+  ext2->ind.mode = TYPE_DIR | RD_ABLE | WR_ABLE;
   ext2->ind.blocks = 0;
   ext2->ind.size = 2 * DIR_SIZE;  // origin 32, maybe wrong
   ext2->ind.block[0] = ext2_alloc_block(ext2);
@@ -78,7 +78,6 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   // root_dir with no name
   ext2->dir[0].inode = ext2->dir[1].inode = ext2->current_dir;
   ext2->dir[0].name_len = ext2->dir[1].name_len = 0;
-  ext2->dir[0].file_type = ext2->dir[1].file_type = TYPE_DIR;
   strcpy(ext2->dir[0].name, ".");
   strcpy(ext2->dir[1].name, "..");
   ext2_wr_dir(ext2, ext2->ind.block[0]);
@@ -513,10 +512,12 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
     ext2_wr_ind(ext2, ext2->current_dir);
     ext2_dir_prepare(ext2, idx, strlen(dirname), type);
   } else {
-    if (type == TYPE_FILE)
+    if (type & TYPE_FILE)
       offset += sprintf(out + offset, "File existed!\n");
-    else
+    else if (type & TYPE_DIR)
       offset += sprintf(out + offset, "Directory existed!\n");
+    else
+      offset += sprintf(out + offset, "Unknowed type!\n");
   }
   ext2->current_dir = now_current_dir;
 }

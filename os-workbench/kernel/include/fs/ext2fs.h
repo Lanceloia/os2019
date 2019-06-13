@@ -52,10 +52,10 @@ struct directory {
   /* directory entry, 32 bytes */
   uint32_t inode;
   uint16_t rec_len;
-  uint8_t name_len;
-  uint8_t file_type;
+  uint16_t mode;
   char name[16];
-  char pad[8];
+  uint8_t name_len;
+  char pad[7];
 };
 
 typedef struct super_block sb_t;
