@@ -87,11 +87,11 @@ static int lookup_auto(char *path) {
   int len = strlen(path);
   if (path[len - 1] == '/') path[len - 1] = '\0';
 
-  printf("FUCK1\n\n\n\n\n\n\n");
+  // printf("FUCK1\n\n\n\n\n\n\n");
   int flag, offset = 1;
   int idx = (path[0] == '/') ? lookup_root(path, &flag, &offset)
                              : lookup_cur(path, &flag, VFS_ROOT, &offset);
-  printf("FUCK2\n\n\n\n\n\n\n");
+  // printf("FUCK2\n\n\n\n\n\n\n");
   if (flag == 1) return idx;
 
   vinode_t buf;
@@ -433,7 +433,7 @@ MODULE_DEF(vfs){
 #endif
 
 int vinode_add_link(int oidx, int nidx, int flag) {
-  printf("\n add_link: %d <- %d : %d\n", oidx, nidx, flag);
+  // printf("\n add_link: %d <- %d : %d\n", oidx, nidx, flag);
   int n_link = vinodes[oidx].next_link;
   vinodes[nidx].next_link = n_link;
   vinodes[nidx].prev_link = oidx;
