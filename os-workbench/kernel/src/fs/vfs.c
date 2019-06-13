@@ -111,8 +111,9 @@ static int lookup_auto(char *path) {
 
     oidx = nidx;
 
-    printf("newidx: %d, rinode_idx: %d, name %s\n", nidx,
-           vinodes[nidx].rinode_idx, vinodes[nidx].name);
+    printf("newidx: %d, rinode_idx: %d, name %s, child: %d, next: %d\n", nidx,
+           vinodes[nidx].rinode_idx, vinodes[nidx].name, vinodes[nidx].child,
+           vinodes[nidx].next);
   }
   return lookup_auto(path);
 }
