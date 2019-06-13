@@ -106,12 +106,16 @@ static int lookup_auto(char *path) {
     return 0;
   }
 
+  if (pidx->child != -1)){
+    printf("file is not exists!\n");
+  }
+
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
 
     if (!strcmp(buf.name, ".")) {
       assert(oidx == -1);
-      assert(pidx->child == -1);
+
       pidx->child = nidx;
 
       strcpy(pnidx->name, ".");
