@@ -294,7 +294,7 @@ static int files_alloc() {
 
 static void files_free(int fd) { files[fd].refcnt = 0; }
 
-int vinodes_open(int inode_idx, int mode) {
+int vinode_open(int inode_idx, int mode) {
   int fd = files_alloc();
   if (fd == -1) return -1;
   files[fd].vinode_idx = inode_idx;
