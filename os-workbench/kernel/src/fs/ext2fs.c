@@ -11,7 +11,7 @@ uint32_t ext2_alloc_inode(ext2_t* ext2);
 uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int type,
                            uint32_t* inode_num, uint32_t* block_num,
                            uint32_t* dir_num);
-void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t len, int type);
+void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, int type);
 void ext2_remove_block(ext2_t* ext2, uint32_t del_num);
 int ext2_search_file(ext2_t* ext2, uint32_t idx);
 
@@ -422,7 +422,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
     // printf("e");
     ext2->ind.size += DIR_SIZE;  // origin 16
     ext2_wr_ind(ext2, ext2->current_dir);
-    ext2_dir_prepare(ext2, idx, strlen(dirname), type);
+    ext2_dir_prepare(ext2, idx, type);
   } else {
     if (type & TYPE_FILE)
       offset += sprintf(out + offset, "File existed!\n");
