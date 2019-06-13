@@ -114,7 +114,7 @@ static int lookup_auto(char *path) {
       pnidx->dot = nidx, pnidx->ddot = -1;
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
-      pnidx->mode = TYPE_LINK, vinode_add_link(idx, nidx);
+      pnidx->mode = TYPE_LINK, vinode_add_link(idx, nidx, 4);
       pnidx->rinode_idx = buf.rinode_idx;
       pnidx->fs = pidx->fs;
 
@@ -129,7 +129,7 @@ static int lookup_auto(char *path) {
       pnidx->dot = oidx, pnidx->ddot = idx;
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
-      pnidx->mode = TYPE_LINK, vinode_add_link(pidx->dot, nidx);
+      pnidx->mode = TYPE_LINK, vinode_add_link(pidx->dot, nidx, 3);
       pnidx->rinode_idx = buf.rinode_idx;
       pnidx->fs = pidx->fs;
 
@@ -192,7 +192,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     pdot->dot = -1, pdot->ddot = ddot;                          \
     pdot->next = ddot, pdot->child = CUR;                       \
     pdot->prev_link = pdot->next_link = dot, pdot->linkcnt = 1; \
-    pdot->mode = TYPE_LINK, vinode_add_link(CUR, dot);          \
+    pdot->mode = TYPE_LINK, vinode_add_link(CUR, dot, 1);       \
     pdot->fs = FS;                                              \
   } while (0)
 
@@ -203,7 +203,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     pddot->dot = dot, pddot->ddot = -1;                             \
     pddot->next = -1, pddot->child = PARENT;                        \
     pddot->prev_link = pddot->next_link = ddot, pddot->linkcnt = 1; \
-    pddot->mode = TYPE_LINK, vinode_add_link(PARENT, ddot);         \
+    pddot->mode = TYPE_LINK, vinode_add_link(PARENT, ddot, 2);      \
     pddot->fs = FS;                                                 \
   } while (0)
 
@@ -388,8 +388,8 @@ MODULE_DEF(vfs){
 #undef _LANCELOIA_DEBUG_
 #endif
 
-int vinode_add_link(int oidx, int nidx) {
-  printf("\n add_link: %d <- %d \n", oidx, nidx);
+int vinode_add_link(int oidx, int nidx, int flag) {
+  printf("\n add_link: %d <- %d : %d\n", oidx, nidx, flag);
   int n_link = vinodes[oidx].next_link;
   vinodes[nidx].next_link = n_link;
   vinodes[nidx].prev_link = oidx;
