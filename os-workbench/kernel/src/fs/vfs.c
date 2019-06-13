@@ -51,10 +51,10 @@ static int lookup_cur(char *path, int *pflag, int cur) {
   int k, len = first_item_namelen(path);
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
     printf(
-        "\nlookup cur: [%d]\n  itemname: %s, path: %s, matchlen: %d\n  type: "
+        "\nlookup cur: [%d]\n  itemname: %s, path: %s\n  type: "
         "%x, "
         "next: %d, child: %d, dot: %d, ddot: %d\n\n",
-        k, vinodes[k].name, path, len, vinodes[k].mode, vinodes[k].next,
+        k, vinodes[k].name, vinodes[k].path, vinodes[k].mode, vinodes[k].next,
         vinodes[k].child, vinodes[k].dot, vinodes[k].ddot);
     if (!strncmp(vinodes[k].name, path, len)) break;
   }
