@@ -105,8 +105,6 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
 }
 
 static void cat_do(device_t *tty, char *dirname, char *pwd) {
-  extern ssize_t ext2_read(ext2_t * ext2, int rinode_idx, char *bug,
-                           uint32_t len);
   build_absolutely_path(dirname, pwd);
   int fd = vfs_open(absolutely_path, TYPE_FILE | RD_ABLE);
   while (vfs_read(fd, bigbuf, 1024))
@@ -114,8 +112,6 @@ static void cat_do(device_t *tty, char *dirname, char *pwd) {
 }
 
 static void catto_do()(device_t *tty, char *dirname, char *pwd) {
-  extern ssize_t ext2_write2(ext2_t * ext2, int rinode_idx, char *bug,
-                             uint32_t len);
   build_absolutely_path(dirname, pwd);
   int fd = vfs_open(absolutely_path, TYPE_FILE | WR_ABLE);
   while (1) {

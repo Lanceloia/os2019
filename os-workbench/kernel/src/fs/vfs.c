@@ -423,7 +423,12 @@ ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
   return ret;
 }
 
-ssize_t vfs_write(int fd, char *buf, size_t nbyte) { return 0; }
+ssize_t vfs_write(int fd, char *buf, size_t nbyte) {
+  return 0;
+
+  extern ssize_t ext2_write2(ext2_t * ext2, int rinode_idx, char *bug,
+                             uint32_t len);
+}
 
 off_t vfs_lseek(int fd, off_t offset, int whence) { return 0; }
 
