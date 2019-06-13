@@ -259,7 +259,7 @@ int vinodes_create_dir(int idx, int par, filesystem_t *fs) {
   assert(pidx->child == -1);
   pidx->child = dot;
 
-  build_dot(dot, fs);
+  build_dot(cur, fs);
   build_ddot(par, fs);
   // return first child
   return dot;
