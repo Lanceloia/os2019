@@ -89,7 +89,6 @@ static int lookup_auto(char *path) {
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
     vinodes[nidx] = buf;
-    strcpy(vinodes[nidx].path, pidx->path);
     vinodes[nidx].next = -1;
     if (oidx == -1)
       pidx->child = nidx;
@@ -97,12 +96,15 @@ static int lookup_auto(char *path) {
       vinodes[oidx].next = nidx;
 
     if (!strcmp(vinodes[nidx].name, ".")) {
+      strcpy(vinodes[nidx].path, "");
       vinodes[nidx].mode = TYPE_LINK;
       vinode_add_link(idx, nidx);
     } else if (!strcmp(vinodes[nidx].name, "..")) {
+      strcpy(vinodes[nidx].path, "");
       vinodes[nidx].mode = TYPE_LINK;
       vinode_add_link(vinodes[idx].ddot, nidx);
     } else {
+      strcpy(vinodes[nidx].path, pidx->path);
       strcat(vinodes[nidx].path, vinodes[nidx].name);
     }
 
@@ -265,12 +267,14 @@ int vfs_init() {
   vfsdirs_alloc("ramdisk1", dev_dir, EXT2, total_dev_cnt++);
   */
 
-  printf("%s  %d\n", "/", lookup_auto("/"));
-  // printf("%s  %d\n", "/dev/", lookup_auto("/dev/"));
-  printf("%s  %d\n", "/dev/", lookup_auto("/dev/"));
-  printf("%s  %d\n", "/dev/ramdisk0/", lookup_auto("/dev/ramdisk0/"));
-  printf("%s  %d\n", "/dev/ramdisk0/hello.cpp/",
-         lookup_auto("/dev/ramdisk0/hello.cpp/"));
+  /*
+    printf("%s  %d\n", "/", lookup_auto("/"));
+    // printf("%s  %d\n", "/dev/", lookup_auto("/dev/"));
+    printf("%s  %d\n", "/dev/", lookup_auto("/dev/"));
+    printf("%s  %d\n", "/dev/ramdisk0/", lookup_auto("/dev/ramdisk0/"));
+    printf("%s  %d\n", "/dev/ramdisk0/hello.cpp/",
+           lookup_auto("/dev/ramdisk0/hello.cpp/"));
+           */
   return 0;
 }
 
@@ -300,7 +304,7 @@ int vfs_close(int fd) { return 0; }
 
 void vfs_ls(char *dirname) {
   int idx = lookup_auto(dirname);
-  printf("       index           name              path\n");
+  printf("       index       name                  path\n");
   printf("cur:   %4d        %12s          %s\n\n", idx, vinodes[idx].name,
          vinodes[idx].path);
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {
