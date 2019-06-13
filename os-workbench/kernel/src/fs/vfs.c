@@ -233,9 +233,8 @@ int vinodes_append_dir(int par, char *name, filesystem_t *fs) {
       ddot = k;
     printf("%d: %s  \n", k, vinodes[k].name);
   }
-
   assert(dot != -1 && ddot != -1);
-
+  vinodes[k].next = nidx;
   build_general_dir(nidx, dot, ddot, name, fs);
   // return new item's idx
   return nidx;
