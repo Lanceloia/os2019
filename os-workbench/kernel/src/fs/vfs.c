@@ -75,7 +75,7 @@ static int lookup_cur(char *path, int *pflag, int cur, int *poffset) {
   while (vinodes[next].mode & TYPE_LINK) next = vinodes[next].next_link;
 
   char *newpath = path + (len + (path[len] == '/' ? 1 : 0));
-  *poffset += len + (path[len] == '/' ? 1 : 0) + 1;
+  *poffset += len;
   return lookup_cur(newpath, pflag, next, poffset);
 }
 
