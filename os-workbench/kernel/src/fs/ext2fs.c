@@ -15,7 +15,7 @@ void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, int mode);
 void ext2_remove_block(ext2_t* ext2, uint32_t del_num);
 int ext2_search_file(ext2_t* ext2, uint32_t idx);
 
-void ext2_cd(ext2_t* ext2, char* dirname, char* out);
+void ext2_cd(ext2_t* ext2, char* dirname);
 void ext2_mkdir(ext2_t*, char*, int);
 void ext2_read(ext2_t*, char*, char*, uint32_t, char*);
 void ext2_write(ext2_t*, char*, char*, uint32_t, char*);
@@ -83,10 +83,10 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2_mkdir(ext2, "hello.cpp", TYPE_FILE);
   ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str), trash);
   ext2_mkdir(ext2, "directory", TYPE_DIR);
-  ext2_cd(ext2, "directory/", trash);
+  ext2_cd(ext2, "directory");
   ext2_mkdir(ext2, "hello2.cpp", TYPE_FILE);
   ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str), trash);
-  ext2_cd(ext2, "..", trash);
+  ext2_cd(ext2, "..");
 
   return 1;
 }
@@ -295,20 +295,31 @@ int ext2_search_file(ext2_t* ext2, uint32_t idx) {
   return 0;
 }
 
-void ext2_cd(ext2_t* ext2, char* dirname, char* out) {
-  // int offset = sprintf(out, "");
+void ext2_cd(ext2_t* ext2, char* dirname) {
   uint32_t i, j, k, flag;
   if (!strcmp(dirname, "../")) dirname[2] = '\0';
   if (!strcmp(dirname, "./")) dirname[1] = '\0';
   flag = ext2_reserch_file(ext2, dirname, TYPE_DIR, &i, &j, &k);
-  if (flag) {
+  if (flag)
     ext2->current_dir = i;
-  } else {
-    // offset += sprintf(out + offset, "No directory: %s\n", dirname);
+  else
     printf("No directory: %s\n", dirname);
-  }
 }
 
+ssize_t ext2_read(ext2_t* ext2, int rinode_idx, char* buf, uint32_t len) {
+  ext2_rd_ind(ext2, rinode_idx);
+  int ret = 0;
+  for (int i = 0; i < ext2->ind.blocks; i++) {
+    ext2_rd_datablock(ext2, ext2->ind.block[i]);
+    for (int j = 0; j < ext2->ind.size - i * BLK_SIZE; ++j) {
+      ret += sprintf(buf + ret, "%c", ext2->datablockbuf[j]);
+      if (ret == len) return return;
+    }
+  }
+  return ret;
+}
+
+/*
 void ext2_read(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
   uint32_t i, j, k, flag;
   int now_current_dir = ext2->current_dir;
@@ -334,6 +345,7 @@ void ext2_read(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
   }
   ext2->current_dir = now_current_dir;
 }
+*/
 
 void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
   uint32_t i, j, k, flag, need_blocks = (len + (BLK_SIZE - 1)) / BLK_SIZE;
