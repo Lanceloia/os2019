@@ -107,7 +107,8 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
 static void cat_do(device_t *tty, char *dirname, char *pwd) {
   extern ssize_t ext2_read(ext2_t * ext2, int rinode_idx, char *bug,
                            uint32_t len);
-  int fd = vfs_open("dirname", TYPE_FILE | RD_ABLE);
+  build_absolutely_path(dirname, pwd);
+  int fd = vfs_open(absolutely_path, TYPE_FILE | RD_ABLE);
   while (vfs_read(fd, bigbuf, 1024))
     tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
