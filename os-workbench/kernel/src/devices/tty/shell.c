@@ -185,6 +185,8 @@ void shell_task(void *name) {
       ls_do(tty, readbuf + 3, pwd);
     else if (!strncmp(readbuf, "cd ", 3))
       cd_do(tty, readbuf + 3, pwd);
+    else if (!strncmp(readbuf, "cat ", 4))
+      cat_do(tty, readbuf + 4, pwd);
     /*
     else if (!strncmp(readbuf, "mkdir ", 6))
       mkdir_do(tty, readbuf + 6, pwd);
