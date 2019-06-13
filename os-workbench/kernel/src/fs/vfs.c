@@ -96,8 +96,8 @@ static int lookup_auto(char *path) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
     vinodes[nidx] = buf;
     vinodes[nidx].linkcnt = 1;
-    vinodes[nidx].dot = pidx->dot;
-    vinodes[nidx].ddot = pidx->ddot;
+    vinodes[nidx].dot = vinodes[pidx->ddot].child;
+    vinodes[nidx].ddot = vinodes[pidx->ddot].dot;
     vinodes[nidx].next_link = vinodes[nidx].prev_link = idx;
     vinodes[nidx].next = -1;
     if (oidx == -1)
