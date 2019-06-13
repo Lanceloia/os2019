@@ -106,7 +106,7 @@ static int lookup_auto(char *path) {
     return 0;
   }
 
-  if (pidx->child != -1)){
+  if (pidx->child != -1) {
     printf("file is not exists!\n");
   }
 
