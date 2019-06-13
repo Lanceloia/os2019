@@ -99,7 +99,7 @@ static int lookup_auto(char *path) {
   int dot = -1, ddot = -1, ret = -1, next = -1;
 
   int flen = first_item_len(path + offset);
-  printf("%d\n", flen);
+  printf("%s, %d\n", path + offset, flen);
 
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
