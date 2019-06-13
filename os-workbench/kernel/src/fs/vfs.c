@@ -345,8 +345,11 @@ int vfs_init() {
   return 0;
 }
 
+char _path[1024];
+
 int vfs_access(const char *path, int mode) {
-  int idx = lookup_auto(path);
+  strcpy(_path, path);
+  int idx = lookup_auto(_path);
   return vinodes[idx].mode & mode;
 }
 
