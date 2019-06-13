@@ -293,7 +293,7 @@ int ext2_search_file(ext2_t* ext2, uint32_t idx) {
 }
 
 void ext2_cd(ext2_t* ext2, char* dirname, char* out) {
-  int offset = sprintf(out, "");
+  // int offset = sprintf(out, "");
   uint32_t i, j, k, flag;
   if (!strcmp(dirname, "../")) dirname[2] = '\0';
   if (!strcmp(dirname, "./")) dirname[1] = '\0';
