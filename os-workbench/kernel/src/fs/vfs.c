@@ -153,6 +153,7 @@ static int lookup_auto(char *path) {
       assert(next == -1);
       next = nidx;
     } else {
+      printf("fuck? %s\n", vinodes[nidx].name);
       /*
       printf("offset: %d, path: %s, path + offset: %s\n", offset, path,
              path + offset);
