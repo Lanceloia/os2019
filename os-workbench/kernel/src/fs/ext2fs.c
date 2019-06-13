@@ -476,9 +476,11 @@ void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
   ext2->current_dir = now_current_dir;
 }
 
+/*
 void ext2_cat(ext2_t* ext2, char* dirname, char* out) {
   ext2_read(ext2, dirname, out, 1024, out);
 }
+*/
 
 void ext2_rd_sb(ext2_t* ext2) {
   ext2->dev->ops->read(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
