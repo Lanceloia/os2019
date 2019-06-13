@@ -375,7 +375,7 @@ ssize_t ext2_write(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
   }
 
   else {
-    printf(out + offset, "File is no exists!\n");
+    printf("File is no exists!\n");
   }
   return ret;
 }
