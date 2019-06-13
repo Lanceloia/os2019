@@ -361,7 +361,7 @@ int vfs_init() {
   int fs_r0 = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
                              ext2_init, ext2_lookup, ext2_readdir);
 
-  vinodes_mount(dev, "ramdisk0", &filesys[fs_r0], EXT2_ROOT);
+  vinodes_mount(dev, "ramdisk0", EXT2FS, &filesys[fs_r0]);
 
   // lookup_auto("/dev/ramdisk0/directory\0\0");
   // lookup_auto("/dev/ramdisk0/directory/\0\0");
