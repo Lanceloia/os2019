@@ -111,7 +111,8 @@ static int lookup_auto(char *path) {
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
       pnidx->mode = TYPE_LINK, vinode_add_link(idx, nidx);
-      pnidx->fs = NULL;
+      pnidx->rinode_idx = buf.rinode_idx;
+      pnidx->fs = pidx->fs;
 
       dot = nidx;
     } else if (!strcmp(buf.name, "..")) {
@@ -125,7 +126,8 @@ static int lookup_auto(char *path) {
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
       pnidx->mode = TYPE_LINK, vinode_add_link(pidx->ddot, nidx);
-      pnidx->fs = NULL;
+      pnidx->rinode_idx = buf.rinode_idx;
+      pnidx->fs = pidx->fs;
 
       ddot = nidx;
     } else {
@@ -139,6 +141,7 @@ static int lookup_auto(char *path) {
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
       pnidx->mode = buf.mode;
+      pnidx->rinode_idx = buf.rinode_idx;
       pnidx->fs = pidx->fs;
     }
 
