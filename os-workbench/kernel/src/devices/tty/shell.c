@@ -96,7 +96,10 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
 
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
   build_absolutely_path(dirname, pwd);
-  if (vfs_access(dirname)) }
+  if (vfs_access(dirname, TYPE_DIR)) {
+    strcat(pwd, dirname);
+  }
+}
 
 /*
 extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
