@@ -37,10 +37,15 @@ static int vinodes_alloc() {
 
 static void vinodes_free(int idx) { vinodes[idx].mode = UNUSED; }
 
-static int first_item_namelen(const char *path) {
+static int first_item_len(const char *path) {
   int ret = 0;
   for (; path[ret] && path[ret] != '/';) ret++;
-  return ret;
+  return path[ret] ? ret : ret + 1;  // . => 1  ./ => 1 ../ => 2
+}
+
+static int item_match(const char *P, const char *T, int len) {
+  if(strncmp(P, T, len)return 0;
+  else return T[len] == '\0' || T[len ] == '/';
 }
 
 static int lookup_cur(char *path, int *pflag, int cur, int *poffset) {
@@ -50,7 +55,7 @@ static int lookup_cur(char *path, int *pflag, int cur, int *poffset) {
     return cur;
   }
 
-  int k, len = first_item_namelen(path);
+  int k, len = first_item_len(path);
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
     /*
     printf(
@@ -60,7 +65,7 @@ static int lookup_cur(char *path, int *pflag, int cur, int *poffset) {
         k, vinodes[k].name, vinodes[k].path, vinodes[k].mode, vinodes[k].next,
         vinodes[k].child, vinodes[k].dot, vinodes[k].ddot);
         */
-    if (!strncmp(vinodes[k].name, path, len)) {
+    if (item_match(vinodes[k].name, path, len)) {
       // printf("match!\n");
       break;
     }
@@ -97,7 +102,7 @@ static int lookup_auto(char *path) {
   int kth = 0, oidx = -1, nidx = -1;
   int dot = -1, ddot = -1, ret = -1, next = -1;
 
-  int flen = first_item_namelen(path + offset);
+  int flen = first_item_len(path + offset);
 
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
@@ -145,7 +150,7 @@ static int lookup_auto(char *path) {
     pnidx->fs = pidx->fs;
     oidx = nidx;
 
-    if (!strncmp(buf.name, path + offset, flen)) {
+    if (item_match(buf.name, path + offset, flen)) {
       printf("read: %s, %d, %d\n\n", path + offset, flen, next);
       assert(next == -1);
       next = nidx;
