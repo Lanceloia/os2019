@@ -12,6 +12,10 @@
 #define TYPE_LINK 0x40
 #define ALLOCED 0x80
 
+#define VFS 0x00
+#define EXT2FS 0x01
+#define PROCFS 0x02
+
 #define MAX_PATH_LENGTH 256
 #define MAX_NAME_LENGTH 32
 
@@ -34,13 +38,15 @@ typedef struct vinode {
   int mode;          // TYPE, RWX_MODE
   int linkcnt;       // link cnt
   int rinode_idx;    // read inode idx
+  int fs_type;       // filesystem type
   filesystem_t *fs;  // filesystem pointer
 
   int prev_link, next_link;  // prev or next link
-
 } vinode_t;
 
 // file operation
+ssize_t vinode_read(int fd, char *buf, ssize_t size);
+ssize_t vinode_write(int fd, char *buf, ssize_t size);
 off_t vinode_lseek(int fd, off_t offset, int whence);
 
 // vinode operation
@@ -56,7 +62,6 @@ struct filesystem {
   void (*init)(filesystem_t *fs, const char *name, device_t *dev);
   int (*lookup)(filesystem_t *fs, char *path, int mode);
   int (*readdir)(filesystem_t *fs, int vinode_idx, int kth, vinode_t *buf);
-  // int filesystem_close(filesystem_t *fs, int vinode_idx);
 };
 
 // interface
