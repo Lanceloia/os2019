@@ -111,8 +111,8 @@ static int lookup_auto(char *path) {
 
       strcpy(pnidx->name, ".");
       strcpy(pnidx->path, pidx->path);
-      pnidx->dot = nidx, pnidx->ddot = -1;
-      pnidx->next = -1, pnidx->child = -1;
+      pnidx->dot = -1, pnidx->ddot = -1;  // will be cover
+      pnidx->next = -1, pnidx->child = idx;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
       pnidx->mode = TYPE_LINK, vinode_add_link(idx, nidx, 4);
       pnidx->rinode_idx = buf.rinode_idx;
@@ -126,10 +126,12 @@ static int lookup_auto(char *path) {
 
       strcpy(pnidx->name, "..");
       strcpy(pnidx->path, pidx->path);
-      pnidx->dot = oidx, pnidx->ddot = idx;
-      pnidx->next = -1, pnidx->child = -1;
+      pnidx->dot = oidx, pnidx->ddot = -1;
+      pnidx->next = -1,
+      pnidx->child = vinodes[pidx->ddot].child;  // ddot's child is parent
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
-      pnidx->mode = TYPE_LINK, vinode_add_link(pidx->ddot, nidx, 3);
+      pnidx->mode = TYPE_LINK,
+      vinode_add_link(vinodes[pidx->ddot].child, nidx, 3);
       pnidx->rinode_idx = buf.rinode_idx;
       pnidx->fs = pidx->fs;
 
