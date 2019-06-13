@@ -101,6 +101,8 @@ static int lookup_auto(char *path) {
   int flen = first_item_len(path + offset);
   printf("%s, %d\n", path + offset, flen);
 
+  if (pidx->fs == NULL) return 0;
+
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
 
