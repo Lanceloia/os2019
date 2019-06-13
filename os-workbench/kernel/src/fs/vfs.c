@@ -128,10 +128,9 @@ static int lookup_auto(char *path) {
       strcpy(pnidx->path, pidx->path);
       pnidx->dot = oidx, pnidx->ddot = -1;
       pnidx->next = -1,
-      pnidx->child = vinodes[pidx->dot].child;  // ddot's child is parent
+      pnidx->child = pidx;  // ddot's child is parent
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
-      pnidx->mode = TYPE_LINK,
-      vinode_add_link(vinodes[pidx->ddot].child, nidx, 3);
+      pnidx->mode = TYPE_LINK, vinode_add_link(pidx->ddot, nidx, 3);
       pnidx->rinode_idx = buf.rinode_idx;
       pnidx->fs = pidx->fs;
 
