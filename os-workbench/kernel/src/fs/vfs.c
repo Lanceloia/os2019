@@ -61,7 +61,7 @@ static int lookup_cur(char *path, int *pflag, int cur) {
         vinodes[k].child, vinodes[k].dot, vinodes[k].ddot);
         */
     if (!strncmp(vinodes[k].name, path, len)) {
-      printf("match!\n");
+      // printf("match!\n");
       break;
     }
   }
@@ -73,7 +73,7 @@ static int lookup_cur(char *path, int *pflag, int cur) {
 
   int next = k;
   while (vinodes[next].mode & TYPE_LINK) {
-    printf("\nthrough link: %d -> %d\n", next, vinodes[next].next_link);
+    // printf("\nthrough link: %d -> %d\n", next, vinodes[next].next_link);
     next = vinodes[next].next_link;
   }
 
@@ -98,7 +98,7 @@ static int lookup_auto(char *path) {
                              : lookup_cur(path, &flag, VFS_ROOT);
 
   if (flag == 1) return idx;
-  printf("file no found, but reach: [%d]\n", idx);
+  // printf("file no found, but reach: [%d]\n", idx);
   vinode_t buf;
   int kth = 0, oidx = -1, nidx = -1, dot = -1, ddot = -1, ret;
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
@@ -123,10 +123,11 @@ static int lookup_auto(char *path) {
       assert(poidx->next == -1);
       poidx->next = nidx;
       poidx->ddot = nidx;
-
-      printf("fuck me: \n\n\n\n%d %d %d %d %d %d %d [%d]", idx, oidx, nidx,
-             pidx->dot, pidx->ddot, pnidx->dot, pnidx->ddot,
-             vinodes[pidx->dot].child);
+      /*
+            printf("fuck me: \n\n\n\n%d %d %d %d %d %d %d [%d]", idx, oidx,
+         nidx, pidx->dot, pidx->ddot, pnidx->dot, pnidx->ddot,
+                   vinodes[pidx->dot].child);
+                   */
       strcpy(pnidx->name, "..");
       strcpy(pnidx->path, pidx->path);
       pnidx->dot = oidx, pnidx->ddot = -1;
