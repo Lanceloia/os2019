@@ -162,6 +162,7 @@ static int lookup_auto(char *path) {
   }
   // assert(0);
   assert(next != -1);
+  printf("fuck: %d", next);
   if (next == -1) return 0;
 
   int noffset = 1;
