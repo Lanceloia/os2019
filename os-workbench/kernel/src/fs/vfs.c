@@ -158,7 +158,7 @@ static int lookup_auto(char *path) {
              */
     }
   }
-  assert(0);
+  // assert(0);
   assert(next != -1);
   if (next == -1) return 0;
 
@@ -342,7 +342,7 @@ int vfs_init() {
 
   lookup_auto("/dev/ramdisk0/directory\0\0");
   lookup_auto("/dev/ramdisk0/directory/\0\0");
-  lookup_auto("/dev/ramdisk0/directory/.\0\0");
+  lookup_auto("/dev/a.\0\0");
 
   return 0;
 }
