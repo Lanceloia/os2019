@@ -208,8 +208,8 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
   do {                                                     \
     strcpy(vinodes[IDX].name, NAME);                       \
     strcpy(vinodes[IDX].path, vinodes[DOT].path);          \
-    strcat(vinodes[IDX].path, "/");                        \
     strcat(vinodes[IDX].path, NAME);                       \
+    strcat(vinodes[IDX].path, "/");                        \
     vinodes[IDX].dot = DOT, vinodes[IDX].ddot = DDOT;      \
     vinodes[IDX].next = -1, vinodes[IDX].child = -1;       \
     vinodes[IDX].prev_link = vinodes[IDX].next_link = IDX; \
