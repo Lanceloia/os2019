@@ -90,8 +90,6 @@ static void build_absolutely_path(char *dirname, char *pwd) {
 static void ls_do(device_t *tty, char *dirname, char *pwd) {
   extern void vfs_ls(char *path);
   build_absolutely_path(dirname, pwd);
-  if (absolutely_path[strlen(absolutely_path) - 1] != '/')
-    strcat(absolutely_path, "/");
   vfs_ls(absolutely_path);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
