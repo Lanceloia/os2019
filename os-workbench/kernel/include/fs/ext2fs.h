@@ -101,6 +101,4 @@ void ext2_wr_inodebitmap(ext2_t* ext2);
 void ext2_rd_datablock(ext2_t* ext2, uint32_t i);
 void ext2_wr_datablock(ext2_t* ext2, uint32_t i);
 
-void ext2_ls(ext2_t* ext2, char* dirname, char* out);
-
 #endif
