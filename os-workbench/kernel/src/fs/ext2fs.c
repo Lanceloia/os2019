@@ -17,8 +17,8 @@ int ext2_search_file(ext2_t* ext2, uint32_t idx);
 
 void ext2_cd(ext2_t* ext2, char* dirname);
 void ext2_mkdir(ext2_t*, char*, int);
-ssize_t ext2_read(ext2_t*, int, char*, uint32_t);
-void ext2_write(ext2_t*, char*, char*, uint32_t, char*);
+// ssize_t ext2_read(ext2_t*, int, char*, uint32_t);
+// void ext2_write(ext2_t*, char*, char*, uint32_t, char*);
 
 static int first_item_len(const char* path) {
   int ret = 0;
