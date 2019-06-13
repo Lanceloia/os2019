@@ -27,7 +27,7 @@ static int lookup_auto(char *path);
 static int vinodes_alloc() {
   for (int i = 0; i < MAX_VINODE; i++)
     if (vinodes[i].mode == UNUSED) {
-      vinodes[i].mode = ALLOCED;
+      vinodes[i].mode |= ALLOCED;
       return i;
     }
   return -1;
