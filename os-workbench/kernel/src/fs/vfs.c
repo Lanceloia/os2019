@@ -80,10 +80,9 @@ static int lookup_root(char *path, int *pflag) {
 }
 
 static int lookup_auto(char *path) {
-  /*
   int len = strlen(path);
   if (path[len - 1] == '/') path[len - 1] = '\0';
-  */
+
   int flag;
   int idx = (path[0] == '/') ? lookup_root(path, &flag)
                              : lookup_cur(path, &flag, VFS_ROOT);
@@ -293,8 +292,8 @@ int vfs_init() {
     printf("%s  %d\n", "/dev/ramdisk0/hello.cpp/",
            lookup_auto("/dev/ramdisk0/hello.cpp/"));
            */
-  lookup_auto("/dev/ramdisk0/directory");
-  lookup_auto("/dev/ramdisk0/directory/");
+  lookup_auto("/dev/ramdisk0/directory\0\0");
+  lookup_auto("/dev/ramdisk0/directory/\0\0");
   // lookup_auto("/dev/ramdisk0/directory/.");
   return 0;
 }
