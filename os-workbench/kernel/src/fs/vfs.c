@@ -146,7 +146,7 @@ static int lookup_auto(char *path) {
     oidx = nidx;
 
     if (!strncmp(buf.name, path + offset, flen)) {
-      printf("read: %s, %d\n\n", path + offset, flen);
+      printf("read: %s, %d, %d\n\n", path + offset, flen, next);
       assert(next == -1);
       next = nidx;
     } else {
