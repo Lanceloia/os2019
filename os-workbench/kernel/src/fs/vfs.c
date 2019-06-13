@@ -69,7 +69,7 @@ static int lookup_cur(char *path, int *pflag, int cur) {
     next = vinodes[next].next_link;
   }
 
-  char *newpath = path + len;
+  char *newpath = path + len + 1;
   printf("old: %s, new: %s, name: %s, next: %d\n", path, newpath,
          vinodes[k].name, next);
   return lookup_cur(newpath, pflag, next);
@@ -80,9 +80,10 @@ static int lookup_root(char *path, int *pflag) {
 }
 
 static int lookup_auto(char *path) {
+  /*
   int len = strlen(path);
   if (path[len - 1] == '/') path[len - 1] = '\0';
-
+  */
   int flag;
   int idx = (path[0] == '/') ? lookup_root(path, &flag)
                              : lookup_cur(path, &flag, VFS_ROOT);
