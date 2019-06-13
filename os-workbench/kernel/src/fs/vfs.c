@@ -205,7 +205,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
 #define build_general_dir(IDX, DOT, DDOT, NAME, FS)        \
   do {                                                     \
     strcpy(vinodes[IDX].name, NAME);                       \
-    strcpy(vinodes[IDX].path, vinodes[DDOT].path);         \
+    strcpy(vinodes[IDX].path, vinodes[DOT].path);          \
     strcat(vinodes[IDX].path, NAME);                       \
     vinodes[IDX].dot = DOT, vinodes[IDX].ddot = DDOT;      \
     vinodes[IDX].next = -1, vinodes[IDX].child = -1;       \
