@@ -15,6 +15,7 @@
 
 filesystem_t filesys[MAX_FILESYSTEM];
 vinode_t vinodes[MAX_VINODE];
+file_t files[MAX_FILE];
 
 typedef struct device device_t;
 extern device_t *dev_lookup(const char *name);
@@ -284,6 +285,23 @@ int vinodes_mount(int par, char *name, filesystem_t *fs, int rfs_root) {
   return ret;
 }
 
+//
+static int files_alloc() {
+  for (int i = 0; i < MAX_FILE; i++)
+    if (files[i].refcnt == 0) return i;
+  return -1;
+}
+
+static void files_free(int fd) { files[fd].refcnt = 0; }
+
+int vinodes_open(int inode_idx, int mode) {
+  int fd = files_alloc();
+  if (fd == -1) return -1;
+  files[fd].vinode_idx = inode_idx;
+  files[fd].offset = 0;
+  files[fd].refcnt++;
+}
+
 typedef struct ext2 ext2_t;
 extern void ext2_init(filesystem_t *fs, const char *name, device_t *dev);
 extern int ext2_lookup(filesystem_t *fs, char *path, int mode);
@@ -343,9 +361,17 @@ int vfs_link(const char *oldpath, const char *newpath) { return 0; }
 
 int vfs_unlink(const char *path) { return 0; }
 
-int vfs_open(const char *path, int flags) { return 0; }
+int vfs_open(const char *path, int mode) {
+  if (!vfs_access(path, mode)) return -1;
 
-ssize_t vfs_read(int fd, char *buf, size_t nbyte) { return 0; }
+  int idx = lookup_auto(_path);
+  return vinode_open(idx, mode);
+}
+
+ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
+  assert(nbyte < 1024);
+  return vinode_read(files[fd].vinode_idx, buf + ret, 1024));
+}
 
 ssize_t vfs_write(int fd, char *buf, size_t nbyte) { return 0; }
 

@@ -104,6 +104,14 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+static void cat_do(device_t *tty, char *dirname, char *pwd) {
+  extern ssize_t ext2_read(ext2_t * ext2, int rinode_idx, char *bug,
+                           uint32_t len);
+  int fd = vfs_open("dirname", TYPE_FILE | RD_ABLE);
+  while (vfs_read(fs, bigbuf, 1024))
+    tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+}
+
 /*
 extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
@@ -136,19 +144,7 @@ static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
-extern void ext2_cat(ext2_t *ext2, char *dirname, char *out);
-static void cat_do(device_t *tty, char *dirname, char *pwd) {
-  int type = vfs_identify_fs(pwd);
-  switch (type & ~INTERFACE) {
-    case 2:  // ext2
-      ext2_cat(vfs_get_real_fs(pwd), dirname, bigbuf);
-      break;
-    default:
-      sprintf(bigbuf, "can't cat here.\n", bigbuf);
-      break;
-  };
-  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
-}
+
 
 static void default_do(device_t *tty) {
   sprintf(bigbuf, "unexpected command\n");

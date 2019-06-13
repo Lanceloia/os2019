@@ -21,7 +21,7 @@ typedef struct filesystem filesystem_t;
 
 typedef struct file {
   int refcnt;       // no used
-  int idx;          // vinode index
+  int vinode_idx;   // vinode index
   uint64_t offset;  // read or write offset
 } file_t;
 
@@ -43,8 +43,8 @@ typedef struct vinode {
 // file operation
 int vinode_open(int vinode_idx, int mode);
 int vinode_close(int fd);
-ssize_t vinode_read(int fd, char *buf, size_t size);
-ssize_t vinode_write(int fd, const char *buf, size_t size);
+ssize_t vinode_read(int vinode_idx, char *buf, size_t size);
+ssize_t vinode_write(int vinode_idx, const char *buf, size_t size);
 off_t vinode_lseek(int fd, off_t offset, int whence);
 
 // vinode operation
