@@ -96,7 +96,7 @@ static int lookup_auto(char *path) {
   vinode_t buf;
   int kth = 0, oidx = -1, nidx = -1;
   int dot = -1, ddot = -1, ret = -1;
-  int next = -1;
+  // int next = -1;
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
 
