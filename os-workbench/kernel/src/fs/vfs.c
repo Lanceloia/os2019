@@ -304,6 +304,11 @@ int vfs_close(int fd) { return 0; }
 
 void vfs_ls(char *dirname) {
   int idx = lookup_auto(dirname);
+  if (vinodes[idx].mode & TYPE_DIR && vinodes[idx].child == -1) {
+    strcat(dirname, ".");
+    lookup_auto(dirname);
+  }
+
   printf("       index       name                  path\n");
   printf("cur:   %4d        %12s          %s\n\n", idx, vinodes[idx].name,
          vinodes[idx].path);
