@@ -91,7 +91,7 @@ static int lookup_auto(char *path) {
   int flag, offset = 1;
   int idx = (path[0] == '/') ? lookup_root(path, &flag, &offset)
                              : lookup_cur(path, &flag, VFS_ROOT, &offset);
-  // printf("FUCK2\n\n\n\n\n\n\n");
+  printf("FUCK2\n\n\n\n\n\n\n");
   if (flag == 1) return idx;
 
   vinode_t buf;
