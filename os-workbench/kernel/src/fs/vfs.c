@@ -44,8 +44,10 @@ static int first_item_len(const char *path) {
 }
 
 static int item_match(const char *P, const char *T, int len) {
-  if(strncmp(P, T, len)return 0;
-  else return T[len] == '\0' || T[len ] == '/';
+  if (strncmp(P, T, len))
+    return 0;
+  else
+    return T[len] == '\0' || T[len] == '/';
 }
 
 static int lookup_cur(char *path, int *pflag, int cur, int *poffset) {
