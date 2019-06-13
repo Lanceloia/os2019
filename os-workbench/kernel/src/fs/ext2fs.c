@@ -106,7 +106,7 @@ int ext2_readdir(filesystem_t* fs, int rinode_idx, int kth, vinode_t* buf) {
           strcpy(buf->name, ext2->dir[k].name);
           buf->rinode_idx = ext2->dir[k].inode;
           buf->mode = ext2->dir[k].mode;
-
+          printf("name: %s", buf->name);
           /*
                     if (strcmp(buf->name, ".") && strcmp(buf->name, "..") &&
                         buf->mode & TYPE_DIR)
