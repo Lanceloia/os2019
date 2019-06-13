@@ -99,6 +99,7 @@ static int lookup_auto(char *path) {
   int dot = -1, ddot = -1, ret = -1, next = -1;
 
   int flen = first_item_len(path + offset);
+  printf("%s\n", flen);
 
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
@@ -342,7 +343,7 @@ int vfs_init() {
 
   lookup_auto("/dev/ramdisk0/directory\0\0");
   lookup_auto("/dev/ramdisk0/directory/\0\0");
-  lookup_auto("/dev/a.\0\0");
+  lookup_auto("/dev/a\0\0");
 
   return 0;
 }
