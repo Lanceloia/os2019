@@ -424,7 +424,7 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len) {
     // don't need open
     ext2_rd_ind(ext2, ext2->dir[k].inode);
     if ((ext2->ind.mode & 0x2) == 0) {
-      offset += sprintf(out + offset, "File can't be writed!\n");
+      printf("File can't be writed!\n");
       return;
     }
     if (ext2->ind.blocks <= need_blocks) {
