@@ -88,6 +88,7 @@ static int lookup_auto(char *path) {
   int kth = 0, oidx = -1, nidx, ret;
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
+    strcpy(buf.path, pidx->path);
     buf.next = -1;
     vinodes[nidx] = buf;
     if (oidx == -1)
@@ -297,11 +298,11 @@ int vfs_close(int fd) { return 0; }
 
 void vfs_ls(char *dirname) {
   int idx = lookup_auto(dirname);
-  printf("       index       name        path\n");
-  printf("cur:   %4d        %8s    %s\n\n", idx, vinodes[idx].name,
+  printf("       index           name              path\n");
+  printf("cur:   %4d        %12s          %s\n\n", idx, vinodes[idx].name,
          vinodes[idx].path);
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {
-    printf("child: %4d        %8s    %s\n", k, vinodes[k].name,
+    printf("child: %4d        %12s          %s\n", k, vinodes[k].name,
            vinodes[k].path);
   }
 }
