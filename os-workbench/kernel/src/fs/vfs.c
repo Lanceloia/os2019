@@ -69,7 +69,7 @@ static int lookup_cur(char *path, int *pflag, int cur, int *poffset) {
         vinodes[k].child, vinodes[k].dot, vinodes[k].ddot);
         */
     if (item_match(vinodes[k].name, path, len)) {
-      // printf("match!\n");
+      printf("name: %s\n", vinodes[k].name);
       break;
     }
   }
