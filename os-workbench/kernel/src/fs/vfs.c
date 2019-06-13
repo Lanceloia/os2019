@@ -57,7 +57,7 @@ static int lookup_cur(char *path, int *pflag, int cur, int *poffset) {
     *pflag = 1;
     return cur;
   }
-
+  printf("path: %s\n", path);
   int k, len = first_item_len(path);
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
     /*
