@@ -185,17 +185,17 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     pddot->fs = FS;                                                 \
   } while (0)
 
-#define build_general_dir(IDX, DOT, DDOT, NAME, FS)         \
-  do {                                                      \
-    strcpy(vinodes[IDX].name, NAME);                        \
-    strcpy(vinodes[IDX].path, vinodes[vinodes[DDOT]].path); \
-    strcat(vinodes[IDX].path, NAME);                        \
-    vinodes[IDX].dot = DOT, vinodes[IDX].ddot = DDOT;       \
-    vinodes[IDX].next = -1, vinodes[IDX].child = -1;        \
-    vinodes[IDX].prev_link = vinodes[IDX].next_link = IDX;  \
-    vinodes[IDX].linkcnt = 1;                               \
-    vinodes[IDX].mode = TYPE_DIR;                           \
-    vinodes[IDX].fs = FS;                                   \
+#define build_general_dir(IDX, DOT, DDOT, NAME, FS)        \
+  do {                                                     \
+    strcpy(vinodes[IDX].name, NAME);                       \
+    strcpy(vinodes[IDX].path, vinodes[DDOT].path);         \
+    strcat(vinodes[IDX].path, NAME);                       \
+    vinodes[IDX].dot = DOT, vinodes[IDX].ddot = DDOT;      \
+    vinodes[IDX].next = -1, vinodes[IDX].child = -1;       \
+    vinodes[IDX].prev_link = vinodes[IDX].next_link = IDX; \
+    vinodes[IDX].linkcnt = 1;                              \
+    vinodes[IDX].mode = TYPE_DIR;                          \
+    vinodes[IDX].fs = FS;                                  \
   } while (0)
 
 int vinodes_build_root() {
@@ -224,7 +224,7 @@ int vinodes_append_dir(int par, char *name, filesystem_t *fs) {
   // input: vinode_idx("/"), "dev/"
   // modify: "/"
   int nidx = vinodes_alloc(), k = vinodes[par].child, dot, ddot;
-  iassert(k != -1);
+  assert(k != -1);
 
   for (; vinodes[k].next != -1; k = vinodes[k].next)
     if (!strcmp(vinodes[k].name, "."))
