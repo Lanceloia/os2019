@@ -44,14 +44,14 @@ static int first_item_namelen(const char *path) {
 }
 
 static int lookup_cur(char *path, int *pflag, int cur) {
-  // cur: vinode_idx(parent dir)
+  // cur: vinode_idx(cur_dir)
   if (!strlen(path)) {
     *pflag = 1;
     return cur;
   }
 
   int k, len = first_item_namelen(path);
-  for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
+  for (k = vinodes[cur].dot; k != -1; k = vinodes[k].next) {
     printf(
         "\nlookup cur: [%d]\n  itemname: %s, path: %s\n  type: "
         "%x, "
