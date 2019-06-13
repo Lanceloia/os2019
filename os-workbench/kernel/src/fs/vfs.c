@@ -107,7 +107,8 @@ static int lookup_auto(char *path) {
   }
 
   if (pidx->child != -1) {
-    printf("file is not exists!\n");
+    printf("directory is read, file is not exists!\n");
+    return 0;
   }
 
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
@@ -163,10 +164,11 @@ static int lookup_auto(char *path) {
       next = nidx;
     }
   }
-  // assert(0);
-  assert(next != -1);
-  // printf("fuck: %d", next);
-  if (next == -1) return 0;
+
+  if (next == -1) {
+    printf("read directory, but file is not exists!\n");
+    return 0;
+  }
 
   int noffset = 1;
   idx = (path[0] == '/') ? lookup_root(path, &flag, &noffset)
