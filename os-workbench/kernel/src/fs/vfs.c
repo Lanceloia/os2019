@@ -344,7 +344,7 @@ int vfs_init() {
 
   // lookup_auto("/dev/ramdisk0/directory\0\0");
   // lookup_auto("/dev/ramdisk0/directory/\0\0");
-  lookup_auto("/dev/asaddasd\0\0");
+  lookup_auto("/dev/ramdisk0/asaddasd\0\0");
 
   return 0;
 }
