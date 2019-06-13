@@ -126,9 +126,10 @@ static int lookup_auto(char *path) {
       strcpy(pnidx->path, pidx->path);
       pnidx->dot = oidx, pnidx->ddot = -1;
       pnidx->next = -1,
-      pnidx->child = idx;  // ddot's child is parent
+      pnidx->child = vinodes[pidx->ddot].child;  // ddot's child is parent
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
-      pnidx->mode = TYPE_LINK, vinode_add_link(pidx->ddot, nidx, 3);
+      pnidx->mode = TYPE_LINK,
+      vinode_add_link(vinodes[pidx->ddot].child, nidx, 3);
       pnidx->rinode_idx = buf.rinode_idx;
       pnidx->fs = pidx->fs;
 
@@ -206,7 +207,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     pddot->fs = FS;                                                 \
   } while (0)
 
-#define build_general_dir(IDX, DOT, DDOT, NAME, FS)        \
+#define build_general_null_dir(IDX, DOT, DDOT, NAME, FS)   \
   do {                                                     \
     strcpy(vinodes[IDX].name, NAME);                       \
     strcpy(vinodes[IDX].path, vinodes[DOT].path);          \
@@ -257,8 +258,8 @@ int vinodes_append_dir(int par, char *name, filesystem_t *fs) {
   assert(dot != -1 && ddot != -1);
   vinodes[k].next = nidx;
   printf("\n\n\n\n\ndot.child: %d\n", vinodes[dot].child);
-  build_general_dir(nidx, dot, vinodes[dot].child, name, fs);
-  // return new item's idx
+  build_general_null_dir(nidx, dot, ddot, name, fs);
+  // return new dir's idx
   return nidx;
 }
 
