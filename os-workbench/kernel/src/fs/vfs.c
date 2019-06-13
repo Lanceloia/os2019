@@ -103,12 +103,12 @@ static int lookup_auto(char *path) {
 
   if (pidx->fs == NULL) {
     printf("uncapable filesystem!\n");
-    return 0;
+    return -1;
   }
 
   if (pidx->child != -1) {
     printf("directory is read, file is not exists!\n");
-    return 0;
+    return -1;
   }
 
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
@@ -167,7 +167,7 @@ static int lookup_auto(char *path) {
 
   if (next == -1) {
     printf("read directory, but file is not exists!\n");
-    return 0;
+    return -1;
   }
 
   int noffset = 1;
@@ -404,14 +404,13 @@ int vfs_close(int fd) { return 0; }
 
 void vfs_ls(char *dirname) {
   printf("\n");
-  int idx;
-  if (!(idx = lookup_auto(dirname))) return;
-
-  printf("<     index       name                  path       >\n");
-  printf(" >    %4d        %12s          %s\n", idx, vinodes[idx].name,
+  int idx = lookup_auto(dirname);
+  if (idx == -1) return;
+  printf("-     index       name                  path        \n");
+  printf(">>    %4d        %12s          %s\n", idx, vinodes[idx].name,
          vinodes[idx].path);
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {
-    printf(" >    %4d        %12s          %s\n", k, vinodes[k].name,
+    printf("-    %4d        %12s          %s\n", k, vinodes[k].name,
            vinodes[k].path);
   }
 }
