@@ -44,7 +44,7 @@ static int first_item_len(const char *path) {
 }
 
 static int item_match(const char *s1, const char *s2, int len) {
-  printf("P: %s\nT: %s\nlen: %d\n\n", s1, s2, len);
+  // printf("P: %s\nT: %s\nlen: %d\n\n", s1, s2, len);
   if (strncmp(s1, s2, len)) return 0;
   return s1[len] == '\0' || s1[len] == '/';
 }
@@ -55,19 +55,11 @@ static int lookup_cur(char *path, int *pflag, int cur, int *poffset) {
     *pflag = 1;
     return cur;
   }
-  printf("path: %s\n", path);
+  // printf("path: %s\n", path);
   int k, len = first_item_len(path);
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
-    /*
-    printf(
-        "\nlookup cur: [%d]\n  itemname: %s, path: %s\n  type: "
-        "%x, "
-        "next: %d, child: %d, dot: %d, ddot: %d\n\n",
-        k, vinodes[k].name, vinodes[k].path, vinodes[k].mode, vinodes[k].next,
-        vinodes[k].child, vinodes[k].dot, vinodes[k].ddot);
-        */
     if (item_match(vinodes[k].name, path, len)) {
-      printf("name: %s\n", vinodes[k].name);
+      // printf("name: %s\n", vinodes[k].name);
       break;
     }
   }
