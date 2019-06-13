@@ -409,9 +409,10 @@ ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
   assert(nbyte <= 1024);
   extern ssize_t ext2_read(ext2_t * ext2, int rinode_idx, char *buf,
                            uint32_t len);
+  int ret = 0;
   switch (pfdind->fs_type) {
     case EXT2FS:
-      int ret = ext2_read(pfdind->fs->rfs, pfdind->rinode_idx, buf, nbyte);
+      ret = ext2_read(pfdind->fs->rfs, pfdind->rinode_idx, buf, nbyte);
       break;
     default:
       assert(0);
