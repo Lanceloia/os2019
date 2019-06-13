@@ -84,7 +84,7 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 
   /* test */
 
-  ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
+  // ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
   // ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
   // ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str), trash);
   /*
