@@ -113,7 +113,9 @@ int ext2_readdir(filesystem_t* fs, int rinode_idx, int kth, vinode_t* buf) {
           buf->rinode_idx = ext2->dir[k].inode;
           buf->mode = ext2->dir[k].mode;
 
-          if (buf->mode & TYPE_DIR) strcat(buf->name, "/");
+          if (!strcmp(buf->name, ".") && !strcmp(buf->name, "..") &&
+              buf->mode & TYPE_DIR)
+            strcat(buf->name, "/");
 
           printf("buf.name == %s\n", buf->name);
           return 1;
