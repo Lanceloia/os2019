@@ -95,6 +95,7 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
 }
 
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
+  extern char *vfs_getpath(const char *dirname);
   build_absolutely_path(dirname, pwd);
   if (vfs_access(absolutely_path, TYPE_DIR)) {
     strcpy(pwd, vfs_getpath(absolutely_path));
