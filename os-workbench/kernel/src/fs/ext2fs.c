@@ -16,7 +16,7 @@ void ext2_remove_block(ext2_t* ext2, uint32_t del_num);
 int ext2_search_file(ext2_t* ext2, uint32_t idx);
 
 void ext2_cd(ext2_t* ext2, char* dirname, char* out);
-void ext2_mkdir(ext2_t*, char*, int, char*);
+void ext2_mkdir(ext2_t*, char*, int);
 void ext2_read(ext2_t*, char*, char*, uint32_t, char*);
 void ext2_write(ext2_t*, char*, char*, uint32_t, char*);
 
@@ -84,12 +84,12 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 
   /* test */
 
-  ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
-  ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
+  ext2_mkdir(ext2, "hello.cpp", TYPE_FILE);
+  ext2_mkdir(ext2, "hello.cpp", TYPE_FILE);
   ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str), trash);
-  ext2_mkdir(ext2, "directory", TYPE_DIR, trash);
+  ext2_mkdir(ext2, "directory", TYPE_DIR);
   ext2_cd(ext2, "directory/", trash);
-  ext2_mkdir(ext2, "hello2.cpp", TYPE_FILE, trash);
+  ext2_mkdir(ext2, "hello2.cpp", TYPE_FILE);
   ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str), trash);
   ext2_cd(ext2, "..", trash);
 
