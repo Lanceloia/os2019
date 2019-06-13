@@ -106,7 +106,7 @@ static int lookup_auto(char *path) {
       pidx->child = nidx;
 
       strcpy(pnidx->name, ".");
-      strcpy(pnidx->dpath, pidx->path);
+      strcpy(pnidx->path, pidx->path);
       pnidx->dot = nidx, pnidx->ddot = -1;
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
