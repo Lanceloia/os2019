@@ -183,7 +183,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
 #define build_dot(CUR, FS)                                      \
   do {                                                          \
     strcpy(pdot->name, ".");                                    \
-    strcpy(pdot->path, "(LINK)");                               \
+    strcpy(pdot->path, pidx->path);                             \
     pdot->dot = -1, pdot->ddot = ddot;                          \
     pdot->next = ddot, pdot->child = CUR;                       \
     pdot->prev_link = pdot->next_link = dot, pdot->linkcnt = 1; \
@@ -194,7 +194,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
 #define build_ddot(PARENT, FS)                                      \
   do {                                                              \
     strcpy(pddot->name, "..");                                      \
-    strcpy(pddot->path, "(LINK)");                                  \
+    strcpy(pddot->path, vinodes[PARENT].path);                      \
     pddot->dot = dot, pddot->ddot = -1;                             \
     pddot->next = -1, pddot->child = PARENT;                        \
     pddot->prev_link = pddot->next_link = ddot, pddot->linkcnt = 1; \
