@@ -91,7 +91,7 @@ static int lookup_auto(char *path) {
   int flag, offset = 1;
   int idx = (path[0] == '/') ? lookup_root(path, &flag, &offset)
                              : lookup_cur(path, &flag, VFS_ROOT, &offset);
-  printf("FUCK2\n\n\n\n\n\n\n");
+  // printf("FUCK2\n\n\n\n\n\n\n");
   if (flag == 1) return idx;
 
   vinode_t buf;
@@ -99,9 +99,12 @@ static int lookup_auto(char *path) {
   int dot = -1, ddot = -1, ret = -1, next = -1;
 
   int flen = first_item_len(path + offset);
-  printf("%s, %d\n", path + offset, flen);
+  // printf("%s, %d\n", path + offset, flen);
 
-  if (pidx->fs == NULL) return 0;
+  if (pidx->fs == NULL) {
+    printf("uncapable filesystem!\n");
+    return 0;
+  }
 
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
@@ -151,20 +154,14 @@ static int lookup_auto(char *path) {
     oidx = nidx;
 
     if (item_match(buf.name, path + offset, flen)) {
-      printf("read: %s, %d, %d\n\n", path + offset, flen, next);
+      // printf("read: %s, %d, %d\n\n", path + offset, flen, next);
       assert(next == -1);
       next = nidx;
-    } else {
-      printf("fuck? %s\n", vinodes[nidx].name);
-      /*
-      printf("offset: %d, path: %s, path + offset: %s\n", offset, path,
-             path + offset);
-             */
     }
   }
   // assert(0);
   assert(next != -1);
-  printf("fuck: %d", next);
+  // printf("fuck: %d", next);
   if (next == -1) return 0;
 
   int noffset = 1;
