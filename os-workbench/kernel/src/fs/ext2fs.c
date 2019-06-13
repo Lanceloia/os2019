@@ -73,7 +73,6 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 
   ext2->current_dir = ext2_alloc_inode(ext2);
   printf("cur_dir: %d\n", ext2->current_dir);
-  strcpy(ext2->current_dir_name, "[root@ /");
   ext2_wr_ind(ext2, ext2->current_dir);
   // "." == ".." == root_dir
   // root_dir with no name
@@ -203,7 +202,7 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int type, uint32_t* ninode,
   return 0;
 }
 
-void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t len, int type) {
+void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, int type) {
   ext2_rd_ind(ext2, idx);
   if (type == TYPE_DIR) {
     ext2->ind.size = 2 * DIR_SIZE;  // "." and ".."
@@ -211,8 +210,6 @@ void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t len, int type) {
     ext2->ind.block[0] = ext2_alloc_block(ext2);
     ext2->dir[0].inode = idx;
     ext2->dir[1].inode = ext2->current_dir;
-    ext2->dir[0].name_len = len;
-    ext2->dir[1].name_len = ext2->current_dir_name_len;
     ext2->dir[0].mode = ext2->dir[1].mode = TYPE_DIR;
     for (int k = 2; k < DIR_AMUT; k++) ext2->dir[k].inode = 0;
     strcpy(ext2->dir[0].name, ".");
@@ -381,101 +378,6 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
   ext2->current_dir = now_current_dir;
   // printf("len: %d", len);
   // ext2_read(ext2, path, buf, len, out);
-}
-
-void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
-  uint32_t i, j, k;
-  int now_current_dir = ext2->current_dir;
-  ext2_reserch_file(ext2, dirname, TYPE_DIR, &i, &j, &k);
-  ext2_rd_ind(ext2, ext2->current_dir);
-  uint32_t flag;
-  int offset = sprintf(out, "items           type     mode     size\n");
-  for (int i = 0; i < ext2->ind.blocks; i++) {
-    ext2_rd_dir(ext2, ext2->ind.block[i]);
-    for (int k = 0; k < DIR_AMUT; k++) {
-      if (ext2->dir[k].inode) {
-        offset += sprintf(out + offset, "%s", ext2->dir[k].name);
-        if (ext2->dir[k].mode & TYPE_DIR) {
-          ext2_rd_ind(ext2, ext2->dir[k].inode);
-          if (!strcmp(ext2->dir[k].name, ".")) {
-            flag = 0;
-            for (int j = 0; j < 15 - 1; j++)
-              offset += sprintf(out + offset, "%c", ' ');
-
-          } else if (!strcmp(ext2->dir[k].name, "..")) {
-            flag = 1;
-            for (int j = 0; j < 15 - 2; j++)
-              offset += sprintf(out + offset, "%c", ' ');
-
-          } else {
-            flag = 2;
-            for (int j = 0; j < 15 - ext2->dir[k].name_len; j++)
-              offset += sprintf(out + offset, "%c", ' ');
-          }
-          offset += sprintf(out + offset, " <DIR>    ");
-          switch (ext2->ind.mode & 7) {
-            case 1:
-              offset += sprintf(out + offset, "____x    ");
-              break;
-            case 2:
-              offset += sprintf(out + offset, "__w__    ");
-              break;
-            case 3:
-              offset += sprintf(out + offset, "__w_x    ");
-              break;
-            case 4:
-              offset += sprintf(out + offset, "r____    ");
-              break;
-            case 5:
-              offset += sprintf(out + offset, "r___x    ");
-              break;
-            case 6:
-              offset += sprintf(out + offset, "r_w__    ");
-              break;
-            case 7:
-              offset += sprintf(out + offset, "r_w_x    ");
-              break;
-          }
-          if (flag != 2)
-            offset += sprintf(out + offset, "---N/A");
-          else
-            offset += sprintf(out + offset, "%6d", ext2->ind.size);
-          offset += sprintf(out + offset, "\n");
-        } else if (ext2->dir[k].mode & TYPE_FILE) {
-          ext2_rd_ind(ext2, ext2->dir[k].inode);
-          for (int j = 0; j < 15 - ext2->dir[k].name_len; j++)
-            offset += sprintf(out + offset, "%c", ' ');
-          offset += sprintf(out + offset, " <FILE>   ");
-          switch (ext2->ind.mode & 7) {
-            case 1:
-              offset += sprintf(out + offset, "____x    ");
-              break;
-            case 2:
-              offset += sprintf(out + offset, "__w__    ");
-              break;
-            case 3:
-              offset += sprintf(out + offset, "__w_x    ");
-              break;
-            case 4:
-              offset += sprintf(out + offset, "r____    ");
-              break;
-            case 5:
-              offset += sprintf(out + offset, "r___x    ");
-              break;
-            case 6:
-              offset += sprintf(out + offset, "r_w__    ");
-              break;
-            case 7:
-              offset += sprintf(out + offset, "r_w_x    ");
-              break;
-          }
-          offset += sprintf(out + offset, "%6d", ext2->ind.size);
-          offset += sprintf(out + offset, "\n");
-        }
-      }
-    }
-  }
-  ext2->current_dir = now_current_dir;
 }
 
 void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {

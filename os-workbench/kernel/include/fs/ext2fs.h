@@ -80,9 +80,7 @@ struct ext2 {
   uint32_t last_alloc_block;
   uint32_t last_alloc_inode;
   uint32_t current_dir;
-  uint32_t current_dir_name_len;
   uint32_t file_open_table[MAX_OPEN_FILE_AMUT];
-  char current_dir_name[256];
   device_t* dev;
 };
 
