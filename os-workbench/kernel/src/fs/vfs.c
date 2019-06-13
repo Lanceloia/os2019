@@ -345,7 +345,10 @@ int vfs_init() {
   return 0;
 }
 
-int vfs_access(const char *path, int mode) { return 0; }
+int vfs_access(const char *path, int mode) {
+  int idx = lookup_auto(path);
+  return vinodes[idx].mode & mode;
+}
 
 int vfs_mount(const char *path, filesystem_t *fs) { return 0; }
 
