@@ -79,11 +79,11 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 
   /* test */
   ext2_mkdir(ext2, "hello.cpp", TYPE_FILE);
-  ext2_write2(ext2, "hello.cpp", hello_str, strlen(hello_str));
+  ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str));
   ext2_mkdir(ext2, "directory", TYPE_DIR);
   ext2_cd(ext2, "directory");
   ext2_mkdir(ext2, "hello2.cpp", TYPE_FILE);
-  ext2_write2(ext2, "hello2.cpp", hello_str, strlen(hello_str));
+  ext2_write(ext2, "hello2.cpp", hello_str, strlen(hello_str));
   ext2_cd(ext2, "..");
 
   return 1;
