@@ -160,7 +160,11 @@ static int lookup_auto(char *path) {
   }
   if (next == -1) return 0;
 
-  return lookup_auto(path);
+  int noffset = 1;
+  idx = (path[0] == '/') ? lookup_root(path, &flag, &noffset)
+                         : lookup_cur(path, &flag, VFS_ROOT, &noffset);
+
+  return (noffset == offset) ? -1 : lookup_auto(path);
 }
 
 static int filesys_alloc() {
