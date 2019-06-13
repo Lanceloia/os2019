@@ -129,7 +129,7 @@ static int lookup_auto(char *path) {
       pnidx->dot = oidx, pnidx->ddot = idx;
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
-      pnidx->mode = TYPE_LINK, vinode_add_link(pidx, nidx, 3);
+      pnidx->mode = TYPE_LINK, vinode_add_link(idx, nidx, 3);
       pnidx->rinode_idx = buf.rinode_idx;
       pnidx->fs = pidx->fs;
 
