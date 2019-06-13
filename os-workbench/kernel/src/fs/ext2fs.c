@@ -87,6 +87,11 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
   // ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
   ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str), trash);
+  ext2_mkdir(ext2, "directory", TYPE_DIR, trash);
+  ext2_cd(ext2, ".", trash);
+  ext2_mkdir(ext2, "hello2.cpp", TYPE_FILE, trash);
+  ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str), trash);
+  ext2_cd(ext2, "..", trash);
   return 1;
 }
 
@@ -286,7 +291,7 @@ int ext2_search_file(ext2_t* ext2, uint32_t idx) {
   return 0;
 }
 
-void ext2_cd(ext2_t* ext2, char* dirname, char* pwd, char* out) {
+void ext2_cd(ext2_t* ext2, char* dirname, char* out) {
   int offset = sprintf(out, "");
   uint32_t i, j, k, flag;
   if (!strcmp(dirname, "../")) dirname[2] = '\0';
@@ -294,15 +299,6 @@ void ext2_cd(ext2_t* ext2, char* dirname, char* pwd, char* out) {
   flag = ext2_reserch_file(ext2, dirname, TYPE_DIR, &i, &j, &k);
   if (flag) {
     ext2->current_dir = i;
-    if (!strcmp(dirname, "..") && ext2->dir[k - 1].name_len)
-      pwd[strlen(pwd) - ext2->dir[k - 1].name_len - 1] = '\0';
-    else if (!strcmp(dirname, "."))
-      ;
-    else if (strcmp(dirname, "..")) {
-      strcat(pwd, dirname);
-      strcat(pwd, "/");
-    }
-    offset += sprintf(out + offset, "Current directory: %s\n", pwd);
   } else {
     offset += sprintf(out + offset, "No directory: %s\n", dirname);
   }
