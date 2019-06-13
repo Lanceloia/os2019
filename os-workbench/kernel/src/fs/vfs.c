@@ -22,8 +22,8 @@ extern device_t *dev_lookup(const char *name);
 // helper
 static int vinodes_alloc();
 static void vinodes_free(int idx);
-static int lookup_cur(char *path, int *flag, int cur);
-static int lookup_root(char *path, int *flag);
+static int lookup_cur(char *path, int *flag, int cur, int *poffset);
+static int lookup_root(char *path, int *flag, int *poffset);
 static int lookup_auto(char *path);
 
 static int vinodes_alloc() {
