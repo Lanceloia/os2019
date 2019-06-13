@@ -163,7 +163,7 @@ static int lookup_auto(char *path) {
   int noffset = 1;
   idx = (path[0] == '/') ? lookup_root(path, &flag, &noffset)
                          : lookup_cur(path, &flag, VFS_ROOT, &noffset);
-
+  assert(noffset > offset);
   return (noffset == offset) ? -1 : lookup_auto(path);
 }
 
