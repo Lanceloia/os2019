@@ -40,7 +40,7 @@ static void vinodes_free(int idx) { vinodes[idx].mode = UNUSED; }
 static int first_item_len(const char *path) {
   int ret = 0;
   for (; path[ret] && path[ret] != '/';) ret++;
-  return path[ret] ? ret : ret + 1;  // . => 1  ./ => 1 ../ => 2
+  return ret;
 }
 
 static int item_match(const char *P, const char *T, int len) {
