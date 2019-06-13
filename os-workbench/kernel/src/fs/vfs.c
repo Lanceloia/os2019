@@ -424,10 +424,20 @@ ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
 }
 
 ssize_t vfs_write(int fd, char *buf, size_t nbyte) {
-  return 0;
-
+  assert(nbyte <= 1024);
   extern ssize_t ext2_write2(ext2_t * ext2, int rinode_idx, char *bug,
                              uint32_t len);
+  int ret = 0;
+  switch (pfdind->fs_type) {
+    case EXT2FS:
+      ret = ext2_write2(pfdind->fs->rfs, pfdind->rinode_idx, files[fd].offset,
+                        buf, nbyte);
+      break;
+    default:
+      assert(0);
+      break;
+  }
+  files[fd].offset += ret;
 }
 
 off_t vfs_lseek(int fd, off_t offset, int whence) { return 0; }
