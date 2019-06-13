@@ -87,7 +87,7 @@ static int lookup_auto(char *path) {
   int len = strlen(path);
   if (path[len - 1] == '/') path[len - 1] = '\0';
 
-  int flag, offset = 0;
+  int flag, offset = 1;
   int idx = (path[0] == '/') ? lookup_root(path, &flag, &offset)
                              : lookup_cur(path, &flag, VFS_ROOT, &offset);
 
