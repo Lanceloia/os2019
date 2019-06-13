@@ -190,7 +190,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     strcpy(pddot->name, "..");                                      \
     strcpy(pddot->path, "(LINK)");                                  \
     pddot->dot = dot, pddot->ddot = -1;                             \
-    pddot->next = -1, pdot->child = PARENT;                         \
+    pddot->next = -1, pddot->child = PARENT;                        \
     pddot->prev_link = pddot->next_link = ddot, pddot->linkcnt = 1; \
     pddot->mode = TYPE_LINK, vinode_add_link(PARENT, ddot);         \
     pddot->fs = FS;                                                 \
