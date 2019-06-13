@@ -71,11 +71,11 @@ static int lookup_cur(char *path, int *pflag, int cur) {
 
   int next = k;
   while (vinodes[next].mode & TYPE_LINK) {
-    printf("\nthrough link: %d - >%d\n", next, vinodes[next].next_link);
+    printf("\nthrough link: %d -> %d\n", next, vinodes[next].next_link);
     next = vinodes[next].next_link;
   }
 
-  char *newpath = path + len + 1;
+  char *newpath = path + len + path[len] == '/';
   printf("oldpath: %s, newpath: %s, match_node_name: %s, next: %d\n", path,
          newpath, vinodes[k].name, next);
   return lookup_cur(newpath, pflag, next);
