@@ -369,7 +369,7 @@ int vfs_open(const char *path, int mode) {
 }
 
 ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
-  assert(nbyte < 1024);
+  assert(nbyte <= 1024);
   return vinode_read(files[fd].vinode_idx, buf, 1024);
 }
 
