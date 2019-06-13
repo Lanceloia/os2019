@@ -61,8 +61,8 @@ static int lookup_cur(char *path, int *pflag, int cur) {
 
   int next = k;
   while (vinodes[next].mode & TYPE_LINK) {
+    printf("through link: %d - >%d\n", next, vinodes[next].next_link);
     next = vinodes[next].next_link;
-    printf("next %d\n", next);
   }
 
   char *newpath = path + strlen(vinodes[k].name);
