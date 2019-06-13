@@ -118,7 +118,7 @@ static int lookup_auto(char *path) {
       poidx->next = nidx;
       poidx->ddot = nidx;
       strcpy(pnidx->name, "..");
-      strcpy(pnidx->path, pidx->path);
+      strcpy(pnidx->path, vinodes[vinodes[pidx->dot].child].path);
       pnidx->dot = oidx, pnidx->ddot = -1;
       pnidx->next = -1, pnidx->child = vinodes[pidx->ddot].child;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
