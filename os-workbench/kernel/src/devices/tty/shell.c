@@ -109,6 +109,8 @@ static void cat_do(device_t *tty, char *dirname, char *pwd) {
   int fd = vfs_open(absolutely_path, TYPE_FILE | RD_ABLE);
   while (vfs_read(fd, bigbuf, 1024))
     tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+  bigbuf[0] = '\n', bigbuf[1] = '\0';
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
 static void catto_do(device_t *tty, char *dirname, char *pwd) {
