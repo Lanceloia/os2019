@@ -114,7 +114,7 @@ int ext2_readdir(filesystem_t* fs, int rinode_idx, int kth, vinode_t* buf) {
           buf->mode = ext2->dir[k].mode;
           // printf("fuck2: inode == %d,  i = %d, k = %d, name =  %s\n",
           //       ext2->ind.blocks, i, k, ext2->dir[k].name);
-          if (buf->mode & TYPE_DIR) strcat(buf.name, "/");
+          if (buf->mode & TYPE_DIR) strcat(buf->name, "/");
           return 1;
         }
       // printf("fuck2: inodeblocks == %d,  i = %d, k = %d, name =  %s\n",
