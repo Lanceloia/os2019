@@ -288,7 +288,7 @@ int fuck() {
 
 int vfs_init() {
   int root = vinodes_build_root();
-  return root;
+  return lookup_auto("/");
   int dev = vinodes_append_dir(root, "dev/", NULL);
   printf("fuck");
   vinodes_create_dir(dev, root, NULL);
