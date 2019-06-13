@@ -208,6 +208,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
   do {                                                     \
     strcpy(vinodes[IDX].name, NAME);                       \
     strcpy(vinodes[IDX].path, vinodes[DOT].path);          \
+    strcat(vinodes[IDX].path, "/");                        \
     strcat(vinodes[IDX].path, NAME);                       \
     vinodes[IDX].dot = DOT, vinodes[IDX].ddot = DDOT;      \
     vinodes[IDX].next = -1, vinodes[IDX].child = -1;       \
@@ -254,7 +255,7 @@ int vinodes_append_dir(int par, char *name, filesystem_t *fs) {
   }
   assert(dot != -1 && ddot != -1);
   vinodes[k].next = nidx;
-  printf("\n\n\n\n\ndot.child: %d\n", vinodes[dot].child);
+  // printf("\n\n\n\n\ndot.child: %d\n", vinodes[dot].child);
   build_general_null_dir(nidx, dot, ddot, name, fs);
   // return new dir's idx
   return nidx;
@@ -298,7 +299,7 @@ int fuck() {
 
 int vfs_init() {
   int root = vinodes_build_root();
-  int dev = vinodes_append_dir(root, "dev/", NULL);
+  int dev = vinodes_append_dir(root, "dev", NULL);
 
   // printf("fuck");
   vinodes_create_dir(dev, root, NULL);
@@ -306,7 +307,7 @@ int vfs_init() {
   int fs_r0 = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
                              ext2_init, ext2_lookup, ext2_readdir);
 
-  vinodes_mount(dev, "ramdisk0/", &filesys[fs_r0], EXT2_ROOT);
+  vinodes_mount(dev, "ramdisk0", &filesys[fs_r0], EXT2_ROOT);
   lookup_auto("/dev/ramdisk0/directory\0\0");
   lookup_auto("/dev/ramdisk0/directory/\0\0");
   lookup_auto("/dev/ramdisk0/directory/.\0\0");
