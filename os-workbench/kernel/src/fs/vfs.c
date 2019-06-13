@@ -8,6 +8,8 @@
 #define VFS_ROOT 0
 
 #define pidx (&vinodes[idx])
+#define poidx (&vinodes[oidx])
+#define pnidx (&vinodes[nidx])
 #define pdot (&vinodes[dot])
 #define pddot (&vinodes[ddot])
 
@@ -91,44 +93,53 @@ static int lookup_auto(char *path) {
   if (flag == 1) return idx;
 
   vinode_t buf;
-  int kth = 0, oidx = -1, nidx, ret;
+  int kth = 0, oidx = -1, nidx = -1, dot = -1, ddot = -1, ret;
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
-    vinodes[nidx] = buf;
-    vinodes[nidx].linkcnt = 1;
-    vinodes[nidx].dot = vinodes[pidx->ddot].child;
-    vinodes[nidx].ddot = vinodes[pidx->ddot].dot;
-    vinodes[nidx].next_link = vinodes[nidx].prev_link = idx;
-    vinodes[nidx].next = -1;
-    if (oidx == -1)
-      pidx->child = nidx;
-    else
-      vinodes[oidx].next = nidx;
 
-    if (!strcmp(vinodes[nidx].name, ".")) {
-      strcpy(vinodes[nidx].path, "");
-      vinodes[nidx].mode = TYPE_LINK;
-      // vinodes[idx].dot = idx;
-      vinode_add_link(vinodes[nidx].dot, nidx);
-    } else if (!strcmp(vinodes[nidx].name, "..")) {
-      strcpy(vinodes[nidx].path, "");
-      // vinodes[idx].ddot = pidx->ddot;
-      vinodes[nidx].mode = TYPE_LINK;
-      vinode_add_link(vinodes[idx].ddot, nidx);
-    } else if (vinodes[nidx].mode & TYPE_DIR) {
-      strcat(vinodes[nidx].name, "/");
-      strcpy(vinodes[nidx].path, pidx->path);
-      strcat(vinodes[nidx].path, vinodes[nidx].name);
-      vinodes[nidx].child = -1;
-    } else if (vinodes[nidx].mode & TYPE_FILE) {
-      strcpy(vinodes[nidx].path, pidx->path);
-      strcat(vinodes[nidx].path, vinodes[nidx].name);
+    if (!strcmp(buf.name, ".")) {
+      assert(oidx == -1);
+      assert(pidx->child == -1);
+      pidx->child = nidx;
+
+      strcpy(pnidx->name, ".");
+      strcpy(pnidx->path, "(LINK)");
+      pnidx->dot = pnidx, pnidx->ddot = -1;
+      pnidx->next = -1, pnidx->child = -1;
+      pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
+      pnidx->mode = TYPE_LINK, vinode_add_link(idx, nidx);
+      pnidx->fs = NULL;
+
+      dot = nidx;
+    } else if (!strcmp(buf.name, "..")) {
+      assert(poidx->next == -1);
+      poidx->next = nidx;
+      poidx->ddot = nidx;
+
+      strcpy(pnidx->name, "..");
+      strcpy(pnidx->path, "(LINK)");
+      pnidx->dot = poidx, pnidx->ddot = nidx;
+      pnidx->next = -1, pnidx->child = -1;
+      pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
+      pnidx->mode = TYPE_LINK, vinode_add_link(pidx->ddot, nidx);
+      pnidx->fs = NULL;
+
+      ddot = nidx;
     } else {
-      assert(0);
+      assert(dot != -1 && ddot != -1);
+      assert(poidx->next == -1);
+      poidx->next = nidx;
+
+      strcpy(pnidx->name, buf.name);
+      strcpy(pnidx->path, "(NOT SUPPORT NOW)";
+      pnidx->dot = dot, pnidx->ddot = ddot;
+      pnidx->next = -1, pnidx->child = -1;
+      pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
+      pnidx->mode = buf.mode;
+      pnidx->fs = pidx->fs;
     }
 
     oidx = nidx;
-
     /*
         printf("newidx: %d, rinode_idx: %d, name %s, child: %d, next: %d\n",
        nidx, vinodes[nidx].rinode_idx, vinodes[nidx].name, vinodes[nidx].child,
