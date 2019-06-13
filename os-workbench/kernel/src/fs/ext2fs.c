@@ -67,7 +67,7 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2->ind.blocks++;
 
   ext2->current_dir = ext2_alloc_inode(ext2);
-  printf("cur_dir: %d\n", ext2->current_dir);
+  // printf("cur_dir: %d\n", ext2->current_dir);
   ext2_wr_ind(ext2, ext2->current_dir);
   // "." == ".." == root_dir
   // root_dir with no name
@@ -106,7 +106,7 @@ int ext2_readdir(filesystem_t* fs, int rinode_idx, int kth, vinode_t* buf) {
           strcpy(buf->name, ext2->dir[k].name);
           buf->rinode_idx = ext2->dir[k].inode;
           buf->mode = ext2->dir[k].mode;
-          printf("name: %s", buf->name);
+          // printf("name: %s", buf->name);
           /*
                     if (strcmp(buf->name, ".") && strcmp(buf->name, "..") &&
                         buf->mode & TYPE_DIR)
