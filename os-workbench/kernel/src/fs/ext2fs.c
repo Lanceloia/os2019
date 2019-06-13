@@ -8,10 +8,10 @@
  */
 uint32_t ext2_alloc_block(ext2_t* ext2);
 uint32_t ext2_alloc_inode(ext2_t* ext2);
-uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int type,
+uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int mode,
                            uint32_t* inode_num, uint32_t* block_num,
                            uint32_t* dir_num);
-void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, int type);
+void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, int mode);
 void ext2_remove_block(ext2_t* ext2, uint32_t del_num);
 int ext2_search_file(ext2_t* ext2, uint32_t idx);
 
@@ -178,14 +178,14 @@ uint32_t ext2_alloc_inode(ext2_t* ext2) {
   return ext2->last_alloc_inode;
 }
 
-uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int type, uint32_t* ninode,
+uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int mode, uint32_t* ninode,
                            uint32_t* nblock, uint32_t* ndir) {
   ext2_rd_ind(ext2, ext2->current_dir);
   for (uint32_t j = 0; j < ext2->ind.blocks; j++) {
     ext2_rd_dir(ext2, ext2->ind.block[j]);
     int len = first_item_len(path);
     for (uint32_t k = 0; k < DIR_AMUT;) {
-      if (!ext2->dir[k].inode || !(ext2->dir[k].mode & type) ||
+      if (!ext2->dir[k].inode || !(ext2->dir[k].mode & mode) ||
           strncmp(ext2->dir[k].name, path, len)) {
         k++;
       } else {
@@ -194,7 +194,7 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int type, uint32_t* ninode,
         *ndir = k;
         return (len == strlen(path))
                    ? 1
-                   : ext2_reserch_file(ext2, path + len + 1, type, ninode,
+                   : ext2_reserch_file(ext2, path + len + 1, mode, ninode,
                                        nblock, ndir);
       }
     }
@@ -202,9 +202,9 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int type, uint32_t* ninode,
   return 0;
 }
 
-void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, int type) {
+void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, int mode) {
   ext2_rd_ind(ext2, idx);
-  if (type == TYPE_DIR) {
+  if (mode == TYPE_DIR) {
     ext2->ind.size = 2 * DIR_SIZE;  // "." and ".."
     ext2->ind.blocks = 1;
     ext2->ind.block[0] = ext2_alloc_block(ext2);
@@ -380,19 +380,15 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len, char* out) {
   // ext2_read(ext2, path, buf, len, out);
 }
 
-void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
+void ext2_mkdir(ext2_t* ext2, char* dirname, int mode) {
   uint32_t idx, ninode, nblock, ndir;
-  int offset = sprintf(out, "");
   int now_current_dir = ext2->current_dir;
-  if (!ext2_reserch_file(ext2, dirname, type, &ninode, &nblock, &ndir)) {
+  if (!ext2_reserch_file(ext2, dirname, mode, &ninode, &nblock, &ndir)) {
     ext2_rd_ind(ext2, ext2->current_dir);
-    if (ext2->ind.size == 4096) {  // origin 4096
-      offset += sprintf(out + offset, "No room to make directory!\n");
-      return;
-    }
+
+    assert(ext2->ind.size < 4096);
+
     if (ext2->ind.size != ext2->ind.blocks * BLK_SIZE) {
-      // printf("mayber wrong1\n");
-      // not full
       int i, j;
       for (i = 0; i < ext2->ind.blocks; i++) {
         ext2_rd_dir(ext2, ext2->ind.block[i]);
@@ -403,33 +399,25 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       idx = ext2->dir[j].inode = ext2_alloc_inode(ext2);
       int last_offset = last_item_offset(dirname);
       ext2->dir[j].name_len = strlen(dirname + last_offset);
-      ext2->dir[j].mode = type;
+      ext2->dir[j].mode = mode;
       strcpy(ext2->dir[j].name, dirname + last_offset);
       ext2_wr_dir(ext2, ext2->ind.block[i]);
     } else {
-      // full
-      // printf("mayber wrong2\n");
       ext2->ind.block[ext2->ind.blocks++] = ext2_alloc_block(ext2);
       ext2_rd_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
       idx = ext2->dir[0].inode = ext2_alloc_inode(ext2);
       int last_offset = last_item_offset(dirname);
       ext2->dir[0].name_len = strlen(dirname + last_offset);
-      ext2->dir[0].mode = type;
+      ext2->dir[0].mode = mode;
       strcpy(ext2->dir[0].name, dirname + last_offset);
       for (int i = 1; i < DIR_AMUT; i++) ext2->dir[i].inode = 0;
       ext2_wr_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
     }
-    // printf("e");
     ext2->ind.size += DIR_SIZE;  // origin 16
     ext2_wr_ind(ext2, ext2->current_dir);
-    ext2_dir_prepare(ext2, idx, type);
+    ext2_dir_prepare(ext2, idx, mode);
   } else {
-    if (type & TYPE_FILE)
-      offset += sprintf(out + offset, "File existed!\n");
-    else if (type & TYPE_DIR)
-      offset += sprintf(out + offset, "Directory existed!\n");
-    else
-      offset += sprintf(out + offset, "Unknowed type!\n");
+    printf("ext2: already exists!\n");
   }
   ext2->current_dir = now_current_dir;
 }
