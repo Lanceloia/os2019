@@ -95,8 +95,10 @@ static int lookup_auto(char *path) {
 
   vinode_t buf;
   int kth = 0, oidx = -1, nidx = -1;
-  int dot = -1, ddot = -1, ret = -1;
-  // int next = -1;
+  int dot = -1, ddot = -1, ret = -1, next = -1;
+
+  int flen = first_item_namelen(path + offset);
+
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
 
@@ -143,15 +145,15 @@ static int lookup_auto(char *path) {
     pnidx->fs = pidx->fs;
     oidx = nidx;
 
-    /*
-        if (!strncmp(buf.name, path)) {
-          assert(next == -1);
-          next = nidx;
-        }
-        */
-    printf("offset: %d, path: %s, path + offset: %s\n", offset, path,
-           path + offset);
+    if (!strncmp(buf.name, path + offset, flen)) {
+      assert(next == -1);
+      next = nidx;
+    } else {
+      printf("offset: %d, path: %s, path + offset: %s\n", offset, path,
+             path + offset);
+    }
   }
+  if (next == -1) return 0;
 
   return lookup_auto(path);
 }
