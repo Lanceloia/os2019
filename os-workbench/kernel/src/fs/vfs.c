@@ -300,6 +300,7 @@ int vinodes_open(int inode_idx, int mode) {
   files[fd].vinode_idx = inode_idx;
   files[fd].offset = 0;
   files[fd].refcnt++;
+  return fd;
 }
 
 typedef struct ext2 ext2_t;
@@ -313,6 +314,7 @@ int fuck() {
   filesys_free(2);
   vinodes_alloc();
   vinodes_free(0);
+  files_free(9);
   return 0;
 }
 
