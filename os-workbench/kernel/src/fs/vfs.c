@@ -158,6 +158,7 @@ static int lookup_auto(char *path) {
              */
     }
   }
+  assert(next != -1);
   if (next == -1) return 0;
 
   int noffset = 1;
