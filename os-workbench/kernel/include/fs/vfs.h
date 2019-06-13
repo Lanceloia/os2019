@@ -41,13 +41,6 @@ typedef struct vinode {
 } vinode_t;
 
 // file operation
-/*int vinode_open(int vinode_idx, int mode);
-int vinode_close(int fd);
-* /
-    /*
-    ssize_t vinode_read(int vinode_idx, char *buf, size_t size);
-    ssize_t vinode_write(int vinode_idx, const char *buf, size_t size);
-    */
 off_t vinode_lseek(int fd, off_t offset, int whence);
 
 // vinode operation
