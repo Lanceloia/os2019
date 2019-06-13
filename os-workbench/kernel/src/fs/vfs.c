@@ -205,7 +205,6 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     pddot->prev_link = pddot->next_link = ddot, pddot->linkcnt = 1; \
     pddot->mode = TYPE_LINK, vinode_add_link(PARENT, ddot);         \
     pddot->fs = FS;                                                 \
-    printf("link %d <-> %d", PARENT, ddot);                         \
   } while (0)
 
 #define build_general_dir(IDX, DOT, DDOT, NAME, FS)        \
@@ -562,7 +561,8 @@ sizeof(ext2_t), ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
 */
 
 int vinode_add_link(int oidx, int nidx) {
-  // printf("\n add_link: %d <- %d \n", oidx, nidx);
+  printf("\n add_link: %d <-> %d \n", oidx, nidx);
+  // printf("link %d <-> %d\n", PARENT, ddot);
   int n_link = vinodes[oidx].next_link;
   vinodes[nidx].next_link = n_link;
   vinodes[nidx].prev_link = oidx;
