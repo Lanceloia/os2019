@@ -94,6 +94,10 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+static void cd_do(device_t *tty, char *dirname, char *pwd) {
+  build_absolutely_path(dirname, pwd);
+  if (vfs_access(dirname)) }
+
 /*
 extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
@@ -152,11 +156,10 @@ extern int vfsdirs_alloc(const char *name, int parent, int type, int fs_idx);
 // extern int dev_dir;
 // extern int total_dev_cnt;
 
-char pwd[256] = "/";
-
 void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
   // vfsdirs_alloc(name, dev_dir, TTY, total_dev_cnt++);
+  char pwd[256] = "/";
   while (1) {
     sprintf(writebuf, "(%s) $ ", name);
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
@@ -174,15 +177,20 @@ void shell_task(void *name) {
     else if (!strncmp(readbuf, "cat ", 4))
       cat_do(tty, readbuf + 4, pwd);
     */
-    if (!strncmp(readbuf, "echo ", 5)) echo_do(tty, readbuf + 5);
-    if (!strncmp(readbuf, "ls ", 3)) ls_do(tty, readbuf + 3, pwd);
+    if (!strncmp(readbuf, "echo ", 5))
+      echo_do(tty, readbuf + 5);
+    else if (!strncmp(readbuf, "ls ", 3))
+      ls_do(tty, readbuf + 3, pwd);
+    else if (!strncmp(readbuf, "cd ", 3))
+      cd_do(tty, readbuf + 3, pwd);
     /*
     else if (!strncmp(readbuf, "mkdir ", 6))
       mkdir_do(tty, readbuf + 6, pwd);
     else if (!strncmp(readbuf, "rmdir ", 6))
       rmdir_do(tty, readbuf + 6, pwd);
-    else if (!strncmp(readbuf, "cd ", 3))
-      cd_do(tty, readbuf + 3, pwd);
+      */
+
+    /*
     else
       default_do(tty);
     */
