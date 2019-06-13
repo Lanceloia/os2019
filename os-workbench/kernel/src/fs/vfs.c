@@ -293,7 +293,7 @@ int vfs_init() {
   // printf("fuck");
   vinodes_create_dir(dev, root, NULL);
 
-  return lookup_auto("/dev");
+  return lookup_auto("/dev/");
 
   int fs_r0 = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
                              ext2_init, ext2_lookup, ext2_readdir);
