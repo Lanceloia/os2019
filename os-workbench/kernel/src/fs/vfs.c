@@ -297,7 +297,7 @@ int vfs_init() {
                              ext2_init, ext2_lookup, ext2_readdir);
 
   int r0 = vinodes_append_dir(dev, "ramdisk0/", &filesys[fs_r0]);
-  vinodes_create_dir(r0, dev, &filesys[fs_r0]);
+  // vinodes_create_dir(r0, dev, &filesys[fs_r0]);
 
   return lookup_auto("/dev/ramdisk0/");
   /*
