@@ -52,12 +52,14 @@ static int lookup_cur(char *path, int *pflag, int cur) {
 
   int k, len = first_item_namelen(path);
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
+    /*
     printf(
         "\nlookup cur: [%d]\n  itemname: %s, path: %s\n  type: "
         "%x, "
         "next: %d, child: %d, dot: %d, ddot: %d\n\n",
         k, vinodes[k].name, vinodes[k].path, vinodes[k].mode, vinodes[k].next,
         vinodes[k].child, vinodes[k].dot, vinodes[k].ddot);
+        */
     if (!strncmp(vinodes[k].name, path, len)) {
       printf("match!\n");
       break;
@@ -132,7 +134,7 @@ static int lookup_auto(char *path) {
       pnidx->child = vinodes[pidx->ddot].child;  // ddot's child is parent
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
       pnidx->mode = TYPE_LINK,
-      vinode_add_link(vinodes[pidx->ddot].child, nidx, 3);
+      vinode_add_link(vinodes[pidx->dot].child, nidx, 3);
       pnidx->rinode_idx = buf.rinode_idx;
       pnidx->fs = pidx->fs;
 
