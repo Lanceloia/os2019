@@ -293,8 +293,8 @@ int vfs_init() {
     printf("%s  %d\n", "/dev/ramdisk0/hello.cpp/",
            lookup_auto("/dev/ramdisk0/hello.cpp/"));
            */
-  lookup_auto("/dev/ramdisk0/directory");
-  lookup_auto("/dev/ramdisk0/directory/.");
+  lookup_auto("/dev/ramdisk0/directory/");
+  // lookup_auto("/dev/ramdisk0/directory/.");
   return 0;
 }
 
