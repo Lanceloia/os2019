@@ -52,9 +52,9 @@ static int lookup_cur(char *path, int *pflag, int cur) {
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
     printf(
         "\nlookup cur: \n  itemname: %s, path: %s, matchlen: %d\n  type: %x, "
-        "next: %d, child: %d\n\n",
+        "next: %d, child: %d, dot: %d, ddot: %d\n\n",
         vinodes[k].name, path, len, vinodes[k].mode, vinodes[k].next,
-        vinodes[k].child);
+        vinodes[k].child, vinodes[k].dot, vinodes[k].ddot);
     if (!strncmp(vinodes[k].name, path, len)) break;
   }
 
@@ -70,8 +70,8 @@ static int lookup_cur(char *path, int *pflag, int cur) {
   }
 
   char *newpath = path + len + 1;
-  printf("old: %s, new: %s, name: %s, next: %d\n", path, newpath,
-         vinodes[k].name, next);
+  printf("oldpath: %s, newpath: %s, match_node_name: %s, next: %d\n", path,
+         newpath, vinodes[k].name, next);
   return lookup_cur(newpath, pflag, next);
 }
 
@@ -105,9 +105,11 @@ static int lookup_auto(char *path) {
     if (!strcmp(vinodes[nidx].name, ".")) {
       strcpy(vinodes[nidx].path, "");
       vinodes[nidx].mode = TYPE_LINK;
-      vinode_add_link(idx, nidx);
+      // vinodes[idx].dot = idx;
+      vinode_add_link(vinodes[nidx].dot, nidx);
     } else if (!strcmp(vinodes[nidx].name, "..")) {
       strcpy(vinodes[nidx].path, "");
+      // vinodes[idx].ddot = pidx->ddot;
       vinodes[nidx].mode = TYPE_LINK;
       vinode_add_link(vinodes[idx].ddot, nidx);
     } else if (vinodes[nidx].mode & TYPE_DIR) {
