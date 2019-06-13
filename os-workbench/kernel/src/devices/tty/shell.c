@@ -113,6 +113,23 @@ static void cat_do(device_t *tty, char *dirname, char *pwd) {
     tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+static void catto_do()(device_t *tty, char *dirname, char *pwd) {
+  extern ssize_t ext2_write2(ext2_t * ext2, int rinode_idx, char *bug,
+                             uint32_t len);
+  build_absolutely_path(dirname, pwd);
+  int fd = vfs_open(absolutely_path, TYPE_FILE | WR_ABLE);
+  while (1) {
+    int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
+    if (readbuf[nread - 1] == '#') {
+      readbuf[nread - 1] = '\0';
+      vfs_write(fd, readbuf, nread);
+      break;
+    } else {
+      readbuf[nread - 1] = '\0';
+      vfs_write(fd, readbuf, nread);
+    }
+  }
+}
 /*
 extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
