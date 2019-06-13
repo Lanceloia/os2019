@@ -50,7 +50,7 @@ static int lookup_cur(char *path, int *pflag, int cur) {
 
   int k, len = first_item_namelen(path);
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
-    printf("lookup cur %s  %d\n", vinodes[k].name, len);
+    printf("lookup cur %s, %s, %d\n", vinodes[k].name, path, len);
     if (!strncmp(vinodes[k].name, path, len)) break;
   }
 
@@ -276,6 +276,7 @@ int vfs_init() {
     printf("%s  %d\n", "/dev/ramdisk0/hello.cpp/",
            lookup_auto("/dev/ramdisk0/hello.cpp/"));
            */
+  lookup_auto("/dev/ramdisk0/directory");
   return 0;
 }
 
