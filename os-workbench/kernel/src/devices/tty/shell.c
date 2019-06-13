@@ -99,6 +99,8 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
   if (vfs_access(dirname, TYPE_DIR)) {
     strcat(pwd, dirname);
   }
+  printf("Current: %s\n", pwd);
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
 /*
