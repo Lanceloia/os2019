@@ -301,7 +301,7 @@ int vinodes_create_dir(int idx, int par, int fs_type, filesystem_t *fs) {
   return dot;
 }
 
-int vinodes_mount(int par, char *name, int fs_type, filesystem_t *fs, ) {
+int vinodes_mount(int par, char *name, int fs_type, filesystem_t *fs) {
   // mount /dev/ramdisk0: par = vinode_idx("/dev"), name = "ramdisk0"
   int ret = vinodes_append_dir(par, name, fs_type, fs);
   switch (fs_type) {
