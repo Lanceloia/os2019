@@ -52,12 +52,12 @@ static int lookup_cur(char *path, int *pflag, int cur) {
 
   int k, len = first_item_namelen(path);
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
-    /*printf(
+    printf(
         "\nlookup cur: [%d]\n  itemname: %s, path: %s\n  type: "
         "%x, "
         "next: %d, child: %d, dot: %d, ddot: %d\n\n",
         k, vinodes[k].name, vinodes[k].path, vinodes[k].mode, vinodes[k].next,
-        vinodes[k].child, vinodes[k].dot, vinodes[k].ddot);*/
+        vinodes[k].child, vinodes[k].dot, vinodes[k].ddot);
     if (!strncmp(vinodes[k].name, path, len)) {
       printf("match!\n");
       break;
@@ -76,10 +76,10 @@ static int lookup_cur(char *path, int *pflag, int cur) {
   }
 
   char *newpath = path + (len + (path[len] == '/' ? 1 : 0));
-
+  /*
   printf("oldpath: %s, newpath: %s, match_node_name: %s, next: %d\n", path,
          newpath, vinodes[k].name, next);
-
+         */
   return lookup_cur(newpath, pflag, next);
 }
 
