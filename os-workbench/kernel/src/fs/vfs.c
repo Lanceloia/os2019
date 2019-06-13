@@ -271,12 +271,12 @@ int vinodes_create_dir(int idx, int par, filesystem_t *fs) {
   return dot;
 }
 
-/*
-int vinodes_mount(int par, char *name, filesystem_t *fs) {
+int vinodes_mount(int par, char *name, filesystem_t *fs, int rfs_root) {
   // mount /dev/ramdisk0: par = vinode_idx("/dev"), name = "ramdisk0"
-  return vinodes_append_dir(par, name, fs);
+  int ret = vinodes_append_dir(par, name, fs);
+  vinodes[ret].rinode_idx = rfs_root;
+  return ret;
 }
-*/
 
 typedef struct ext2 ext2_t;
 extern void ext2_init(filesystem_t *fs, const char *name, device_t *dev);
@@ -302,7 +302,7 @@ int vfs_init() {
   int fs_r0 = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
                              ext2_init, ext2_lookup, ext2_readdir);
 
-  vinodes_append_dir(dev, "ramdisk0/", &filesys[fs_r0]);
+  vinodes_mount(dev, "ramdisk0/", &filesys[fs_r0], EXT2_ROOT);
   // vinodes_create_dir(r0, dev, &filesys[fs_r0]);
 
   return lookup_auto("/dev/ramdisk0/.");

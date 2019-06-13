@@ -15,6 +15,8 @@
 #define MAX_PATH_LENGTH 256
 #define MAX_NAME_LENGTH 32
 
+#define EXT2_ROOT 1
+
 typedef struct filesystem filesystem_t;
 
 typedef struct file {

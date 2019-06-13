@@ -103,7 +103,7 @@ int ext2_readdir(filesystem_t* fs, int rinode_idx, int kth, vinode_t* buf) {
   // printf("fuck: kth == %d\n", kth);
   ext2_t* ext2 = (ext2_t*)fs->rfs;
   int cnt = 0;
-  ext2_rd_ind(ext2, 1);
+  ext2_rd_ind(ext2, rinode_idx);
   printf("rinode: %d, kth: %d\n", rinode_idx, kth);
   for (int i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
@@ -113,8 +113,8 @@ int ext2_readdir(filesystem_t* fs, int rinode_idx, int kth, vinode_t* buf) {
           strcpy(buf->name, ext2->dir[k].name);
           buf->rinode_idx = ext2->dir[k].inode;
           buf->mode = ext2->dir[k].mode;
-          printf("fuck2: inode == %d,  i = %d, k = %d, name =  %s\n",
-                 ext2->ind.blocks, i, k, ext2->dir[k].name);
+          // printf("fuck2: inode == %d,  i = %d, k = %d, name =  %s\n",
+          //       ext2->ind.blocks, i, k, ext2->dir[k].name);
           return 1;
         }
       // printf("fuck2: inodeblocks == %d,  i = %d, k = %d, name =  %s\n",
