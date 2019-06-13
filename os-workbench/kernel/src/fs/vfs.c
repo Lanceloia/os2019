@@ -44,6 +44,7 @@ static int first_item_len(const char *path) {
 }
 
 static int item_match(const char *P, const char *T, int len) {
+  printf("P: %s\nT: %s\nlen: %d\n\n");
   if (strncmp(P, T, len))
     return 0;
   else
