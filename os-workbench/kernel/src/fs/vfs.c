@@ -45,7 +45,7 @@ static int first_item_len(const char *path) {
 
 static int item_match(const char *s1, const char *s2, int len) {
   printf("P: %s\nT: %s\nlen: %d\n\n", s1, s2, len);
-  return (!strncmp(s1, s2, len));
+  if (strncmp(s1, s2, len)) return 0;
   return s1[len] == '\0' || s1[len] == '/';
 }
 
