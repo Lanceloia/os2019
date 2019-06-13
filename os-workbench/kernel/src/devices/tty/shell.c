@@ -111,7 +111,7 @@ static void cat_do(device_t *tty, char *dirname, char *pwd) {
     tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
-static void catto_do()(device_t *tty, char *dirname, char *pwd) {
+static void catto_do(device_t *tty, char *dirname, char *pwd) {
   build_absolutely_path(dirname, pwd);
   int fd = vfs_open(absolutely_path, TYPE_FILE | WR_ABLE);
   while (1) {
