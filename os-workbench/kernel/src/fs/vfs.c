@@ -247,6 +247,7 @@ int vinodes_append_dir(int par, char *name, filesystem_t *fs) {
     if (!strcmp(vinodes[k].name, ".")) {
       dot = k;
       ddot = vinodes[k].next;
+      printf("dot: %d, ddot: %d\n", dot, ddot);
     }
   }
   assert(dot != -1 && ddot != -1);
