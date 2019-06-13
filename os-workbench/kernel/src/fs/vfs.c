@@ -374,7 +374,7 @@ ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
   assert(nbyte <= 1024);
   extern ssize_t ext2_read(ext2_t * ext2, int rinode_idx, char *buf,
                            uint32_t len);
-  return ext2_read(vinodes[files[fd].vinode_idx].fs->rfs, bufm len);
+  return ext2_read(vinodes[files[fd].vinode_idx].fs->rfs, buf len);
 }
 
 ssize_t vfs_write(int fd, char *buf, size_t nbyte) { return 0; }
