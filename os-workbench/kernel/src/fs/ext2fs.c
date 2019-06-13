@@ -89,7 +89,7 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   // ext2_mkdir(ext2, "hello.cpp", TYPE_FILE, trash);
   ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str), trash);
   ext2_mkdir(ext2, "directory", TYPE_DIR, trash);
-  ext2_cd(ext2, "directory", trash);
+  ext2_cd(ext2, "directory/", trash);
   ext2_mkdir(ext2, "hello2.cpp", TYPE_FILE, trash);
   ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str), trash);
   ext2_cd(ext2, "..", trash);
@@ -301,7 +301,8 @@ void ext2_cd(ext2_t* ext2, char* dirname, char* out) {
   if (flag) {
     ext2->current_dir = i;
   } else {
-    offset += sprintf(out + offset, "No directory: %s\n", dirname);
+    // offset += sprintf(out + offset, "No directory: %s\n", dirname);
+    printf("No directory: %s\n", dirname);
   }
 }
 
