@@ -8,7 +8,7 @@
  */
 uint32_t ext2_alloc_block(ext2_t* ext2);
 uint32_t ext2_alloc_inode(ext2_t* ext2);
-uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int file_type,
+uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int type,
                            uint32_t* inode_num, uint32_t* block_num,
                            uint32_t* dir_num);
 void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t len, int type);
@@ -108,7 +108,7 @@ int ext2_readdir(filesystem_t* fs, int rinode_idx, int kth, vinode_t* buf) {
         if (++cnt == kth) {
           strcpy(buf->name, ext2->dir[k].name);
           buf->rinode_idx = ext2->dir[k].inode;
-          buf->mode = ext2->dir[k].file_type;
+          buf->mode = ext2->dir[k].mode;
           return 1;
         }
       // printf("fuck2: %d %s\n", k, ext2->dir[k].name);
@@ -176,7 +176,7 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int type, uint32_t* ninode,
     ext2_rd_dir(ext2, ext2->ind.block[j]);
     int len = first_item_len(path);
     for (uint32_t k = 0; k < DIR_AMUT;) {
-      if (!ext2->dir[k].inode || ext2->dir[k].file_type != type ||
+      if (!ext2->dir[k].inode || !(ext2->dir[k].mode & type) ||
           strncmp(ext2->dir[k].name, path, len)) {
         k++;
       } else {
@@ -203,7 +203,7 @@ void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t len, int type) {
     ext2->dir[1].inode = ext2->current_dir;
     ext2->dir[0].name_len = len;
     ext2->dir[1].name_len = ext2->current_dir_name_len;
-    ext2->dir[0].file_type = ext2->dir[1].file_type = TYPE_DIR;
+    ext2->dir[0].mode = ext2->dir[1].mode = TYPE_DIR;
     for (int k = 2; k < DIR_AMUT; k++) ext2->dir[k].inode = 0;
     strcpy(ext2->dir[0].name, ".");
     strcpy(ext2->dir[1].name, "..");
@@ -385,7 +385,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
     for (int k = 0; k < DIR_AMUT; k++) {
       if (ext2->dir[k].inode) {
         offset += sprintf(out + offset, "%s", ext2->dir[k].name);
-        if (ext2->dir[k].file_type == TYPE_DIR) {
+        if (ext2->dir[k].mode & TYPE_DIR) {
           ext2_rd_ind(ext2, ext2->dir[k].inode);
           if (!strcmp(ext2->dir[k].name, ".")) {
             flag = 0;
@@ -431,7 +431,7 @@ void ext2_ls(ext2_t* ext2, char* dirname, char* out) {
           else
             offset += sprintf(out + offset, "%6d", ext2->ind.size);
           offset += sprintf(out + offset, "\n");
-        } else if (ext2->dir[k].file_type == TYPE_FILE) {
+        } else if (ext2->dir[k].mode & TYPE_FILE) {
           ext2_rd_ind(ext2, ext2->dir[k].inode);
           for (int j = 0; j < 15 - ext2->dir[k].name_len; j++)
             offset += sprintf(out + offset, "%c", ' ');
@@ -491,7 +491,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       idx = ext2->dir[j].inode = ext2_alloc_inode(ext2);
       int last_offset = last_item_offset(dirname);
       ext2->dir[j].name_len = strlen(dirname + last_offset);
-      ext2->dir[j].file_type = type;
+      ext2->dir[j].mode = type;
       strcpy(ext2->dir[j].name, dirname + last_offset);
       ext2_wr_dir(ext2, ext2->ind.block[i]);
     } else {
@@ -502,7 +502,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int type, char* out) {
       idx = ext2->dir[0].inode = ext2_alloc_inode(ext2);
       int last_offset = last_item_offset(dirname);
       ext2->dir[0].name_len = strlen(dirname + last_offset);
-      ext2->dir[0].file_type = type;
+      ext2->dir[0].mode = type;
       strcpy(ext2->dir[0].name, dirname + last_offset);
       for (int i = 1; i < DIR_AMUT; i++) ext2->dir[i].inode = 0;
       ext2_wr_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
