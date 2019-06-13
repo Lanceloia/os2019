@@ -44,7 +44,7 @@ static int first_item_namelen(const char *path) {
 }
 
 static int lookup_cur(char *path, int *pflag, int cur) {
-  // printf("path == %s\n", path);
+  // cur: vinode_idx(parent dir)
   if (!strlen(path)) {
     *pflag = 1;
     return cur;
@@ -58,7 +58,10 @@ static int lookup_cur(char *path, int *pflag, int cur) {
         "next: %d, child: %d, dot: %d, ddot: %d\n\n",
         k, vinodes[k].name, vinodes[k].path, vinodes[k].mode, vinodes[k].next,
         vinodes[k].child, vinodes[k].dot, vinodes[k].ddot);
-    if (!strncmp(vinodes[k].name, path, len)) break;
+    if (!strncmp(vinodes[k].name, path, len)) {
+      printf("match!\n");
+      break;
+    }
   }
 
   if (k == -1) {
