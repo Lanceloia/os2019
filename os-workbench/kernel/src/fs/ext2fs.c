@@ -72,6 +72,7 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2->ind.blocks++;
 
   ext2->current_dir = ext2_alloc_inode(ext2);
+  printf("cur_dir: %d\n", ext2->current_dir);
   strcpy(ext2->current_dir_name, "[root@ /");
   ext2_wr_ind(ext2, ext2->current_dir);
   // "." == ".." == root_dir
