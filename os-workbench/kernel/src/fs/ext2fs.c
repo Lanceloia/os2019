@@ -111,7 +111,7 @@ int ext2_readdir(filesystem_t* fs, int rinode_idx, int kth, vinode_t* buf) {
           buf->mode = ext2->dir[k].mode;
           return 1;
         }
-      // printf("fuck2: %d %s\n", k, ext2->dir[k].name);
+      printf("fuck2: %d %s\n", k, ext2->dir[k].name);
     }
   }
   return 0;

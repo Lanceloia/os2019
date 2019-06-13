@@ -101,8 +101,8 @@ static int lookup_auto(char *path) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
     printf("name == %s, oid == %d, kth == %d\n", buf.name, oidx, kth);
     if (!strcmp(buf.name, ".")) {
-      // assert(oidx == -1);
-      // assert(pidx->child == -1);
+      assert(oidx == -1);
+      assert(pidx->child == -1);
       pidx->child = nidx;
 
       strcpy(pnidx->name, ".");
@@ -115,7 +115,7 @@ static int lookup_auto(char *path) {
 
       dot = nidx;
     } else if (!strcmp(buf.name, "..")) {
-      // assert(poidx->next == -1);
+      assert(poidx->next == -1);
       poidx->next = nidx;
       poidx->ddot = nidx;
 
