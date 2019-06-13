@@ -124,7 +124,7 @@ static int lookup_auto(char *path) {
 
       printf("fuck me: \n\n\n\n%d %d %d %d %d %d %d %d [%d]", idx, oidx, nidx,
              pidx->dot, pidx->ddot, pnidx->dot, pnidx->ddot,
-             vinodes[pidx->ddot].child);
+             vinodes[pidx->dot].child);
       strcpy(pnidx->name, "..");
       strcpy(pnidx->path, pidx->path);
       pnidx->dot = oidx, pnidx->ddot = -1;
