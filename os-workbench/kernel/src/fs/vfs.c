@@ -306,6 +306,7 @@ void vfs_ls(char *dirname) {
   int idx = lookup_auto(dirname);
   if (vinodes[idx].mode & TYPE_DIR && vinodes[idx].child == -1) {
     strcat(dirname, ".");
+    printf("try reach: %s\n", dirname);
     lookup_auto(dirname);
   }
 
