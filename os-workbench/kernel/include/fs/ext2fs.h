@@ -45,7 +45,7 @@ struct inode {
   uint32_t blocks;                // the size of file (blks)
   uint32_t size;                  // the size of file (bytes)
   uint32_t block[EXT2_N_BLOCKS];  // direct or indirect blocks
-  char pad[2];
+  char pad[4];
 };
 
 struct directory {
