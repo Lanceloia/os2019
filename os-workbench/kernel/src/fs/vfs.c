@@ -404,7 +404,8 @@ int vfs_close(int fd) { return 0; }
 
 void vfs_ls(char *dirname) {
   printf("\n");
-  if (!lookup_auto(dirname)) return;
+  int idx;
+  if (!(idx = lookup_auto(dirname))) return;
 
   printf("<     index       name                  path       >\n");
   printf(" >    %4d        %12s          %s\n", idx, vinodes[idx].name,
