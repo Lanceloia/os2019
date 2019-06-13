@@ -407,7 +407,7 @@ void vfs_ls(char *dirname) {
   int idx = lookup_auto(dirname);
   if (idx == -1) return;
   printf("-     index       name                  path        \n");
-  printf(">>    %4d        %12s          %s\n", idx, vinodes[idx].name,
+  printf(">>   %4d        %12s          %s\n", idx, vinodes[idx].name,
          vinodes[idx].path);
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {
     printf("-    %4d        %12s          %s\n", k, vinodes[k].name,
