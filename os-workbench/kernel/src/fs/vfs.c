@@ -299,7 +299,7 @@ int vfs_init() {
   vinodes_append_dir(dev, "ramdisk0/", &filesys[fs_r0]);
   // vinodes_create_dir(r0, dev, &filesys[fs_r0]);
 
-  return lookup_auto("/dev/ramdisk0/");
+  return lookup_auto("/dev/ramdisk0/.");
   /*
   strcpy(vfsdirs[0].name, "/");
   strcpy(vfsdirs[0].absolutely_name, "/");
