@@ -425,8 +425,8 @@ ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
 
 ssize_t vfs_write(int fd, char *buf, size_t nbyte) {
   assert(nbyte <= 1024);
-  extern ssize_t ext2_write2(ext2_t * ext2, int rinode_idx, char *bug,
-                             uint32_t len);
+  extern ssize_t ext2_write2(ext2_t * ext2, int rinode_idx, uint64_t offset,
+                             char *bug, uint32_t len);
   int ret = 0;
   switch (pfdind->fs_type) {
     case EXT2FS:
