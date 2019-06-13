@@ -86,10 +86,11 @@ static int lookup_auto(char *path) {
   int len = strlen(path);
   if (path[len - 1] == '/') path[len - 1] = '\0';
 
+  printf("FUCK2\n\n\n\n\n\n\n");
   int flag, offset = 1;
   int idx = (path[0] == '/') ? lookup_root(path, &flag, &offset)
                              : lookup_cur(path, &flag, VFS_ROOT, &offset);
-  printf("\n\n\n\n\n\n\n");
+  printf("FUCK1\n\n\n\n\n\n\n");
   if (flag == 1) return idx;
 
   vinode_t buf;
@@ -150,8 +151,10 @@ static int lookup_auto(char *path) {
       assert(next == -1);
       next = nidx;
     } else {
+      /*
       printf("offset: %d, path: %s, path + offset: %s\n", offset, path,
              path + offset);
+             */
     }
   }
   if (next == -1) return 0;
