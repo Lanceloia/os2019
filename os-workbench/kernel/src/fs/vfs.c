@@ -43,12 +43,10 @@ static int first_item_len(const char *path) {
   return ret;
 }
 
-static int item_match(const char *P, const char *T, int len) {
-  printf("P: %s\nT: %s\nlen: %d\n\n", P, T, len);
-  if (strncmp(P, T, len))
-    return 0;
-  else
-    return T[len] == '\0' || T[len] == '/';
+static int item_match(const char *s1, const char *s2, int len) {
+  printf("P: %s\nT: %s\nlen: %d\n\n", s1, s2, len);
+  return (!strncmp(s1, s2, len));
+  return s1[len] == '\0' || s1[len] == '/';
 }
 
 static int lookup_cur(char *path, int *pflag, int cur, int *poffset) {
