@@ -50,7 +50,11 @@ static int lookup_cur(char *path, int *pflag, int cur) {
 
   int k, len = first_item_namelen(path);
   for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
-    printf("lookup cur %s, %s, %d\n", vinodes[k].name, path, len);
+    printf(
+        "lookup cur: \n  itemname: %s, path: %s, matchlen: %d\n  type: %x, "
+        "next: %d, child: %d\n",
+        vinodes[k].name, path, len, vinodes[k].mode, vinodes[k].next,
+        vinodes[k].child);
     if (!strncmp(vinodes[k].name, path, len)) break;
   }
 
@@ -61,7 +65,7 @@ static int lookup_cur(char *path, int *pflag, int cur) {
 
   int next = k;
   while (vinodes[next].mode & TYPE_LINK) {
-    printf("\nthrough link: %d - >%d\n", next, vinodes[next].next_link);
+    // printf("\nthrough link: %d - >%d\n", next, vinodes[next].next_link);
     next = vinodes[next].next_link;
   }
 
@@ -120,9 +124,11 @@ static int lookup_auto(char *path) {
 
     oidx = nidx;
 
-    printf("newidx: %d, rinode_idx: %d, name %s, child: %d, next: %d\n", nidx,
-           vinodes[nidx].rinode_idx, vinodes[nidx].name, vinodes[nidx].child,
-           vinodes[nidx].next);
+    /*
+        printf("newidx: %d, rinode_idx: %d, name %s, child: %d, next: %d\n",
+       nidx, vinodes[nidx].rinode_idx, vinodes[nidx].name, vinodes[nidx].child,
+               vinodes[nidx].next);
+    */
   }
   return lookup_auto(path);
 }
