@@ -94,7 +94,7 @@ static int lookup_auto(char *path) {
                              : lookup_cur(path, &flag, VFS_ROOT);
 
   if (flag == 1) return idx;
-
+  printf("file no found, but reach: [%d]\n", idx);
   vinode_t buf;
   int kth = 0, oidx = -1, nidx = -1, dot = -1, ddot = -1, ret;
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
