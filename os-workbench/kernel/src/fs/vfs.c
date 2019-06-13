@@ -103,12 +103,12 @@ static int lookup_auto(char *path) {
       strcpy(vinodes[nidx].path, "");
       vinodes[nidx].mode = TYPE_LINK;
       vinode_add_link(vinodes[idx].ddot, nidx);
-    } else if (vinodes[idx].mode & TYPE_DIR) {
+    } else if (vinodes[nidx].mode & TYPE_DIR) {
       strcat(vinodes[nidx].name, "/");
       strcpy(vinodes[nidx].path, pidx->path);
       strcat(vinodes[nidx].path, vinodes[nidx].name);
       vinodes[nidx].child = -1;
-    } else if (vinodes[idx].mode & TYPE_FILE) {
+    } else if (vinodes[nidx].mode & TYPE_FILE) {
       strcpy(vinodes[nidx].path, pidx->path);
       strcat(vinodes[nidx].path, vinodes[nidx].name);
     } else {
