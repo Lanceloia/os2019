@@ -309,36 +309,6 @@ int vfs_init() {
                              ext2_init, ext2_lookup, ext2_readdir);
 
   vinodes_mount(dev, "ramdisk0/", &filesys[fs_r0], EXT2_ROOT);
-  // vinodes_create_dir(r0, dev, &filesys[fs_r0]);
-
-  // return lookup_auto("/dev/ramdisk0/.");
-  /*
-  strcpy(vfsdirs[0].name, "/");
-  strcpy(vfsdirs[0].absolutely_name, "/");
-  vfsdirs[0].dot = vfsdirs[0].ddot = 0;
-  vfsdirs[0].next = vfsdirs[0].child = -1;
-  vfsdirs[0].type = VFS;
-  dev_dir = vfsdirs_alloc("dev", 0, VFS, -1);
-  proc_dir = vfsdirs_alloc("proc", 0, PROCFS, -1);
-  vfs_device(total_dev_cnt, "ext2fs", dev_lookup("ramdisk0"),
-  sizeof(ext2_t), ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
-             ext2_mkdir_tmp, ext2_rmdir_tmp);
-  vfsdirs_alloc("ramdisk0", dev_dir, EXT2, total_dev_cnt++);
-
-  vfs_device(total_dev_cnt, "ext2fs", dev_lookup("ramdisk1"),
-  sizeof(ext2_t), ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
-             ext2_mkdir_tmp, ext2_rmdir_tmp);
-  vfsdirs_alloc("ramdisk1", dev_dir, EXT2, total_dev_cnt++);
-  */
-
-  /*
-    printf("%s  %d\n", "/", lookup_auto("/"));
-    // printf("%s  %d\n", "/dev/", lookup_auto("/dev/"));
-    printf("%s  %d\n", "/dev/", lookup_auto("/dev/"));
-    printf("%s  %d\n", "/dev/ramdisk0/", lookup_auto("/dev/ramdisk0/"));
-    printf("%s  %d\n", "/dev/ramdisk0/hello.cpp/",
-           lookup_auto("/dev/ramdisk0/hello.cpp/"));
-           */
   lookup_auto("/dev/ramdisk0/directory\0\0");
   lookup_auto("/dev/ramdisk0/directory/\0\0");
   lookup_auto("/dev/ramdisk0/directory/.\0\0");
@@ -398,49 +368,6 @@ void vfs_ls(char *dirname) {
   }
 }
 
-/*
-void vfs_cd(char *dirname, char *pwd, char *out) {
-  int offset = sprintf(out, "");
-  if (!strcmp(dirname, "."))
-    cur_dir = vfsdirs[cur_dir].dot;
-  else if (!strcmp(dirname, ".."))
-    cur_dir = vfsdirs[cur_dir].ddot;
-  else {
-    for (int i = vfsdirs[cur_dir].child; i != -1; i = vfsdirs[i].next) {
-      if (!strcmp(dirname, vfsdirs[i].name)) cur_dir = i, i = -1;
-    }
-  }
-  strcpy(pwd, vfsdirs[cur_dir].absolutely_name);
-  offset += sprintf(out + offset, "Current directory: %s\n", pwd);
-}
-
-void vfs_ls(char *dirname, char *pwd, char *out) {
-  int offset = sprintf(out, ""), tmp_dir = -1;
-  if (!strcmp(dirname, "."))
-    tmp_dir = vfsdirs[cur_dir].dot;
-  else if (!strcmp(dirname, ".."))
-    tmp_dir = vfsdirs[cur_dir].ddot;
-  else {
-    for (int i = vfsdirs[cur_dir].child; i != -1; i = vfsdirs[i].next) {
-      if (!strcmp(dirname, vfsdirs[i].name)) tmp_dir = i, i = -1;
-    }
-  }
-  if (tmp_dir == -1)
-    offset += sprintf(out + offset, "No such directory.\n");
-  else {
-    offset += sprintf(out + offset, "items           type     path\n");
-    for (int i = vfsdirs[tmp_dir].child; i != -1; i = vfsdirs[i].next) {
-      offset += sprintf(out + offset, "%s", vfsdirs[i].name);
-      for (int j = 0; j < 15 - strlen(vfsdirs[i].name); j++)
-        offset += sprintf(out + offset, "%c", ' ');
-      offset += sprintf(out + offset, " <DIR>    ");
-      offset += sprintf(out + offset, "%s", vfsdirs[i].absolutely_name);
-      offset += sprintf(out + offset, "\n");
-    }
-  }
-}
-*/
-
 MODULE_DEF(vfs){
     .init = vfs_init,
     .access = vfs_access,
@@ -460,105 +387,6 @@ MODULE_DEF(vfs){
 #ifdef _LANCELOIA_DEBUG_
 #undef _LANCELOIA_DEBUG_
 #endif
-
-/*
-typedef struct ext2 ext2_t;
-extern void ext2_init(fs_t *fs, const char *name, device_t *dev);
-
-extern id_t *ext2_lookup(fs_t *fs, const char *path, int flags);
-extern int ext2_open(id_t *id, int flags);
-extern int ext2_close(id_t *id);
-extern int ext2_mkdir(const char *dirname);
-extern int ext2_rmdir(const char *dirname);
-*/
-
-/*
-
-id_t *ext2_lookup_tmp(fs_t *fs, const char *path, int flags) { return NULL;
-} int ext2_open_tmp(id_t *id, int flags) { return 0; } int
-ext2_close_tmp(id_t *id) { return 0; } int ext2_mkdir_tmp(const char
-*dirname) { return 0; } int ext2_rmdir_tmp(const char *dirname) { return 0;
-}
-*/
-
-/*
-void vfs_device(int idx, char *name, device_t *dev, size_t size,
-                void (*init)(fs_t *, const char *, device_t *),
-                id_t *(*lookup)(fs_t *fs, const char *path, int flags),
-                int (*open)(id_t *id, int flags), int (*close)(id_t *id),
-                int (*mkdir)(const char *name),
-                int (*rmdir)(const char *name)) {
-  strcpy(filesys[idx].name, name);
-  // printf("name: %s", name);
-  filesys[idx].realfilesys = pmm->alloc(size);
-  filesys[idx].ops = &filesys_ops[idx];
-  filesys[idx].dev = dev;
-  filesys_ops[idx].init = init;
-  filesys_ops[idx].lookup = lookup;
-  filesys_ops[idx].open = open;
-  filesys_ops[idx].close = close;
-  filesys_ops[idx].mkdir = mkdir;
-  filesys_ops[idx].rmdir = rmdir;
-  filesys_ops[idx].init(&filesys[idx], name, dev);
-}
-*/
-
-/*
-int vfsdirs_alloc(const char *name, int parent, int type, int fs_idx) {
-  int idx = -1;
-  for (int i = 0; idx == -1 && i < MAX_DIRS; i++)
-    if (strlen(vfsdirs[i].name) == 0) idx = i;
-  if (idx == -1) assert(0);
-  strcpy(vfsdirs[idx].name, name);
-  strcpy(vfsdirs[idx].absolutely_name, vfsdirs[parent].absolutely_name);
-  strcat(vfsdirs[idx].absolutely_name, name);
-  strcat(vfsdirs[idx].absolutely_name, "/");
-  vfsdirs[idx].dot = idx;
-  vfsdirs[idx].ddot = parent;
-  vfsdirs[idx].next = -1;
-  vfsdirs[idx].child = -1;
-  vfsdirs[idx].type = type;
-  if (fs_idx >= 0)
-    vfsdirs[idx].realfilesys = filesys[fs_idx].realfilesys;
-  else
-    vfsdirs[idx].realfilesys = NULL;
-
-  if (vfsdirs[parent].child == -1)
-    vfsdirs[parent].child = idx;
-  else {
-    for (int i = vfsdirs[parent].child;; i = vfsdirs[i].next) {
-      if (vfsdirs[i].next == -1) {
-        vfsdirs[i].next = idx;
-        break;
-      }
-    }
-  }
-  return idx;
-}
-*/
-
-/*
-void vfs_init(){
-  // vfs_device(1, "tty1", dev_lookup("tty1"));
-  cur_dir = 0;
-  strcpy(vfsdirs[0].name, "/");
-  strcpy(vfsdirs[0].absolutely_name, "/");
-  vfsdirs[0].dot = vfsdirs[0].ddot = 0;
-  vfsdirs[0].next = vfsdirs[0].child = -1;
-  vfsdirs[0].type = VFS;
-  dev_dir = vfsdirs_alloc("dev", 0, VFS, -1);
-  proc_dir = vfsdirs_alloc("proc", 0, PROCFS, -1);
-  vfs_device(total_dev_cnt, "ext2fs", dev_lookup("ramdisk0"),
-sizeof(ext2_t), ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
-             ext2_mkdir_tmp, ext2_rmdir_tmp);
-  vfsdirs_alloc("ramdisk0", dev_dir, EXT2, total_dev_cnt++);
-
-  vfs_device(total_dev_cnt, "ext2fs", dev_lookup("ramdisk1"),
-sizeof(ext2_t), ext2_init, ext2_lookup_tmp, ext2_open_tmp, ext2_close_tmp,
-             ext2_mkdir_tmp, ext2_rmdir_tmp);
-  vfsdirs_alloc("ramdisk1", dev_dir, EXT2, total_dev_cnt++);
-}
-*/
 
 int vinode_add_link(int oidx, int nidx) {
   printf("\n add_link: %d <- %d \n", oidx, nidx);
