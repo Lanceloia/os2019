@@ -456,14 +456,13 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len) {
 void ext2_write2(ext2_t* ext2, int rinode_idx, char* buf, uint32_t len) {
   uint32_t i, j, k, flag, need_blocks = (len + (BLK_SIZE - 1)) / BLK_SIZE;
   int now_current_dir = ext2->current_dir;
-  int offset = sprintf(out, "");
   flag = ext2_reserch_file(ext2, path, TYPE_FILE, &i, &j, &k);
   printf("writeflag: %d\n", flag);
   if (flag) {
     // don't need open
     ext2_rd_ind(ext2, ext2->dir[k].inode);
     if ((ext2->ind.mode & 0x2) == 0) {
-      offset += sprintf(out + offset, "File can't be writed!\n");
+      printf("File can't be writed!\n");
       return;
     }
     if (ext2->ind.blocks <= need_blocks) {
@@ -487,12 +486,9 @@ void ext2_write2(ext2_t* ext2, int rinode_idx, char* buf, uint32_t len) {
     ext2->ind.size = len;
     ext2_wr_ind(ext2, ext2->dir[k].inode);
   } else {
-    printf("fuck");
-    offset += sprintf(out + offset, "File is no exists!\n");
+    printf("File is no exists!\n");
   }
   ext2->current_dir = now_current_dir;
-  // printf("len: %d", len);
-  // ext2_read(ext2, path, buf, len, out);
 }
 
 void ext2_mkdir(ext2_t* ext2, char* dirname, int mode) {
