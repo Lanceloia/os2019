@@ -133,6 +133,7 @@ static int lookup_auto(char *path) {
       strcpy(pnidx->name, buf.name);
       strcpy(pnidx->path, pidx->path);
       strcat(pnidx->path, buf.name);
+      if (buf.mode & TYPE_DIR) strcat(pnidx->path, "/");
       pnidx->dot = dot, pnidx->ddot = ddot;
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
@@ -308,11 +309,11 @@ int vfs_init() {
                              ext2_init, ext2_lookup, ext2_readdir);
 
   vinodes_mount(dev, "ramdisk0", &filesys[fs_r0], EXT2_ROOT);
-  /*
+
   lookup_auto("/dev/ramdisk0/directory\0\0");
   lookup_auto("/dev/ramdisk0/directory/\0\0");
   lookup_auto("/dev/ramdisk0/directory/.\0\0");
-  */
+
   return 0;
 }
 
