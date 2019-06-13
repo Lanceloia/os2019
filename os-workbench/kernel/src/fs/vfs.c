@@ -265,7 +265,7 @@ int vinodes_build_root() {
   return idx;
 }
 
-int vinodes_append_dir(int par, char *name, filesystem_t *fs) {
+int vinodes_append_dir(int par, char *name, int fy_type, filesystem_t *fs) {
   // input: vinode_idx("/"), "dev/"
   // modify: "/"
   int nidx = vinodes_alloc(), k = vinodes[par].child, dot = -1, ddot = -1;
@@ -281,7 +281,7 @@ int vinodes_append_dir(int par, char *name, filesystem_t *fs) {
   assert(dot != -1 && ddot != -1);
   vinodes[k].next = nidx;
   // printf("\n\n\n\n\ndot.child: %d\n", vinodes[dot].child);
-  build_general_null_dir(nidx, dot, ddot, name, fs);
+  build_general_null_dir(nidx, dot, ddot, name, fy_type, fs);
   // return new dir's idx
   return nidx;
 }
