@@ -99,7 +99,7 @@ static int lookup_auto(char *path) {
   int kth = 0, oidx = -1, nidx = -1, dot = -1, ddot = -1, ret;
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
-    printf("name == %s, oid == %d, kth == %d\n", buf.name, oidx, kth);
+    // printf("name == %s, oid == %d, kth == %d\n", buf.name, oidx, kth);
     if (!strcmp(buf.name, ".")) {
       assert(oidx == -1);
       assert(pidx->child == -1);
