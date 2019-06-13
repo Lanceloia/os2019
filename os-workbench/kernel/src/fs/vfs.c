@@ -66,7 +66,7 @@ static int lookup_cur(char *path, int *pflag, int cur, int *poffset) {
   }
 
   if (k == -1) {
-    assert(0);
+    // assert(0);
     *pflag = 0;
     return cur;
   }
