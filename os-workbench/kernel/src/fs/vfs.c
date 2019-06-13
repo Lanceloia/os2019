@@ -106,7 +106,7 @@ static int lookup_auto(char *path) {
       pidx->child = nidx;
 
       strcpy(pnidx->name, ".");
-      strcpy(pnidx->path, "(LINK)");
+      strcpy(pnidx->dpath, pidx->path);
       pnidx->dot = nidx, pnidx->ddot = -1;
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
@@ -121,7 +121,7 @@ static int lookup_auto(char *path) {
       poidx->ddot = nidx;
 
       strcpy(pnidx->name, "..");
-      strcpy(pnidx->path, "(LINK)");
+      strcpy(pnidx->path, pidx->path);
       pnidx->dot = oidx, pnidx->ddot = idx;
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
@@ -136,7 +136,7 @@ static int lookup_auto(char *path) {
       poidx->next = nidx;
 
       strcpy(pnidx->name, buf.name);
-      strcpy(pnidx->path, "(NOT SUPPORT NOW)");
+      strcpy(pnidx->path, pidx->path);
       pnidx->dot = dot, pnidx->ddot = ddot;
       pnidx->next = -1, pnidx->child = -1;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
