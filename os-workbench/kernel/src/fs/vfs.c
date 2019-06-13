@@ -72,16 +72,9 @@ static int lookup_cur(char *path, int *pflag, int cur) {
   }
 
   int next = k;
-  while (vinodes[next].mode & TYPE_LINK) {
-    // printf("\nthrough link: %d -> %d\n", next, vinodes[next].next_link);
-    next = vinodes[next].next_link;
-  }
+  while (vinodes[next].mode & TYPE_LINK) next = vinodes[next].next_link;
 
   char *newpath = path + (len + (path[len] == '/' ? 1 : 0));
-  /*
-  printf("oldpath: %s, newpath: %s, match_node_name: %s, next: %d\n", path,
-         newpath, vinodes[k].name, next);
-         */
   return lookup_cur(newpath, pflag, next);
 }
 
@@ -98,12 +91,12 @@ static int lookup_auto(char *path) {
                              : lookup_cur(path, &flag, VFS_ROOT);
 
   if (flag == 1) return idx;
-  // printf("file no found, but reach: [%d]\n", idx);
+
   vinode_t buf;
   int kth = 0, oidx = -1, nidx = -1, dot = -1, ddot = -1, ret;
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
-    // printf("name == %s, oid == %d, kth == %d\n", buf.name, oidx, kth);
+
     if (!strcmp(buf.name, ".")) {
       assert(oidx == -1);
       assert(pidx->child == -1);
@@ -123,16 +116,10 @@ static int lookup_auto(char *path) {
       assert(poidx->next == -1);
       poidx->next = nidx;
       poidx->ddot = nidx;
-      /*
-            printf("fuck me: \n\n\n\n%d %d %d %d %d %d %d [%d]", idx, oidx,
-         nidx, pidx->dot, pidx->ddot, pnidx->dot, pnidx->ddot,
-                   vinodes[pidx->dot].child);
-                   */
       strcpy(pnidx->name, "..");
       strcpy(pnidx->path, pidx->path);
       pnidx->dot = oidx, pnidx->ddot = -1;
-      pnidx->next = -1,
-      pnidx->child = vinodes[pidx->ddot].child;  // ddot's child is parent
+      pnidx->next = -1, pnidx->child = vinodes[pidx->ddot].child;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
       pnidx->mode = TYPE_LINK,
       vinode_add_link(vinodes[pidx->dot].child, nidx, 3);
@@ -144,7 +131,6 @@ static int lookup_auto(char *path) {
       assert(dot != -1 && ddot != -1);
       assert(poidx->next == -1);
       poidx->next = nidx;
-
       strcpy(pnidx->name, buf.name);
       strcpy(pnidx->path, pidx->path);
       strcat(pnidx->path, buf.name);
@@ -157,11 +143,6 @@ static int lookup_auto(char *path) {
     }
 
     oidx = nidx;
-    /*
-        printf("newidx: %d, rinode_idx: %d, name %s, child: %d, next: %d\n",
-       nidx, vinodes[nidx].rinode_idx, vinodes[nidx].name, vinodes[nidx].child,
-               vinodes[nidx].next);
-    */
   }
   return lookup_auto(path);
 }
@@ -366,11 +347,12 @@ void vfs_ls(char *dirname) {
     lookup_auto(dirname);
   }
 
-  printf("       index       name                  path\n");
-  printf("cur:   %4d        %12s          %s\n\n", idx, vinodes[idx].name,
+  printf("---    index       name                  path     ---\n");
+  printf("       %4d        %12s          %s\n", idx, vinodes[idx].name,
          vinodes[idx].path);
+  printf("---                                               ---\n");
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {
-    printf("child: %4d        %12s          %s\n", k, vinodes[k].name,
+    printf("      %4d        %12s          %s\n", k, vinodes[k].name,
            vinodes[k].path);
   }
 }

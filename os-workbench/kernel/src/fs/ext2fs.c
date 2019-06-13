@@ -20,11 +20,6 @@ void ext2_mkdir(ext2_t*, char*, int);
 void ext2_read(ext2_t*, char*, char*, uint32_t, char*);
 void ext2_write(ext2_t*, char*, char*, uint32_t, char*);
 
-/*
-id_t* ext2_lookup(fs_t* fs, const char* path, int flags) { return NULL; };
-int ext2_close(id_t* id) { return 0; }
-*/
-
 static int first_item_len(const char* path) {
   int ret = 0;
   for (; path[ret] != '\0' && path[ret] != '/';) ret++;
