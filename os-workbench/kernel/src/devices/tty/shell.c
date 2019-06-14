@@ -118,15 +118,11 @@ static void catto_do(device_t *tty, char *dirname, char *pwd) {
   int fd = vfs_open(absolutely_path, TYPE_FILE | WR_ABLE);
   while (1) {
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
-
-    // printf("fuck? %s, %d", readbuf, nread);
     if (readbuf[nread - 2] == '~') {
-      readbuf[nread - 2] = '\0';
       vfs_write(fd, readbuf, nread - 2);
       break;
     } else {
-      readbuf[nread - 1] = '\0';
-      vfs_write(fd, readbuf, nread - 1);
+      vfs_write(fd, readbuf, nread);
     }
   }
 }
