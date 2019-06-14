@@ -425,6 +425,7 @@ ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
 }
 
 ssize_t vfs_write(int fd, char *buf, size_t nbyte) {
+  if (fd < 0) return 0;
   assert(nbyte <= 1024);
   extern ssize_t ext2_write2(ext2_t * ext2, int rinode_idx, uint64_t offset,
                              char *bug, uint32_t len);
