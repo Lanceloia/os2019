@@ -371,7 +371,7 @@ ssize_t ext2_write2(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
   if (ret != len) {
     printf("ret == %d, len == %d\n", ret, len);
   }
-  ext2->ind.size = len;
+  ext2->ind.size = offset + len;
   ext2_wr_ind(ext2, rinode_idx);
 
   return ret;
