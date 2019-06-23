@@ -11,7 +11,7 @@ uint32_t ext2_alloc_inode(ext2_t* ext2);
 uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int mode,
                            uint32_t* inode_num, uint32_t* block_num,
                            uint32_t* dir_num);
-void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, int mode);
+void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t par, int mode);
 void ext2_remove_block(ext2_t* ext2, uint32_t del_num);
 int ext2_search_file(ext2_t* ext2, uint32_t idx);
 
