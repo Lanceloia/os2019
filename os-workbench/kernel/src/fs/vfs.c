@@ -124,7 +124,7 @@ static int lookup_auto(char *path) {
       pnidx->dot = -1, pnidx->ddot = -1;  // will be cover
       pnidx->next = -1, pnidx->child = idx;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
-      pnidx->mode = TYPE_LINK, vinode_add_link(idx, nidx, 4);
+      pnidx->mode = TYPE_LINK, add_link(idx, nidx, 4);
 
       dot = nidx;
     } else if (!strcmp(buf.name, "..")) {
@@ -136,8 +136,7 @@ static int lookup_auto(char *path) {
       pnidx->dot = oidx, pnidx->ddot = -1;
       pnidx->next = -1, pnidx->child = vinodes[pidx->ddot].child;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
-      pnidx->mode = TYPE_LINK,
-      vinode_add_link(vinodes[pidx->dot].child, nidx, 3);
+      pnidx->mode = TYPE_LINK, add_link(vinodes[pidx->dot].child, nidx, 3);
 
       ddot = nidx;
     } else {
@@ -210,7 +209,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     pdot->dot = -1, pdot->ddot = ddot;                          \
     pdot->next = ddot, pdot->child = CUR;                       \
     pdot->prev_link = pdot->next_link = dot, pdot->linkcnt = 1; \
-    pdot->mode = TYPE_LINK, vinode_add_link(CUR, dot, 1);       \
+    pdot->mode = TYPE_LINK, add_link(CUR, dot, 1);              \
     pdot->fs_type = FSTYPE;                                     \
     pdot->fs = FS;                                              \
   } while (0)
@@ -222,7 +221,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     pddot->dot = dot, pddot->ddot = -1;                             \
     pddot->next = -1, pddot->child = PARENT;                        \
     pddot->prev_link = pddot->next_link = ddot, pddot->linkcnt = 1; \
-    pddot->mode = TYPE_LINK, vinode_add_link(PARENT, ddot, 2);      \
+    pddot->mode = TYPE_LINK, add_link(PARENT, ddot, 2);             \
     pddot->fs_type = FSTYPE;                                        \
     pddot->fs = FS;                                                 \
   } while (0)
@@ -518,12 +517,10 @@ MODULE_DEF(vfs){
 #undef _LANCELOIA_DEBUG_
 #endif
 
-int vinode_add_link(int oidx, int nidx, int flag) {
-  // printf("\n add_link: %d <- %d : %d\n", oidx, nidx, flag);
+void add_link(int oidx, int nidx, int flag) {
   int n_link = vinodes[oidx].next_link;
   vinodes[nidx].next_link = n_link;
   vinodes[nidx].prev_link = oidx;
   vinodes[oidx].next_link = nidx;
   vinodes[n_link].prev_link = nidx;
-  return 0;
 }
