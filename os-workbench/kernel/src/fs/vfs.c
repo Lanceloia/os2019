@@ -388,7 +388,10 @@ int vfs_mount(const char *path, filesystem_t *fs) { return 0; }
 
 int vfs_unmount(const char *path) { return 0; }
 
-int vfs_mkdir(const char *path) { return 0; }
+int vfs_mkdir(const char *path) {
+  assert(0);
+  return 0;
+}
 
 int vfs_rmdir(const char *path) { return 0; }
 
