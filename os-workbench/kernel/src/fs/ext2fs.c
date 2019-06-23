@@ -384,7 +384,7 @@ void ext2_mkdir(ext2_t* ext2, int rinode_idx, char* dirname) {
   ext2_rd_ind(ext2, rinode_idx);
 
   assert(ext2->ind.size < 4096);
-
+  int idx;
   if (ext2->ind.size != ext2->ind.blocks * BLK_SIZE) {
     int i, j;
     for (i = 0; i < ext2->ind.blocks; i++) {
@@ -393,7 +393,7 @@ void ext2_mkdir(ext2_t* ext2, int rinode_idx, char* dirname) {
         if (ext2->dir[j].inode == 0) goto End;
     }
   End:
-    int idx = ext2->dir[j].inode = ext2_alloc_inode(ext2);
+    idx = ext2->dir[j].inode = ext2_alloc_inode(ext2);
     ext2->dir[j].mode = TYPE_DIR;
     ext2->dir[j].name_len = strlen(dirname);
     strcpy(ext2->dir[j].name, dirname);
