@@ -135,6 +135,7 @@ static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+/*
 extern void ext2_rmdir(ext2_t *ext2, char *dirname, char *out);
 static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
   int type = vfs_identify_fs(pwd);
@@ -148,6 +149,7 @@ static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
   };
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
+*/
 
 static void default_do(device_t *tty) {
   sprintf(bigbuf, "unexpected command\n");
