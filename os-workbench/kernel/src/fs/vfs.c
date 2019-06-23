@@ -87,11 +87,9 @@ static int lookup_auto(char *path) {
   int len = strlen(path);
   if (path[len - 1] == '/') path[len - 1] = '\0';
 
-  // printf("FUCK1\n\n\n\n\n\n\n");
   int flag, offset = 1;
   int idx = (path[0] == '/') ? lookup_root(path, &flag, &offset)
                              : lookup_cur(path, &flag, VFS_ROOT, &offset);
-  // printf("FUCK2\n\n\n\n\n\n\n");
   if (flag == 1) return idx;
 
   vinode_t buf;
@@ -101,15 +99,9 @@ static int lookup_auto(char *path) {
   int flen = first_item_len(path + offset);
   // printf("%s, %d\n", path + offset, flen);
 
-  if (pidx->fs == NULL) {
-    printf("uncapable filesystem!\n");
-    return -1;
-  }
+  if (pidx->fs == NULL) return -1;
 
-  if (pidx->child != -1) {
-    printf("directory is read, file is not exists!\n");
-    return -1;
-  }
+  if (pidx->child != -1) return -1;
 
   while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
@@ -272,7 +264,7 @@ static int append_dir(int par, char *name, int fy_type, filesystem_t *fs) {
     if (!strcmp(vinodes[k].name, ".")) {
       dot = k;
       ddot = vinodes[k].next;
-      printf("dot: %d, ddot: %d\n", dot, ddot);
+      // printf("dot: %d, ddot: %d\n", dot, ddot);
     }
   }
   assert(dot != -1 && ddot != -1);
@@ -357,22 +349,22 @@ int vfs_init() {
 
   // lookup_auto("/dev/ramdisk0/directory\0\0");
   // lookup_auto("/dev/ramdisk0/directory/\0\0");
-  lookup_auto("/dev/asaddasd\0\0");
+  // lookup_auto("/dev/asaddasd\0\0");
 
   return 0;
 }
 
-char tmp_path[1024];
+char tmppath[1024];
 
 int vfs_access(const char *path, int mode) {
-  strcpy(tmp_path, path);
-  int idx = lookup_auto(tmp_path);
+  strcpy(tmppath, path);
+  int idx = lookup_auto(tmppath);
   return vinodes[idx].mode & mode;
 }
 
 char *vfs_getpath(const char *path) {
-  strcpy(tmp_path, path);
-  int idx = lookup_auto(tmp_path);
+  strcpy(tmppath, path);
+  int idx = lookup_auto(tmppath);
   return vinodes[idx].path;
 }
 
@@ -396,25 +388,25 @@ int vfs_mkdir(const char *path) {
     return 1;
   }
 
-  strcpy(tmp_path, path);
-  tmp_path[offset] = '\0';
-  printf("path: %s, name: %s\n", tmp_path, tmp_path + offset + 1);
+  strcpy(tmppath, path);
+  tmppath[offset] = '\0';
+  // printf("path: %s, name: %s\n", tmppath, tmppath + offset + 1);
   extern int ext2_mkdir(ext2_t * ext2, int idx, char *name);
 
-  int idx = lookup_auto(tmp_path);
+  int idx = lookup_auto(tmppath);
   int rinode_idx = -1;
-  printf("find idx: %d\n", idx);
+  // printf("find idx: %d\n", idx);
   switch (pidx->fs_type) {
     case EXT2FS:
       rinode_idx =
-          ext2_mkdir(pidx->fs->rfs, pidx->rinode_idx, tmp_path + offset + 1);
+          ext2_mkdir(pidx->fs->rfs, pidx->rinode_idx, tmppath + offset + 1);
       break;
 
     default:
       assert(0);
       break;
   }
-  int nidx = append_dir(idx, tmp_path + offset + 1, pidx->fs_type, pidx->fs);
+  int nidx = append_dir(idx, tmppath + offset + 1, pidx->fs_type, pidx->fs);
   prepare_dir(nidx, idx, pidx->fs_type, pidx->fs);
   pnidx->rinode_idx = rinode_idx;
   return 0;
@@ -429,7 +421,7 @@ int vfs_unlink(const char *path) { return 0; }
 int vfs_open(const char *path, int mode) {
   if (!vfs_access(path, mode)) return -1;
 
-  int idx = lookup_auto(tmp_path);
+  int idx = lookup_auto(tmppath);
   return vinode_open(idx, mode);
 }
 
