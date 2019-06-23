@@ -405,15 +405,15 @@ int vfs_mkdir(const char *path) {
     return 1;
   }
 
-  strncmp(tmp_path, path, offset);
-  printf("path: %s, name: %s\n", tmp_path, path + offset + 1);
-
+  strcpy(tmp_path, path);
+  tmp_path[offset] = 0;
+  printf("path: %s, name: %s\n", tmp_path, tmp_path + offset + 1);
   extern void ext2_mkdir(ext2_t * ext2, int idx, char *name);
 
   int idx = lookup_auto(tmp_path);
   switch (pidx->fs_type) {
     case EXT2FS:
-      ext2_mkdir(pidx->fs->rfs, idx, path + offset + 1);
+      ext2_mkdir(pidx->fs->rfs, idx, tmp_path + offset + 1);
       break;
 
     default:
