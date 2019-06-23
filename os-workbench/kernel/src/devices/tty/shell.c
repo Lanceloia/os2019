@@ -126,21 +126,12 @@ static void catto_do(device_t *tty, char *dirname, char *pwd) {
     }
   }
 }
-/*
-extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
+
+// extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
-  int type = vfs_identify_fs(pwd);
-  int type2 = TYPE_DIR;
-  for (int i = 0; i < strlen(dirname); i++)
-    if (dirname[i] == '.') type2 = TYPE_FILE;
-  switch (type & ~INTERFACE) {
-    case 2:  // ext2
-      ext2_mkdir(vfs_get_real_fs(pwd), dirname, type2, bigbuf);
-      break;
-    default:
-      sprintf(bigbuf, "can't mkdir here.\n", bigbuf);
-      break;
-  };
+  build_absolutely_path(dirname, pwd);
+  int ret = vfs_mkdir(absolutely_path);
+  assert(ret == 0);  // success
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
@@ -158,8 +149,6 @@ static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
-
-
 static void default_do(device_t *tty) {
   sprintf(bigbuf, "unexpected command\n");
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
@@ -167,12 +156,12 @@ static void default_do(device_t *tty) {
 
 extern int vfsdirs_alloc(const char *name, int parent, int type, int fs_idx);
 
-*/
+* /
 
-// extern int dev_dir;
-// extern int total_dev_cnt;
+    // extern int dev_dir;
+    // extern int total_dev_cnt;
 
-void shell_task(void *name) {
+    void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
   // vfsdirs_alloc(name, dev_dir, TTY, total_dev_cnt++);
   char pwd[256] = "/";
@@ -203,9 +192,9 @@ void shell_task(void *name) {
       catto_do(tty, readbuf + 6, pwd);
     else if (!strncmp(readbuf, "cat ", 4))
       cat_do(tty, readbuf + 4, pwd);
-    /*
     else if (!strncmp(readbuf, "mkdir ", 6))
       mkdir_do(tty, readbuf + 6, pwd);
+    /*
     else if (!strncmp(readbuf, "rmdir ", 6))
       rmdir_do(tty, readbuf + 6, pwd);
       */
