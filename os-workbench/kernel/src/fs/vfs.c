@@ -242,7 +242,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     vinodes[IDX].fs = FS;                                        \
   } while (0)
 
-int vinodes_build_root() {
+static int build_root() {
   int idx = vinodes_alloc();
   int dot = vinodes_alloc();
   int ddot = vinodes_alloc();
@@ -265,7 +265,7 @@ int vinodes_build_root() {
   return idx;
 }
 
-int vinodes_append_dir(int par, char *name, int fy_type, filesystem_t *fs) {
+static int append_dir(int par, char *name, int fy_type, filesystem_t *fs) {
   // input: vinode_idx("/"), "dev/"
   // modify: "/"
   int nidx = vinodes_alloc(), k = vinodes[par].child, dot = -1, ddot = -1;
@@ -286,7 +286,7 @@ int vinodes_append_dir(int par, char *name, int fy_type, filesystem_t *fs) {
   return nidx;
 }
 
-int vinodes_create_dir(int idx, int par, int fs_type, filesystem_t *fs) {
+static int prepare_dir(int idx, int par, int fs_type, filesystem_t *fs) {
   // input: idx = vinode_idx("/dev/"), pat = vinode_idx("/")
   // modify: "/dev/"
   int dot = vinodes_alloc();
@@ -303,7 +303,7 @@ int vinodes_create_dir(int idx, int par, int fs_type, filesystem_t *fs) {
 
 int vinodes_mount(int par, char *name, int fs_type, filesystem_t *fs) {
   // mount /dev/ramdisk0: par = vinode_idx("/dev"), name = "ramdisk0"
-  int ret = vinodes_append_dir(par, name, fs_type, fs);
+  int ret = append_dir(par, name, fs_type, fs);
   switch (fs_type) {
     case VFS:
       vinodes[ret].rinode_idx = VFS_ROOT;
@@ -352,11 +352,11 @@ int fuck() {
 }
 
 int vfs_init() {
-  int root = vinodes_build_root();
-  int dev = vinodes_append_dir(root, "dev", VFS, NULL);
+  int root = build_root();
+  int dev = append_dir(root, "dev", VFS, NULL);
 
   // printf("fuck");
-  vinodes_create_dir(dev, root, VFS, NULL);
+  prepare_dir(dev, root, VFS, NULL);
 
   int fs_r0 = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
                              ext2_init, ext2_lookup, ext2_readdir);
@@ -422,9 +422,8 @@ int vfs_mkdir(const char *path) {
       assert(0);
       break;
   }
-  int nidx =
-      vinodes_append_dir(idx, tmp_path + offset + 1, pidx->fs_type, pidx->fs);
-  vinodes_create_dir(nidx, idx, pidx->fs_type, pidx->fs);
+  int nidx = append_dir(idx, tmp_path + offset + 1, pidx->fs_type, pidx->fs);
+  prepare_dir(nidx, idx, pidx->fs_type, pidx->fs);
   pnidx->rinode_idx = rinode_idx;
   return 0;
 }
