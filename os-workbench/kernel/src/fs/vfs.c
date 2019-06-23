@@ -384,24 +384,43 @@ char *vfs_getpath(const char *path) {
   return vinodes[idx].path;
 }
 
-char *vfs_getname(const char *path) {
+int *vfs_help_getpathlen(const char *path) {
   strcpy(tmp_path, path);
   int len = strlen(path);
-  if (path[len - 1] == '/') {
-    printf("Null name!\n");
-    return NULL;
-  }
-
-  for (len = len - 1; len >= 0; len--)
-    if (path[len] == '/') return tmp_path + len + 1;
-  return tmp_path;
+  for (int i = len - 1; i >= 0; i--)
+    if (path[len] == '/') return i;
+  return 0;
 }
 
 int vfs_mount(const char *path, filesystem_t *fs) { return 0; }
 
 int vfs_unmount(const char *path) { return 0; }
 
-int vfs_mkdir(const char *path) { return 0; }
+int vfs_mkdir(const char *path) {
+  int len = strlen(path);
+  int offset = vfs_help_getpathlen(path);
+
+  if (len == offset) {
+    printf("Incorrect pathname! \n");
+    return 1;
+  }
+
+  strncmp(tmp_path, path, offset);
+  printf("path: %s, name: %s\n", tmp_path, path + offset + 1);
+
+  extern void ext2_mkdir(ext2_t * ext2, int idx, char *name);
+
+  int idx = lookup_auto(tmp_path);
+  switch (pidx->fs_type) {
+    case EXT2FS:
+      ext2_mkdir(pidx->fs->rfs, idx, path + offset + 1);
+      break;
+
+    default:
+      break;
+  }
+  return 0;
+}
 
 int vfs_rmdir(const char *path) { return 0; }
 
