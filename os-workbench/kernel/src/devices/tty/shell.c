@@ -76,37 +76,37 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
 }
 */
 
-char absolutely_path[256];
+char abs_path[256];
 
-static void build_absolutely_path(char *dirname, char *pwd) {
+static void build_abs_path(char *dirname, char *pwd) {
   if (dirname[0] != '/') {
-    strcpy(absolutely_path, pwd);
-    strcat(absolutely_path, dirname);
+    strcpy(abs_path, pwd);
+    strcat(abs_path, dirname);
   } else {
-    strcpy(absolutely_path, dirname);
+    strcpy(abs_path, dirname);
   }
 }
 
 static void ls_do(device_t *tty, char *dirname, char *pwd) {
   extern void vfs_ls(char *path);
-  build_absolutely_path(dirname, pwd);
-  vfs_ls(absolutely_path);
+  build_abs_path(dirname, pwd);
+  vfs_ls(abs_path);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
   extern char *vfs_getpath(const char *dirname);
-  build_absolutely_path(dirname, pwd);
-  if (vfs_access(absolutely_path, TYPE_DIR)) {
-    strcpy(pwd, vfs_getpath(absolutely_path));
+  build_abs_path(dirname, pwd);
+  if (vfs_access(abs_path, TYPE_DIR)) {
+    strcpy(pwd, vfs_getpath(abs_path));
   }
   printf("Current: %s\n", pwd);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
 static void cat_do(device_t *tty, char *dirname, char *pwd) {
-  build_absolutely_path(dirname, pwd);
-  int fd = vfs_open(absolutely_path, TYPE_FILE | RD_ABLE);
+  build_abs_path(dirname, pwd);
+  int fd = vfs_open(abs_path, TYPE_FILE | RD_ABLE);
   while (vfs_read(fd, bigbuf, 1024))
     tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
   bigbuf[0] = '\n', bigbuf[1] = '\0';
@@ -114,8 +114,8 @@ static void cat_do(device_t *tty, char *dirname, char *pwd) {
 }
 
 static void catto_do(device_t *tty, char *dirname, char *pwd) {
-  build_absolutely_path(dirname, pwd);
-  int fd = vfs_open(absolutely_path, TYPE_FILE | WR_ABLE);
+  build_abs_path(dirname, pwd);
+  int fd = vfs_open(abs_path, TYPE_FILE | WR_ABLE);
   while (1) {
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
     if (readbuf[nread - 2] == '~') {
@@ -129,9 +129,9 @@ static void catto_do(device_t *tty, char *dirname, char *pwd) {
 
 // extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
-  build_absolutely_path(dirname, pwd);
-  int ret = vfs_mkdir(absolutely_path);
-  assert(ret == 0);  // success
+  build_abs_path(dirname, pwd);
+  if (vfs_access(abs_path, TYPE_DIR)) printf("Dir existed! \n");
+  if (vfs_mkdir(abs_path)) printf("Cannot mkdir here! \n");
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 

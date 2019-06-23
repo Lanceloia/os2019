@@ -370,28 +370,37 @@ int vfs_init() {
   return 0;
 }
 
-char _path[1024];
+char tmp_path[1024];
 
 int vfs_access(const char *path, int mode) {
-  strcpy(_path, path);
-  int idx = lookup_auto(_path);
+  strcpy(tmp_path, path);
+  int idx = lookup_auto(tmp_path);
   return vinodes[idx].mode & mode;
 }
 
-char *vfs_getpath(const char *path, int mode) {
-  strcpy(_path, path);
-  int idx = lookup_auto(_path);
+char *vfs_getpath(const char *path) {
+  strcpy(tmp_path, path);
+  int idx = lookup_auto(tmp_path);
   return vinodes[idx].path;
+}
+
+char *vfs_getname(const char *path) {
+  int len = strlen(path);
+  if (path[len - 1] == '/') {
+    printf("Null name!\n");
+    return NULL;
+  }
+
+  for (len = len - 1; len >= 0; len--;)
+    if (path[len] == '/') return path + len + 1;
+  return path;
 }
 
 int vfs_mount(const char *path, filesystem_t *fs) { return 0; }
 
 int vfs_unmount(const char *path) { return 0; }
 
-int vfs_mkdir(const char *path) {
-  assert(0);
-  return 0;
-}
+int vfs_mkdir(const char *path) { return 0; }
 
 int vfs_rmdir(const char *path) { return 0; }
 
@@ -402,7 +411,7 @@ int vfs_unlink(const char *path) { return 0; }
 int vfs_open(const char *path, int mode) {
   if (!vfs_access(path, mode)) return -1;
 
-  int idx = lookup_auto(_path);
+  int idx = lookup_auto(tmp_path);
   return vinode_open(idx, mode);
 }
 
