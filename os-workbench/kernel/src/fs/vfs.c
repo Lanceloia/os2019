@@ -287,7 +287,7 @@ int vinodes_append_dir(int par, char *name, int fy_type, filesystem_t *fs) {
 }
 
 int vinodes_create_dir(int idx, int par, int fs_type, filesystem_t *fs) {
-  // input: vinode_idx("/dev/"), vinode_idx("/")
+  // input: idx = vinode_idx("/dev/"), pat = vinode_idx("/")
   // modify: "/dev/"
   int dot = vinodes_alloc();
   int ddot = vinodes_alloc();
@@ -405,20 +405,26 @@ int vfs_mkdir(const char *path) {
   }
 
   strcpy(tmp_path, path);
-  tmp_path[offset] = 0;
+  tmp_path[offset] = '\0';
   printf("path: %s, name: %s\n", tmp_path, tmp_path + offset + 1);
-  extern void ext2_mkdir(ext2_t * ext2, int idx, char *name);
+  extern int ext2_mkdir(ext2_t * ext2, int idx, char *name);
 
   int idx = lookup_auto(tmp_path);
+  int rinode_idx = -1;
   printf("find idx: %d\n", idx);
   switch (pidx->fs_type) {
     case EXT2FS:
-      ext2_mkdir(pidx->fs->rfs, pidx->rinode_idx, tmp_path + offset + 1);
+      pnidx->rinode_idx =
+          ext2_mkdir(pidx->fs->rfs, pidx->rinode_idx, tmp_path + offset + 1);
       break;
 
     default:
+      assert(0);
       break;
   }
+  int nidx =
+      vinodes_append_dir(idx, tmp_path + offset + 1, pidx->fs_type, pidx->fs);
+  vinodes_create_dir(nidx, idx, pidx->fs_type, pidx->fs);
   return 0;
 }
 

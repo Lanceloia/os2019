@@ -383,7 +383,7 @@ ssize_t ext2_write(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
   return ret;
 }
 
-void ext2_mkdir(ext2_t* ext2, int rinode_idx, char* dirname) {
+int ext2_mkdir(ext2_t* ext2, int rinode_idx, char* dirname) {
   ext2_rd_ind(ext2, rinode_idx);
 
   assert(ext2->ind.size < 4096);
@@ -414,6 +414,7 @@ void ext2_mkdir(ext2_t* ext2, int rinode_idx, char* dirname) {
   ext2->ind.size += DIR_SIZE;  // origin 16
   ext2_wr_ind(ext2, rinode_idx);
   ext2_ind_prepare(ext2, idx, rinode_idx, TYPE_DIR);
+  return idx;
 }
 
 /*
