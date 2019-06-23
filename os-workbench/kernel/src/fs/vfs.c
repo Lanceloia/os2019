@@ -384,7 +384,7 @@ char *vfs_getpath(const char *path) {
   return vinodes[idx].path;
 }
 
-int *vfs_help_getpathlen(const char *path) {
+int vfs_help_getpathlen(const char *path) {
   strcpy(tmp_path, path);
   int len = strlen(path);
   for (int i = len - 1; i >= 0; i--)
