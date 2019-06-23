@@ -50,7 +50,7 @@ ssize_t vinode_write(int fd, char *buf, ssize_t size);
 off_t vinode_lseek(int fd, off_t offset, int whence);
 
 // vinode operation
-int vinode_add_link(int old_vinode_idx, int new_vinode_idx, int fuck);
+void add_link(int old_vinode_idx, int new_vinode_idx, int fuck);
 int vinode_rm_link(int vinode_idx);
 int vinode_mkdir(int vinode, const char *name);
 int vinode_rmdir(int vinode, const char *name);
