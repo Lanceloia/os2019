@@ -103,7 +103,7 @@ static int lookup_auto(char *path) {
 
   if (pidx->child != -1) return -1;
 
-  while ((ret = pidx->fs->readdir(pidx->fs, pidx->rinode_idx, ++kth, &buf))) {
+  while ((ret = pidx->fs->readdir(pidx->fs, pidx->ridx, ++kth, &buf))) {
     if ((nidx = vinodes_alloc()) == -1) assert(0);
 
     if (!strcmp(buf.name, ".")) {
@@ -145,7 +145,7 @@ static int lookup_auto(char *path) {
       pnidx->mode = buf.mode;
     }
 
-    pnidx->rinode_idx = buf.rinode_idx;
+    pnidx->ridx = buf.ridx;
     pnidx->fs_type = pidx->fs_type;
     pnidx->fs = pidx->fs;
     oidx = nidx;
@@ -241,7 +241,7 @@ static int build_root() {
 
   strcpy(pidx->name, "/");
   strcpy(pidx->path, "/");
-  pidx->rinode_idx = -1;
+  pidx->ridx = -1;
   pidx->dot = -1, pidx->ddot = -1;
   pidx->next = -1, pidx->child = dot;
   pidx->prev_link = pidx->next_link = idx;
@@ -290,10 +290,10 @@ int vinodes_mount(int par, char *name, int fs_type, filesystem_t *fs) {
   int ret = append_dir(par, name, fs_type, fs);
   switch (fs_type) {
     case VFS:
-      vinodes[ret].rinode_idx = VFS_ROOT;
+      vinodes[ret].ridx = VFS_ROOT;
       break;
     case EXT2FS:
-      vinodes[ret].rinode_idx = EXT2_ROOT;
+      vinodes[ret].ridx = EXT2_ROOT;
       break;
     default:
       assert(0);
@@ -379,6 +379,8 @@ int vfs_mount(const char *path, filesystem_t *fs) { return 0; }
 
 int vfs_unmount(const char *path) { return 0; }
 
+extern int ext2_mkdir(ext2_t *, int, char *);
+
 int vfs_mkdir(const char *path) {
   int len = strlen(path);
   int offset = vfs_help_getpathlen(path);
@@ -390,25 +392,21 @@ int vfs_mkdir(const char *path) {
 
   strcpy(tmppath, path);
   tmppath[offset] = '\0';
-  // printf("path: %s, name: %s\n", tmppath, tmppath + offset + 1);
-  extern int ext2_mkdir(ext2_t * ext2, int idx, char *name);
 
   int idx = lookup_auto(tmppath);
-  int rinode_idx = -1;
-  // printf("find idx: %d\n", idx);
+  int ridx = -1, nidx = -1;
   switch (pidx->fs_type) {
     case EXT2FS:
-      rinode_idx =
-          ext2_mkdir(pidx->fs->rfs, pidx->rinode_idx, tmppath + offset + 1);
+      ridx = ext2_mkdir(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1);
       break;
 
     default:
       assert(0);
       break;
   }
-  int nidx = append_dir(idx, tmppath + offset + 1, pidx->fs_type, pidx->fs);
+  nidx = append_dir(idx, tmppath + offset + 1, pidx->fs_type, pidx->fs);
   prepare_dir(nidx, idx, pidx->fs_type, pidx->fs);
-  pnidx->rinode_idx = rinode_idx;
+  pnidx->ridx = ridx;
   return 0;
 }
 
@@ -425,18 +423,19 @@ int vfs_open(const char *path, int mode) {
   return vinode_open(idx, mode);
 }
 
-#define pfdind (&vinodes[files[fd].vinode_idx])
+#define pfd (&vinodes[files[fd].vinode_idx])
+
+extern ssize_t ext2_read(ext2_t *, int, uint64_t, char *, uint32_t);
+extern ssize_t ext2_write(ext2_t *, int, uint64_t, char *, uint32_t);
 
 ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
   if (fd < 0) return 0;
   assert(nbyte <= 1024);
-  extern ssize_t ext2_read(ext2_t * ext2, int rinode_idx, uint64_t offset,
-                           char *buf, uint32_t len);
+
   int ret = 0;
-  switch (pfdind->fs_type) {
+  switch (pfd->fs_type) {
     case EXT2FS:
-      ret = ext2_read(pfdind->fs->rfs, pfdind->rinode_idx, files[fd].offset,
-                      buf, nbyte);
+      ret = ext2_read(pfd->fs->rfs, pfd->ridx, files[fd].offset, buf, nbyte);
       break;
     default:
       assert(0);
@@ -449,13 +448,10 @@ ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
 ssize_t vfs_write(int fd, char *buf, size_t nbyte) {
   if (fd < 0) return 0;
   assert(nbyte <= 1024);
-  extern ssize_t ext2_write(ext2_t * ext2, int rinode_idx, uint64_t offset,
-                            char *bug, uint32_t len);
   int ret = 0;
-  switch (pfdind->fs_type) {
+  switch (pfd->fs_type) {
     case EXT2FS:
-      ret = ext2_write(pfdind->fs->rfs, pfdind->rinode_idx, files[fd].offset,
-                       buf, nbyte);
+      ret = ext2_write(pfd->fs->rfs, pfd->ridx, files[fd].offset, buf, nbyte);
       break;
     default:
       assert(0);

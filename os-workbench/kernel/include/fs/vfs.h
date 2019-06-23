@@ -37,7 +37,7 @@ typedef struct vinode {
 
   int mode;          // TYPE, RWX_MODE
   int linkcnt;       // link cnt
-  int rinode_idx;    // read inode idx
+  int ridx;          // read inode idx
   int fs_type;       // filesystem type
   filesystem_t *fs;  // filesystem pointer
 
