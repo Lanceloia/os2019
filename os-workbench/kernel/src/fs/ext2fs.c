@@ -410,7 +410,7 @@ void ext2_mkdir(ext2_t* ext2, int rinode_idx, char* dirname) {
   }
   ext2->ind.size += DIR_SIZE;  // origin 16
   ext2_wr_ind(ext2, rinode_idx);
-  ext2_dir_prepare(ext2, idx, rinode_idx, mode);
+  ext2_dir_prepare(ext2, idx, rinode_idx, TYPE_DIR);
 }
 
 /*
