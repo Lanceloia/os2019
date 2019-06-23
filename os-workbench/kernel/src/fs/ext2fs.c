@@ -93,19 +93,19 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 }
 
 int ext2_lookup(filesystem_t* fs, const char* path, int mode) { return 0; }
-int ext2_readdir(filesystem_t* fs, int rinode_idx, int kth, vinode_t* buf) {
+int ext2_readdir(filesystem_t* fs, int ridx, int kth, vinode_t* buf) {
   // printf("fuck: kth == %d\n", kth);
   ext2_t* ext2 = (ext2_t*)fs->rfs;
   int cnt = 0;
-  ext2_rd_ind(ext2, rinode_idx);
-  // printf("rinode: %d, kth: %d\n", rinode_idx, kth);
+  ext2_rd_ind(ext2, ridx);
+  // printf("rinode: %d, kth: %d\n", ridx, kth);
   for (int i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
     for (int k = 0; k < DIR_AMUT; k++) {
       if (ext2->dir[k].inode)
         if (++cnt == kth) {
           strcpy(buf->name, ext2->dir[k].name);
-          buf->rinode_idx = ext2->dir[k].inode;
+          buf->ridx = ext2->dir[k].inode;
           buf->mode = ext2->dir[k].mode;
           // printf("name: %s", buf->name);
           /*
@@ -310,12 +310,12 @@ void ext2_cd(ext2_t* ext2, char* dirname) {
     printf("No directory: %s\n", dirname);
 }
 
-ssize_t ext2_read(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
+ssize_t ext2_read(ext2_t* ext2, int ridx, uint64_t offset, char* buf,
                   uint32_t len) {
   int skip_blocks = offset / BLK_SIZE;
   int first_offset = offset - skip_blocks * BLK_SIZE;
 
-  ext2_rd_ind(ext2, rinode_idx);
+  ext2_rd_ind(ext2, ridx);
   int ret = 0;
   for (int i = skip_blocks; i < ext2->ind.blocks; i++) {
     ext2_rd_datablock(ext2, ext2->ind.block[i]);
@@ -333,7 +333,7 @@ ssize_t ext2_read(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
   return ret;
 }
 
-ssize_t ext2_write(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
+ssize_t ext2_write(ext2_t* ext2, int ridx, uint64_t offset, char* buf,
                    uint32_t len) {
   int skip_blocks = offset / BLK_SIZE;
   int first_offset = offset - skip_blocks * BLK_SIZE;
@@ -341,7 +341,7 @@ ssize_t ext2_write(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
   int need_blocks = (len + offset + (BLK_SIZE - 1)) / BLK_SIZE;
 
   ssize_t ret = 0;
-  ext2_rd_ind(ext2, rinode_idx);
+  ext2_rd_ind(ext2, ridx);
   if ((ext2->ind.mode & WR_ABLE) == 0) {
     printf("File can't be writed!\n");
     return 0;
@@ -378,13 +378,13 @@ ssize_t ext2_write(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
     printf("ret == %d, len == %d\n", ret, len);
   }
   ext2->ind.size = offset + len;
-  ext2_wr_ind(ext2, rinode_idx);
+  ext2_wr_ind(ext2, ridx);
 
   return ret;
 }
 
-int ext2_mkdir(ext2_t* ext2, int rinode_idx, char* dirname) {
-  ext2_rd_ind(ext2, rinode_idx);
+int ext2_mkdir(ext2_t* ext2, int ridx, char* dirname) {
+  ext2_rd_ind(ext2, ridx);
 
   assert(ext2->ind.size < 4096);
   int idx;
@@ -412,8 +412,8 @@ int ext2_mkdir(ext2_t* ext2, int rinode_idx, char* dirname) {
     ext2_wr_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
   }
   ext2->ind.size += DIR_SIZE;  // origin 16
-  ext2_wr_ind(ext2, rinode_idx);
-  ext2_ind_prepare(ext2, idx, rinode_idx, TYPE_DIR);
+  ext2_wr_ind(ext2, ridx);
+  ext2_ind_prepare(ext2, idx, ridx, TYPE_DIR);
   return idx;
 }
 
