@@ -385,10 +385,9 @@ char *vfs_getpath(const char *path) {
 }
 
 int vfs_help_getpathlen(const char *path) {
-  strcpy(tmp_path, path);
   int len = strlen(path);
   for (int i = len - 1; i >= 0; i--)
-    if (path[len] == '/') return i;
+    if (path[i] == '/') return i;
   return 0;
 }
 
