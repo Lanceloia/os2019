@@ -385,15 +385,16 @@ char *vfs_getpath(const char *path) {
 }
 
 char *vfs_getname(const char *path) {
+  strcpy(tmp_path, path);
   int len = strlen(path);
   if (path[len - 1] == '/') {
     printf("Null name!\n");
     return NULL;
   }
 
-  for (len = len - 1; len >= 0; len--;)
-    if (path[len] == '/') return path + len + 1;
-  return path;
+  for (len = len - 1; len >= 0; len--)
+    if (path[len] == '/') return tmp_path + len + 1;
+  return tmp_path;
 }
 
 int vfs_mount(const char *path, filesystem_t *fs) { return 0; }
