@@ -11,12 +11,12 @@ uint32_t ext2_alloc_inode(ext2_t* ext2);
 uint32_t ext2_reserch_file(ext2_t* ext2, char* name, int mode,
                            uint32_t* inode_num, uint32_t* block_num,
                            uint32_t* dir_num);
-void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t par, int mode);
+void ext2_ind_prepare(ext2_t* ext2, uint32_t idx, uint32_t par, int mode);
 void ext2_remove_block(ext2_t* ext2, uint32_t del_num);
 int ext2_search_file(ext2_t* ext2, uint32_t idx);
 
 void ext2_cd(ext2_t* ext2, char* dirname);
-void ext2_mkdir(ext2_t*, char*, int);
+// void ext2_mkdir(ext2_t*, char*, int);
 // ssize_t ext2_read(ext2_t*, int, char*, uint32_t);
 // void ext2_write(ext2_t*, char*, char*, uint32_t);
 
@@ -26,12 +26,14 @@ static int first_item_len(const char* path) {
   return ret;
 }
 
+/*
 static int last_item_offset(const char* path) {
   int offset = 0, ret = 0;
   for (; path[offset] != '\0'; offset++)
     if (path[offset] == '/') ret = offset + 1;
   return ret;
 }
+*/
 
 #define ouput(str, ...) offset += sprintf(out + offset, str, ...)
 
@@ -197,7 +199,7 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int mode, uint32_t* ninode,
   return 0;
 }
 
-void ext2_dir_prepare(ext2_t* ext2, uint32_t idx, uint32_t par, int mode) {
+void ext2_ind_prepare(ext2_t* ext2, uint32_t idx, uint32_t par, int mode) {
   ext2_rd_ind(ext2, idx);
   if (mode == TYPE_DIR) {
     ext2->ind.size = 2 * DIR_SIZE;  // "." and ".."
@@ -410,7 +412,7 @@ void ext2_mkdir(ext2_t* ext2, int rinode_idx, char* dirname) {
   }
   ext2->ind.size += DIR_SIZE;  // origin 16
   ext2_wr_ind(ext2, rinode_idx);
-  ext2_dir_prepare(ext2, idx, rinode_idx, TYPE_DIR);
+  ext2_ind_prepare(ext2, idx, rinode_idx, TYPE_DIR);
 }
 
 /*
