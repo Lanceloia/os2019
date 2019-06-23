@@ -156,14 +156,7 @@ static void default_do(device_t *tty) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
-extern int vfsdirs_alloc(const char *name, int parent, int type, int fs_idx);
-
-* /
-
-    // extern int dev_dir;
-    // extern int total_dev_cnt;
-
-    void shell_task(void *name) {
+void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
   // vfsdirs_alloc(name, dev_dir, TTY, total_dev_cnt++);
   char pwd[256] = "/";
