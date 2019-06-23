@@ -79,11 +79,11 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 
   /* test */
   ext2_mkdir(ext2, "hello.cpp", TYPE_FILE);
-  ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str));
+  // ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str));
   ext2_mkdir(ext2, "directory", TYPE_DIR);
   ext2_cd(ext2, "directory");
-  ext2_mkdir(ext2, "hello2.cpp", TYPE_FILE);
-  ext2_write(ext2, "hello2.cpp", hello_str, strlen(hello_str));
+  // ext2_mkdir(ext2, "hello2.cpp", TYPE_FILE);
+  // ext2_write(ext2, "hello2.cpp", hello_str, strlen(hello_str));
   ext2_cd(ext2, "..");
 
   return 1;
@@ -327,8 +327,8 @@ ssize_t ext2_read(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
   return ret;
 }
 
-ssize_t ext2_write2(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
-                    uint32_t len) {
+ssize_t ext2_write(ext2_t* ext2, int rinode_idx, uint64_t offset, char* buf,
+                   uint32_t len) {
   int skip_blocks = offset / BLK_SIZE;
   int first_offset = offset - skip_blocks * BLK_SIZE;
 
@@ -419,6 +419,7 @@ void ext2_mkdir(ext2_t* ext2, char* dirname, int mode) {
   ext2->current_dir = now_current_dir;
 }
 
+/*
 void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len) {
   uint32_t i, j, k, flag, need_blocks = (len + (BLK_SIZE - 1)) / BLK_SIZE;
   int now_current_dir = ext2->current_dir;
@@ -455,6 +456,7 @@ void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len) {
   }
   ext2->current_dir = now_current_dir;
 }
+*/
 
 void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
   int offset = sprintf(out, "");
