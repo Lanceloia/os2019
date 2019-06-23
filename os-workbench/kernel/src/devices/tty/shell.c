@@ -193,10 +193,7 @@ void shell_task(void *name) {
     else if (!strncmp(readbuf, "rmdir ", 6))
       rmdir_do(tty, readbuf + 6, pwd);
       */
-
-    /*
     else
       default_do(tty);
-    */
   }
 }
