@@ -413,7 +413,7 @@ int vfs_mkdir(const char *path) {
   printf("find idx: %d\n", idx);
   switch (pidx->fs_type) {
     case EXT2FS:
-      ext2_mkdir(pidx->fs->rfs, idx, tmp_path + offset + 1);
+      ext2_mkdir(pidx->fs->rfs, pidx->rinode_idx, tmp_path + offset + 1);
       break;
 
     default:
