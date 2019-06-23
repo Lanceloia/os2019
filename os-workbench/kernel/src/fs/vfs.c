@@ -265,8 +265,6 @@ static int build_root() {
 }
 
 static int append_dir(int par, char *name, int fy_type, filesystem_t *fs) {
-  // input: vinode_idx("/"), "dev/"
-  // modify: "/"
   int nidx = vinodes_alloc(), k = vinodes[par].child, dot = -1, ddot = -1;
   assert(k != -1);
 
@@ -279,15 +277,11 @@ static int append_dir(int par, char *name, int fy_type, filesystem_t *fs) {
   }
   assert(dot != -1 && ddot != -1);
   vinodes[k].next = nidx;
-  // printf("\n\n\n\n\ndot.child: %d\n", vinodes[dot].child);
   build_general_null_dir(nidx, dot, ddot, name, fy_type, fs);
-  // return new dir's idx
   return nidx;
 }
 
 static int prepare_dir(int idx, int par, int fs_type, filesystem_t *fs) {
-  // input: idx = vinode_idx("/dev/"), pat = vinode_idx("/")
-  // modify: "/dev/"
   int dot = vinodes_alloc();
   int ddot = vinodes_alloc();
 
@@ -296,7 +290,6 @@ static int prepare_dir(int idx, int par, int fs_type, filesystem_t *fs) {
 
   build_dot(idx, fs_type, fs);
   build_ddot(par, fs_type, fs);
-  // return first child
   return dot;
 }
 
