@@ -292,13 +292,15 @@ static int prepare_dir(int idx, int par, int fs_type, filesystem_t *fs) {
 }
 
 static int remove_dir(int idx, int par) {
-  printf("%d %d fuck! \n", idx, par);
+  // printf("%d %d fuck! \n", idx, par);
   int pre = vinodes[par].child;
   for (; vinodes[pre].next != idx;) pre = vinodes[pre].next;
   assert(vinodes[pre].next == idx);
   vinodes[pre].next = pidx->next;
-  printf("d: %d, dd: %d\n", pidx->dot, pidx->ddot);
-  for (int k = pidx->child; k != -1; k = vinodes[k].next) delete_vinode(k);
+  // printf("d: %d, dd: %d\n", pidx->dot, pidx->ddot);
+  for (int k = pidx->child; k != -1; k = vinodes[k].next) {
+    delete_vinode(k);
+  }
   // delete_vinode(pidx->ddot);
   delete_vinode(idx);
   return 0;
