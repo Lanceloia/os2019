@@ -414,6 +414,7 @@ int ext2_mkdir(ext2_t* ext2, int ridx, char* dirname) {
   ext2->ind.size += DIR_SIZE;  // origin 16
   ext2_wr_ind(ext2, ridx);
   ext2_ind_prepare(ext2, idx, ridx, TYPE_DIR);
+  printf("Dir is made! \n");
   return idx;
 }
 
@@ -456,6 +457,7 @@ rmdirEnd:
       }
     }
     ext2_wr_ind(ext2, ridx);
+    printf("Dir is removed! \n");
     return 0;
   } else {
     printf("Dir is not empty! \n");

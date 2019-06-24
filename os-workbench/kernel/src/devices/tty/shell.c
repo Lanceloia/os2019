@@ -127,29 +127,19 @@ static void catto_do(device_t *tty, char *dirname, char *pwd) {
   }
 }
 
-// extern void ext2_mkdir(ext2_t *ext2, char *dirname, int type, char *out);
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
   build_abs_path(dirname, pwd);
-  if (vfs_access(abs_path, TYPE_DIR)) printf("Dir existed! \n");
+  if (vfs_access(abs_path, TYPE_DIR)) printf("Dir is exists! \n");
   if (vfs_mkdir(abs_path)) printf("Cannot mkdir here! \n");
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
-/*
-extern void ext2_rmdir(ext2_t *ext2, char *dirname, char *out);
 static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
-  int type = vfs_identify_fs(pwd);
-  switch (type & ~INTERFACE) {
-    case 2:  // ext2
-      ext2_rmdir(vfs_get_real_fs(pwd), dirname, bigbuf);
-      break;
-    default:
-      sprintf(bigbuf, "can't rmdir here.\n", bigbuf);
-      break;
-  };
+  build_abs_path(dirname, pwd);
+  if (!vfs_access(abs_path, TYPE_DIR)) printf("Dir is not exists! \n");
+  if (vfs_rmdir(abs_path)) printf("Cannot rmdir here! \n");
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
-*/
 
 static void default_do(device_t *tty) {
   sprintf(bigbuf, "unexpected command\n");
@@ -172,10 +162,6 @@ void shell_task(void *name) {
     /*
     if (!strcmp(readbuf, "pwd"))
       pwd_do(tty, pwd);
-    else if (!strncmp(readbuf, "echo ", 5))
-      echo_do(tty, readbuf + 5);
-    else if (!strncmp(readbuf, "cat ", 4))
-      cat_do(tty, readbuf + 4, pwd);
     */
     if (!strncmp(readbuf, "echo ", 5))
       echo_do(tty, readbuf + 5);
@@ -189,10 +175,8 @@ void shell_task(void *name) {
       cat_do(tty, readbuf + 4, pwd);
     else if (!strncmp(readbuf, "mkdir ", 6))
       mkdir_do(tty, readbuf + 6, pwd);
-    /*
     else if (!strncmp(readbuf, "rmdir ", 6))
       rmdir_do(tty, readbuf + 6, pwd);
-      */
     else
       default_do(tty);
   }

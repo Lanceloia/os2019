@@ -285,6 +285,18 @@ static int prepare_dir(int idx, int par, int fs_type, filesystem_t *fs) {
   return dot;
 }
 
+static int remove_dir(int idx, int par) {
+  vinodes_free(pidx->dot);
+  vinodes_free(pidx->ddot);
+
+  for (int pre = vinodes[par].child; vinodes[pre].next != idx;)
+    pre = vinodes[pre].next;
+  assert(vinodes[pre].next == idx);
+  vinodes[pre].next = pidx->next;
+  vinodes_free(idx);
+  return 0;
+}
+
 int vinodes_mount(int par, char *name, int fs_type, filesystem_t *fs) {
   // mount /dev/ramdisk0: par = vinode_idx("/dev"), name = "ramdisk0"
   int ret = append_dir(par, name, fs_type, fs);
@@ -410,7 +422,36 @@ int vfs_mkdir(const char *path) {
   return 0;
 }
 
-int vfs_rmdir(const char *path) { return 0; }
+int vfs_rmdir(const char *path) {
+  int len = strlen(path);
+  int offset = vfs_help_getpathlen(path);
+
+  if (len == offset) {
+    printf("Incorrect pathname! \n");
+    return 1;
+  }
+
+  strcpy(tmppath, path);
+  int nidx = lookup_auto(tmppath);
+  tmppath[offset] = '\0';
+  int idx = lookup_auto(tmppath);
+
+  // assert(idx == pnidx->ddot)
+
+  switch (pidx->fs_type) {
+    case EXT2FS:
+      ext2_rmdir(pidx->fs->rfs, idx, tmppath + offset + 1);
+      break;
+
+    default:
+      assert(0);
+      break;
+  }
+  nidx = append_dir(idx, tmppath + offset + 1, pidx->fs_type, pidx->fs);
+  prepare_dir(nidx, idx, pidx->fs_type, pidx->fs);
+  pnidx->ridx = ridx;
+  return 0;
+}
 
 int vfs_link(const char *oldpath, const char *newpath) { return 0; }
 
