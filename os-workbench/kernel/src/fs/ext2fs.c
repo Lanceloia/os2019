@@ -77,7 +77,7 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2->dir[0].name_len = ext2->dir[1].name_len = 0;
   strcpy(ext2->dir[0].name, ".");
   strcpy(ext2->dir[1].name, "..");
-  ext2_wr_dir(ext2, ext2->ind.block[0]);
+  ext2_wr_dir(ext2, ext2->current_dir);
 
   /* test */
   /*
