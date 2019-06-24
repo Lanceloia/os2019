@@ -185,6 +185,7 @@ void shell_task(void *name) {
       rmdir_do(tty, readbuf + 6, pwd);
     else
       default_do(tty);
+
+    sprintf(bigbuf, "");
   }
-  sprintf(bigbuf, "");
 }
