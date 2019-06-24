@@ -420,7 +420,7 @@ int ext2_create(ext2_t* ext2, int ridx, char* name, int mode) {
 int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
   ext2_rd_ind(ext2, ridx);
 
-  int i, j, n, m, cnt, ret = -1;
+  int i, j, n, m, cnt;
   for (i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
     for (j = 0; j < DIR_AMUT; j++)
@@ -440,10 +440,9 @@ RemoveEnd:
       ext2_wr_dir(ext2, ext2->dir[j].inode);
 
       printf("Dir is removed! \n");
-      ret = 0;
     } else {
       printf("Dir is not empty! \n");
-      ret = 1;
+      return 1;
     }
   } else {
     assert(0);
