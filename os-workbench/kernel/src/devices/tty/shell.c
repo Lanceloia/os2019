@@ -151,7 +151,7 @@ struct shellinfo {
   char *name;
   char *script;
   int offset;
-} = {{"ls ", "  ls [dirname]\n", 3}};
+} INFO = {{"ls ", "  ls [dirname]\n", 3}};
 
 static void default_do(device_t *tty) {
   int offset = 0;
