@@ -427,9 +427,8 @@ int ext2_rmdir(ext2_t* ext2, int ridx, char* dirname) {
     for (j = 0; j < DIR_AMUT; j++)
       if (!strcmp(ext2->dir[j].name, dirname)) goto rmdirEnd;
   }
-
 rmdirEnd:
-
+  printf("name: %s\n", ext2->dir[j].name);
   ext2_rd_ind(ext2, ext2->dir[j].inode);
   if (ext2->ind.size == 2 * DIR_SIZE) {
     assert(ext2->ind.blocks == 2);
