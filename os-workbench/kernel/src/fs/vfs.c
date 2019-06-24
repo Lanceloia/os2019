@@ -297,6 +297,7 @@ static int remove_dir(int idx, int par) {
   for (; vinodes[pre].next != idx;) pre = vinodes[pre].next;
   assert(vinodes[pre].next == idx);
   vinodes[pre].next = pidx->next;
+  printf("d: %d, dd: %d\n", pidx->dot, pidx->ddot);
   // delete_vinode(pidx->dot);
   // delete_vinode(pidx->ddot);
   delete_vinode(idx);
