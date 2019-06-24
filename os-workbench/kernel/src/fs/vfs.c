@@ -521,6 +521,7 @@ void vfs_ls(char *dirname) {
   printf("\n");
   int idx = lookup_auto(dirname);
   if (idx == -1) return;
+  printf("----------------------------------------------------\n");
   printf("-     index       name                  path        \n");
   printf(">>   %4d        %12s          %s\n", idx, vinodes[idx].name,
          vinodes[idx].path);
@@ -528,6 +529,7 @@ void vfs_ls(char *dirname) {
     printf("-    %4d        %12s          %s\n", k, vinodes[k].name,
            vinodes[k].path);
   }
+  printf("----------------------------------------------------\n");
 }
 
 MODULE_DEF(vfs){
