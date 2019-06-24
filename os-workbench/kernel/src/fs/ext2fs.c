@@ -467,7 +467,7 @@ RemoveEnd:
 
   ext2_wr_ind(ext2, ridx);
 
-  return ret;
+  return 0;
 }
 
 /*
