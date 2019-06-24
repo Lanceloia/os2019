@@ -79,15 +79,13 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2_wr_dir(ext2, ext2->ind.block[0]);
 
   /* test */
-  /*
-  ext2_mkdir(ext2, "hello.cpp", TYPE_FILE);
-  // ext2_write(ext2, "hello.cpp", hello_str, strlen(hello_str));
-  ext2_mkdir(ext2, "directory", TYPE_DIR);
-  ext2_cd(ext2, "directory");
-  // ext2_mkdir(ext2, "hello2.cpp", TYPE_FILE);
-  // ext2_write(ext2, "hello2.cpp", hello_str, strlen(hello_str));
+  int hello_cpp = ext2_create(ext2, ext2->current_dir, "hello.cpp", TYPE_FILE);
+  ext2_write(ext2, hello_cpp, 0, hello_str, strlen(hello_str));
+  int default_dir = ext2_create(ext2, "default_dir", TYPE_DIR);
+  ext2_cd(ext2, "default_dir");
+  int hello2_cpp = ext2_write(ext2, "hello2.cpp", TYPE_FILE);
+  ext2_write(ext2, hello_cpp, 0, hello_str, strlen(hello_str));
   ext2_cd(ext2, "..");
-  */
   return 1;
 }
 
@@ -106,18 +104,8 @@ int ext2_readdir(filesystem_t* fs, int ridx, int kth, vinode_t* buf) {
           strcpy(buf->name, ext2->dir[k].name);
           buf->ridx = ext2->dir[k].inode;
           buf->mode = ext2->dir[k].mode;
-          // printf("name: %s", buf->name);
-          /*
-                    if (strcmp(buf->name, ".") && strcmp(buf->name, "..") &&
-                        buf->mode & TYPE_DIR)
-                      strcat(buf->name, "/");
-                      */
-
-          // printf("buf.name == %s\n", buf->name);
           return 1;
         }
-      // printf("fuck2: inodeblocks == %d,  i = %d, k = %d, name =  %s\n",
-      //       ext2->ind.blocks, i, k, ext2->dir[k].name);
     }
   }
   return 0;
