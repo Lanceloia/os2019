@@ -437,6 +437,7 @@ int vfs_rmdir(const char *path) {
   tmppath[offset] = '\0';
   int idx = lookup_auto(tmppath);
 
+  printf("fuck! \n");
   // assert(idx == pnidx->ddot)
 
   switch (pidx->fs_type) {
