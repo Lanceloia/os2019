@@ -286,6 +286,7 @@ static int prepare_dir(int idx, int par, int fs_type, filesystem_t *fs) {
 }
 
 static int remove_dir(int idx, int par) {
+  printf("%d %d fuck! \n", idx, par);
   int pre = vinodes[par].child;
   for (; vinodes[pre].next != idx;) pre = vinodes[pre].next;
   assert(vinodes[pre].next == idx);
