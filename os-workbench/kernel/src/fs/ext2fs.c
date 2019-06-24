@@ -83,9 +83,10 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   /* test */
   int hello_cpp = ext2_create(ext2, ext2->current_dir, "hello.cpp", TYPE_FILE);
   ext2_write(ext2, hello_cpp, 0, hello_str, strlen(hello_str));
-  int default_dir = ext2_create(ext2, "default_dir", TYPE_DIR);
+  int default_dir =
+      ext2_create(ext2, ext2->current_dir, "default_dir", TYPE_DIR);
   ext2_cd(ext2, "default_dir");
-  int hello2_cpp = ext2_write(ext2, "hello2.cpp", TYPE_FILE);
+  int hello2_cpp = ext2_write(ext2, ext2->current_dir, "hello2.cpp", TYPE_FILE);
   ext2_write(ext2, hello_cpp, 0, hello_str, strlen(hello_str));
   ext2_cd(ext2, "..");
   return 1;
