@@ -399,8 +399,8 @@ int vfs_mount(const char *path, filesystem_t *fs) { return 0; }
 
 int vfs_unmount(const char *path) { return 0; }
 
-extern int ext2_mkdir(ext2_t *, int, char *);
-extern int ext2_rmdir(ext2_t *, int, char *);
+extern int ext2_create(ext2_t *, int, char *, int);
+extern int ext2_remove(ext2_t *, int, char *, int);
 
 int vfs_mkdir(const char *path) {
   int len = strlen(path);
@@ -418,7 +418,8 @@ int vfs_mkdir(const char *path) {
   int ridx = -1, nidx = -1;
   switch (pidx->fs_type) {
     case EXT2FS:
-      ridx = ext2_mkdir(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1);
+      ridx = ext2_create(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1,
+                         TYPE_DIR);
       nidx = append_dir(idx, tmppath + offset + 1, pidx->fs_type, pidx->fs);
       prepare_dir(nidx, idx, pidx->fs_type, pidx->fs);
       pnidx->ridx = ridx;
@@ -452,7 +453,7 @@ int vfs_rmdir(const char *path) {
 
   switch (pidx->fs_type) {
     case EXT2FS:
-      ret = ext2_rmdir(pidx->fs->rfs, idx, tmppath + offset + 1);
+      ret = ext2_remove(pidx->fs->rfs, idx, tmppath + offset + 1, TYPE_DIR);
       if (!ret) remove_dir(nidx, idx);
       break;
 
