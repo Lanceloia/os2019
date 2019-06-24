@@ -171,11 +171,10 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int mode, uint32_t* ninode,
     int len = first_item_len(path);
     for (uint32_t k = 0; k < DIR_AMUT;) {
       if (!ext2->dir[k].inode ||
-          (ext2->dir[k].mode | mode) == ext2->dir[k].mode) ||
+          (ext2->dir[k].mode | mode) == ext2->dir[k].mode ||
           strncmp(ext2->dir[k].name, path, len)) {
         k++;
-      }
-      else {
+      } else {
         ext2->current_dir = *ninode = ext2->dir[k].inode;
         *nblock = j;
         *ndir = k;
