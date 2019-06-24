@@ -116,7 +116,7 @@ static int lookup_auto(char *path) {
       pnidx->dot = -1, pnidx->ddot = -1;  // will be cover
       pnidx->next = -1, pnidx->child = idx;
       pnidx->prev_link = pnidx->next_link = nidx, pnidx->linkcnt = 1;
-      pnidx->mode = TYPE_LINK, add_link(idx, nidx, 4);
+      pnidx->mode = TYPE_LINK, add_link(idx, nidx);
 
       dot = nidx;
     } else if (!strcmp(buf.name, "..")) {
@@ -201,7 +201,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     pdot->dot = -1, pdot->ddot = ddot;                          \
     pdot->next = ddot, pdot->child = CUR;                       \
     pdot->prev_link = pdot->next_link = dot, pdot->linkcnt = 1; \
-    pdot->mode = TYPE_LINK, add_link(CUR, dot, 1);              \
+    pdot->mode = TYPE_LINK, add_link(CUR, dot);                 \
     pdot->fs_type = FSTYPE;                                     \
     pdot->fs = FS;                                              \
   } while (0)
@@ -213,7 +213,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     pddot->dot = dot, pddot->ddot = -1;                             \
     pddot->next = -1, pddot->child = PARENT;                        \
     pddot->prev_link = pddot->next_link = ddot, pddot->linkcnt = 1; \
-    pddot->mode = TYPE_LINK, add_link(PARENT, ddot, 2);             \
+    pddot->mode = TYPE_LINK, add_link(PARENT, ddot);                \
     pddot->fs_type = FSTYPE;                                        \
     pddot->fs = FS;                                                 \
   } while (0)
@@ -231,6 +231,12 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
     vinodes[IDX].mode = TYPE_DIR;                                \
     vinodes[IDX].fs_type = FSTYPE;                               \
     vinodes[IDX].fs = FS;                                        \
+  } while (0)
+
+#define delete_vinode(IDX) \
+  do {                     \
+    vinodes_free(IDX);     \
+    remove_link(IDX);      \
   } while (0)
 
 static int build_root() {
@@ -539,10 +545,18 @@ MODULE_DEF(vfs){
 #undef _LANCELOIA_DEBUG_
 #endif
 
-void add_link(int oidx, int nidx, int flag) {
-  int n_link = vinodes[oidx].next_link;
-  vinodes[nidx].next_link = n_link;
-  vinodes[nidx].prev_link = oidx;
-  vinodes[oidx].next_link = nidx;
+void add_link(int oidx, int nidx) {
+  int n_link = poidx->next_link;
+  pnidx->next_link = n_link;
+  pnidx->prev_link = oidx;
+  poidx->next_link = nidx;
   vinodes[n_link].prev_link = nidx;
+}
+
+void remove_link(int idx) {
+  int p_link = pidx->prev_link;
+  int n_link = pidx->next_link;
+
+  vinodes[p_link].next_link = pidx->next_link;
+  vinodes[n_link].prev_link = pidx->prev_link;
 }
