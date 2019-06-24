@@ -53,8 +53,8 @@ off_t vinode_lseek(int fd, off_t offset, int whence);
 void add_link(int oidx, int nidx);
 void remove_link(int idx);
 int vinode_rm_link(int vinode_idx);
-int vinode_mkdir(int vinode, const char *name);
-int vinode_rmdir(int vinode, const char *name);
+int vinode_create(int vinode, const char *name);
+int vinode_remove(int vinode, const char *name);
 
 struct filesystem {
   char name[NAME_lENGTH];
@@ -69,8 +69,8 @@ int vfs_init();
 int vfs_access(const char *path, int mode);
 int vfs_mount(const char *path, filesystem_t *fs);
 int vfs_unmount(const char *path);
-int vfs_mkdir(const char *path);
-int vfs_rmdir(const char *path);
+int vfs_create(const char *path);
+int vfs_remove(const char *path);
 int vfs_link(const char *oldpath, const char *newpath);
 int vfs_open(const char *path, int mode);
 ssize_t vfs_read(int fd, char *buf, size_t nbyte);

@@ -402,7 +402,7 @@ int vfs_unmount(const char *path) { return 0; }
 extern int ext2_create(ext2_t *, int, char *, int);
 extern int ext2_remove(ext2_t *, int, char *, int);
 
-int vfs_mkdir(const char *path) {
+int vfs_create(const char *path) {
   int len = strlen(path);
   int offset = vfs_help_getpathlen(path);
 
@@ -426,13 +426,13 @@ int vfs_mkdir(const char *path) {
       break;
 
     default:
-      printf("Cannot mkdir here! \n");
+      printf("Cannot create here! \n");
       break;
   }
   return 0;
 }
 
-int vfs_rmdir(const char *path) {
+int vfs_remove(const char *path) {
   int len = strlen(path);
   int offset = vfs_help_getpathlen(path);
 
@@ -458,7 +458,7 @@ int vfs_rmdir(const char *path) {
       break;
 
     default:
-      printf("Cannot rmdir here! \n");
+      printf("Cannot remove here! \n");
       break;
   }
   return ret;
@@ -535,8 +535,8 @@ MODULE_DEF(vfs){
     .access = vfs_access,
     .mount = vfs_mount,
     .unmount = vfs_unmount,
-    .mkdir = vfs_mkdir,
-    .rmdir = vfs_rmdir,
+    .create = vfs_create,
+    .remove = vfs_remove,
     .link = vfs_link,
     .unlink = vfs_unlink,
     .open = vfs_open,
