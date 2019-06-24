@@ -143,7 +143,7 @@ static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
 static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
   build_abs_path(dirname, pwd);
   if (!vfs_access(abs_path, TYPE_DIR)) printf("Dir is not exists! \n");
-  if (vfs_remove(abs_path, TYPE_DIR)) printf("Cannot rmdir here! \n");
+  if (vfs_remove(abs_path)) printf("Cannot rmdir here! \n");
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
