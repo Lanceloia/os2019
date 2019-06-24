@@ -443,17 +443,19 @@ rmdirEnd:
     ext2_rd_ind(ext2, ridx);
     ext2->ind.size -= DIR_SIZE;
 
-    for (m = 1; m < ext2->ind.blocks; m++) {
-      ext2_rd_dir(ext2, ext2->ind.block[m]);
-      for (cnt = 0, n = 0; n < DIR_AMUT; n++)
-        if (ext2->dir[n].inode == 0) cnt++;
-      if (cnt == DIR_AMUT) {
-        ext2_remove_block(ext2, ext2->ind.block[m]);
-        for (; m < ext2->ind.blocks - 1; m++)
-          ext2->ind.block[m] = ext2->ind.block[m + 1];
-        ext2->ind.blocks--;
-      }
-    }
+    /*
+        for (m = 1; m < ext2->ind.blocks; m++) {
+          ext2_rd_dir(ext2, ext2->ind.block[m]);
+          for (cnt = 0, n = 0; n < DIR_AMUT; n++)
+            if (ext2->dir[n].inode == 0) cnt++;
+          if (cnt == DIR_AMUT) {
+            ext2_remove_block(ext2, ext2->ind.block[m]);
+            ext2->ind.blocks--;
+            for (; m < ext2->ind.blocks; m++)
+              ext2->ind.block[m] = ext2->ind.block[m + 1];
+          }
+        }
+    */
     ext2_wr_ind(ext2, ridx);
     printf("Dir is removed! \n");
     return 0;
