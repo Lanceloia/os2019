@@ -153,10 +153,11 @@ struct shellinfo {
   void (*func)(device_t *tty, char *argv, char *pwd);
   int offset;
 } INFO[] = {
+    {"echo ", "  echo [expr]     (print expreesion)", ls_do, 5},
     {"ls ", "  ls [dirname]     (list directory's items)", ls_do, 3},
     {"cd ", "  cd [dirname]     (change directory)", cd_do, 3},
     {"cat ", "  cat [filename]   (read file)", cat_do, 4},
-    {"cat > ", "  cat > [dirname]  (write file, end: '~')", catto_do, 6},
+    {"cat > ", "  cat > [filename]  (write file, end: '~')", catto_do, 6},
     {"mkdir ", "  mkdir [dirname]  (make directory)", mkdir_do, 6},
     {"rmdir ", "  rmdir [dirname]  (remove directory)", rmdir_do, 6},
 };
