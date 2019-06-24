@@ -77,7 +77,7 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2->dir[0].name_len = ext2->dir[1].name_len = 0;
   strcpy(ext2->dir[0].name, ".");
   strcpy(ext2->dir[1].name, "..");
-  ext2_wr_dir(ext2, ext2->current_dir);
+  ext2_wr_dir(ext2, ext2->ind.block[0]);
 
   /* test */
   /*
@@ -420,7 +420,7 @@ int ext2_create(ext2_t* ext2, int ridx, char* name, int mode) {
 int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
   ext2_rd_ind(ext2, ridx);
 
-  int i, j;
+  int i, j, n, m, cnt;
   for (i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
     for (j = 0; j < DIR_AMUT; j++)
@@ -449,16 +449,24 @@ RemoveEnd:
 
   ext2_rd_ind(ext2, ridx);
   ext2->ind.size -= DIR_SIZE;
+
+  for (m = 1; m < ext2->ind.blocks; m++) {
+    printf("fuck: %d", ext2->ind.blocks);
+    ext2_rd_dir(ext2, ext2->ind.block[m]);
+    for (cnt = 0, n = 0; n < DIR_AMUT; n++)
+      if (ext2->dir[n].inode == 0) cnt++;
+    if (cnt == DIR_AMUT) {
+      ext2_remove_block(ext2, ext2->ind.block[m]);
+      ext2->ind.blocks--;
+      for (; m < ext2->ind.blocks; m++)
+        ext2->ind.block[m] = ext2->ind.block[m + 1];
+    }
+  }
+
   ext2_wr_ind(ext2, ridx);
 
   return 0;
 }
-
-/*
-void ext2_cat(ext2_t* ext2, char* dirname, char* out) {
-  ext2_read(ext2, dirname, out, 1024, out);
-}
-*/
 
 void ext2_rd_sb(ext2_t* ext2) {
   ext2->dev->ops->read(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
