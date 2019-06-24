@@ -392,6 +392,7 @@ int vfs_mount(const char *path, filesystem_t *fs) { return 0; }
 int vfs_unmount(const char *path) { return 0; }
 
 extern int ext2_mkdir(ext2_t *, int, char *);
+extern int ext2_rmdir(ext2_t *, int, char *);
 
 int vfs_mkdir(const char *path) {
   int len = strlen(path);
