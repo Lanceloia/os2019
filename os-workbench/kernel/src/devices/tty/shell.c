@@ -129,8 +129,14 @@ static void catto_do(device_t *tty, char *dirname, char *pwd) {
 
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
   build_abs_path(dirname, pwd);
-  if (vfs_access(abs_path, TYPE_DIR)) printf("Dir is exists! \n");
-  if (vfs_mkdir(abs_path)) printf("Cannot mkdir here! \n");
+  if (vfs_access(abs_path, TYPE_DIR)) {
+    printf("Dir is exists! \n");
+    return;
+  }
+  if (vfs_mkdir(abs_path)) {
+    printf("Cannot mkdir here! \n");
+    return;
+  }
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
