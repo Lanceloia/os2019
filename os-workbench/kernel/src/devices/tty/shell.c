@@ -133,7 +133,7 @@ static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
     printf("Dir is exists! \n");
     return;
   }
-  if (vfs_mkdir(abs_path)) {
+  if (vfs_create(abs_path)) {
     printf("Cannot mkdir here! \n");
     return;
   }
