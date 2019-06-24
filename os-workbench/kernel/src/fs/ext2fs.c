@@ -15,6 +15,8 @@ void ext2_ind_prepare(ext2_t* ext2, uint32_t idx, uint32_t par, int mode);
 void ext2_remove_block(ext2_t* ext2, uint32_t del_num);
 int ext2_search_file(ext2_t* ext2, uint32_t idx);
 
+int ext2_create(ext2_t* ext2, int ridx, char* name, int mode);
+int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode);
 void ext2_cd(ext2_t* ext2, char* dirname);
 // ssize_t ext2_read(ext2_t*, int, char*, uint32_t);
 // void ext2_write(ext2_t*, char*, char*, uint32_t);
