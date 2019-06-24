@@ -448,9 +448,7 @@ int vfs_rmdir(const char *path) {
       assert(0);
       break;
   }
-  nidx = append_dir(idx, tmppath + offset + 1, pidx->fs_type, pidx->fs);
-  prepare_dir(nidx, idx, pidx->fs_type, pidx->fs);
-  pnidx->ridx = ridx;
+  remove_dir(nidx, idx);
   return 0;
 }
 
