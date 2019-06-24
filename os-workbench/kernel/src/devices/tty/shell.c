@@ -148,7 +148,10 @@ static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
 }
 
 static void default_do(device_t *tty) {
-  sprintf(bigbuf, "unexpected command\n");
+  int offset = 0;
+  offset += sprintf(bigbuf + offset, "Unexpected command\n");
+  offset += sprintf(bigbuf + offset, "ls\t[dirname]\n");
+  offset += sprintf(bigbuf + offset, "cd\t[dirname]\n");
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
