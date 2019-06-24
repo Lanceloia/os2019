@@ -213,14 +213,11 @@ void ext2_ind_prepare(ext2_t* ext2, uint32_t idx, uint32_t par, int mode) {
     strcpy(ext2->dir[0].name, ".");
     strcpy(ext2->dir[1].name, "..");
     ext2_wr_dir(ext2, ext2->ind.block[0]);
-    ext2->ind.mode = 0x26; /* drwxrwxrwx: ? */
+    ext2->ind.mode = TYPE_DIR;
   } else {
-    assert(0);
-    /*
     ext2->ind.size = 0;
     ext2->ind.blocks = 0;
-    ext2->ind.mode = 0x17; // drwxrwxrwx: ?
-    */
+    ext2->ind.mode = TYPE_FILE;
   }
   ext2_wr_ind(ext2, idx);
 }
