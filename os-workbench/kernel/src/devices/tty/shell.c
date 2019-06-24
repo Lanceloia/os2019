@@ -62,6 +62,7 @@ static void catto_do(device_t *tty, char *dirname, char *pwd) {
   int fd = vfs_open(abs_path, TYPE_FILE | WR_ABLE);
   while (1) {
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
+    printf("fuck?");
     if (readbuf[nread - 2] == '~') {
       vfs_write(fd, readbuf, nread - 2);
       break;
@@ -97,13 +98,13 @@ struct shellinfo {
   void (*func)(device_t *tty, char *argv, char *pwd);
   int offset;
 } INFO[] = {
-    {"echo ", "  echo [expr]     (print expreesion)", echo_do, 5},
-    {"ls ", "  ls [dirname]     (list directory's items)", ls_do, 3},
-    {"cd ", "  cd [dirname]     (change directory)", cd_do, 3},
-    {"cat ", "  cat [filename]   (read file)", cat_do, 4},
-    {"cat > ", "  cat > [filename]  (write file, end: '~')", catto_do, 6},
-    {"mkdir ", "  mkdir [dirname]  (make directory)", mkdir_do, 6},
-    {"rmdir ", "  rmdir [dirname]  (remove directory)", rmdir_do, 6},
+    {"echo ", "  echo [expr]       (print expreesion)", echo_do, 5},
+    {"ls ", "  ls [dirname]      (list directory's items)", ls_do, 3},
+    {"cd ", "  cd [dirname]      (change directory)", cd_do, 3},
+    {"cat ", "  cat [filename]    (read file)", cat_do, 4},
+    {"cat > ", "  cat > [filename]  (write file, end with '~')", catto_do, 6},
+    {"mkdir ", "  mkdir [dirname]   (make directory)", mkdir_do, 6},
+    {"rmdir ", "  rmdir [dirname]   (remove directory)", rmdir_do, 6},
 };
 
 static void default_do(device_t *tty) {
