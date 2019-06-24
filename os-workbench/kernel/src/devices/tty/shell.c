@@ -186,4 +186,5 @@ void shell_task(void *name) {
     else
       default_do(tty);
   }
+  sprintf(bigbuf, "");
 }

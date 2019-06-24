@@ -431,7 +431,6 @@ rmdirEnd:
   printf("name: %s\n", ext2->dir[j].name);
   ext2_rd_ind(ext2, ext2->dir[j].inode);
   if (ext2->ind.size == 2 * DIR_SIZE) {
-    assert(ext2->ind.blocks == 2);
     ext2->ind.size = ext2->ind.blocks = 0;
     ext2_remove_block(ext2, ext2->ind.block[0]);
     ext2_remove_block(ext2, ext2->ind.block[1]);
