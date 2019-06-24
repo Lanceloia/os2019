@@ -367,10 +367,6 @@ int vfs_init() {
   vinodes_mount(dev, "ramdisk0", EXT2FS, &filesys[fs_r0]);
   vinodes_mount(dev, "ramdisk1", EXT2FS, &filesys[fs_r1]);
 
-  // lookup_auto("/dev/ramdisk0/directory\0\0");
-  // lookup_auto("/dev/ramdisk0/directory/\0\0");
-  // lookup_auto("/dev/asaddasd\0\0");
-
   return 0;
 }
 

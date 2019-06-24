@@ -27,15 +27,6 @@ static int first_item_len(const char* path) {
   return ret;
 }
 
-/*
-static int last_item_offset(const char* path) {
-  int offset = 0, ret = 0;
-  for (; path[offset] != '\0'; offset++)
-    if (path[offset] == '/') ret = offset + 1;
-  return ret;
-}
-*/
-
 #define ouput(str, ...) offset += sprintf(out + offset, str, ...)
 
 char* hello_str =

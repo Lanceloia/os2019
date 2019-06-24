@@ -6,15 +6,6 @@
 char readbuf[128], writebuf[128];
 char bigbuf[2048] = {};
 
-/* shell command */
-
-/*
-static void pwd_do(device_t *tty, char *pwd) {
-  sprintf(bigbuf, "%s\n", pwd);
-  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
-}
-*/
-
 char abs_path[256];
 
 static void build_abs_path(char *dirname, char *pwd) {
@@ -24,6 +15,13 @@ static void build_abs_path(char *dirname, char *pwd) {
   } else {
     strcpy(abs_path, dirname);
   }
+}
+
+/* shell command */
+
+static void pwd_do(device_t *tty, char *unused, char *pwd) {
+  sprintf(bigbuf, "%s\n", pwd);
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
 static void echo_do(device_t *tty, char *str, char *pwd) {
@@ -99,14 +97,14 @@ struct shellinfo {
   void (*func)(device_t *tty, char *argv, char *pwd);
   int offset;
 } INFO[] = {
-    {"echo ", "  echo [expr]       (print expreesion)", echo_do, 5},
-    {"ls ", "  ls [dirname]      (list directory's items)", ls_do, 3},
-    {"cd ", "  cd [dirname]      (change directory)", cd_do, 3},
-    {"cat ", "  cat [filename]    (read file)", cat_do, 4},
-    {"cat > ", "  cat > [filename]  (write file, end with '~')", catto_do, 6},
-    {"mkdir ", "  mkdir [dirname]   (make directory)", mkdir_do, 6},
     {"rmdir ", "  rmdir [dirname]   (remove directory)", rmdir_do, 6},
-};
+    {"mkdir ", "  mkdir [dirname]   (make directory)", mkdir_do, 6},
+    {"cat > ", "  cat > [filename]  (write file, end with '~')", catto_do, 6},
+    {"cat ", "  cat [filename]    (read file)", cat_do, 4},
+    {"cd ", "  cd [dirname]      (change directory)", cd_do, 3},
+    {"ls ", "  ls [dirname]      (list directory's items)", ls_do, 3},
+    {"echo ", "  echo [expr]       (print expreesion)", echo_do, 5},
+    {"pwd ", "  pwd               (print work directory", pwd_do, 4}};
 
 static void default_do(device_t *tty) {
   int offset = 0;
@@ -128,6 +126,7 @@ void shell_task(void *name) {
 
     if (!strcmp(readbuf, "ls")) strcpy(readbuf, "ls .");
     if (!strcmp(readbuf, "cd")) strcpy(readbuf, "cd .");
+    if (!strcmp(readbuf, "pwd")) strcpy(readbuf, "pwd ");
 
     /*
     if (!strcmp(readbuf, "pwd"))
