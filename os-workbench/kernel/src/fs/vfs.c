@@ -180,7 +180,6 @@ static void filesys_free(int idx) { strcpy(filesys[idx].name, ""); }
 static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
                           void (*init)(filesystem_t *, const char *,
                                        device_t *),
-                          int (*lookup)(filesystem_t *, char *, int),
                           int (*readdir)(filesystem_t *, int, int,
                                          vinode_t *)) {
   int idx = filesys_alloc();
@@ -188,7 +187,6 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
   filesys[idx].rfs = pmm->alloc(size);
   filesys[idx].dev = dev;
   filesys[idx].init = init;
-  filesys[idx].lookup = lookup;
   filesys[idx].readdir = readdir;
   filesys[idx].init(&filesys[idx], name, dev);
   return idx;
@@ -343,7 +341,6 @@ int vinode_open(int inode_idx, int mode) {
 
 typedef struct ext2 ext2_t;
 extern void ext2_init(filesystem_t *fs, const char *name, device_t *dev);
-extern int ext2_lookup(filesystem_t *fs, char *path, int mode);
 extern int ext2_readdir(filesystem_t *fs, int vinode_idx, int kth,
                         vinode_t *buf);
 
@@ -364,8 +361,9 @@ int vfs_init() {
   prepare_dir(dev, root, VFS, NULL);
 
   int fs_r0 = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
-                             ext2_init, ext2_lookup, ext2_readdir);
-
+                             ext2_init, ext2_readdir);
+  int fs_r1 = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk1"), sizeof(ext2_t),
+                             ext2_init, ext2_readdir);
   vinodes_mount(dev, "ramdisk0", EXT2FS, &filesys[fs_r0]);
 
   // lookup_auto("/dev/ramdisk0/directory\0\0");

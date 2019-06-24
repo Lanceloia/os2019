@@ -61,7 +61,6 @@ struct filesystem {
   void *rfs;
   device_t *dev;
   void (*init)(filesystem_t *fs, const char *name, device_t *dev);
-  int (*lookup)(filesystem_t *fs, char *path, int mode);
   int (*readdir)(filesystem_t *fs, int vinode_idx, int kth, vinode_t *buf);
 };
 
