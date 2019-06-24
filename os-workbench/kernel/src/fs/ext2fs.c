@@ -455,10 +455,11 @@ rmdirEnd:
         ext2->ind.blocks--;
       }
     }
-
     ext2_wr_ind(ext2, ridx);
+    return 0;
   } else {
     printf("Dir is not empty! \n");
+    return 1;
   }
 }
 
