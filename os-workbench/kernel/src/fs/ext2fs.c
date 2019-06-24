@@ -438,8 +438,6 @@ RemoveEnd:
       ext2_remove_block(ext2, ext2->dir[j].inode);
       ext2->dir[j].inode = 0;
       ext2_wr_dir(ext2, ext2->dir[j].inode);
-
-      printf("Dir is removed! \n");
     } else {
       printf("Dir is not empty! \n");
       return 1;
@@ -451,20 +449,6 @@ RemoveEnd:
 
   ext2_rd_ind(ext2, ridx);
   ext2->ind.size -= DIR_SIZE;
-
-  for (m = 1; m < ext2->ind.blocks; m++) {
-    printf("fuck: %d", ext2->ind.blocks);
-    ext2_rd_dir(ext2, ext2->ind.block[m]);
-    for (cnt = 0, n = 0; n < DIR_AMUT; n++)
-      if (ext2->dir[n].inode == 0) cnt++;
-    if (cnt == DIR_AMUT) {
-      ext2_remove_block(ext2, ext2->ind.block[m]);
-      ext2->ind.blocks--;
-      for (; m < ext2->ind.blocks; m++)
-        ext2->ind.block[m] = ext2->ind.block[m + 1];
-    }
-  }
-
   ext2_wr_ind(ext2, ridx);
 
   return 0;
