@@ -298,7 +298,7 @@ static int remove_dir(int idx, int par) {
   assert(vinodes[pre].next == idx);
   vinodes[pre].next = pidx->next;
   printf("d: %d, dd: %d\n", pidx->dot, pidx->ddot);
-  // delete_vinode(pidx->dot);
+  for (int k = pidx->child; k != -1; k = vinodes[k].next) delete_vinode(k);
   // delete_vinode(pidx->ddot);
   delete_vinode(idx);
   return 0;
@@ -418,15 +418,15 @@ int vfs_mkdir(const char *path) {
   switch (pidx->fs_type) {
     case EXT2FS:
       ridx = ext2_mkdir(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1);
+      nidx = append_dir(idx, tmppath + offset + 1, pidx->fs_type, pidx->fs);
+      prepare_dir(nidx, idx, pidx->fs_type, pidx->fs);
+      pnidx->ridx = ridx;
       break;
 
     default:
-      assert(0);
+      printf("Cannot mkdir here! \n");
       break;
   }
-  nidx = append_dir(idx, tmppath + offset + 1, pidx->fs_type, pidx->fs);
-  prepare_dir(nidx, idx, pidx->fs_type, pidx->fs);
-  pnidx->ridx = ridx;
   return 0;
 }
 
@@ -450,13 +450,13 @@ int vfs_rmdir(const char *path) {
   switch (pidx->fs_type) {
     case EXT2FS:
       ext2_rmdir(pidx->fs->rfs, idx, tmppath + offset + 1);
+      remove_dir(nidx, idx);
       break;
 
     default:
-      assert(0);
+      printf("Cannot rmdir here! \n");
       break;
   }
-  remove_dir(nidx, idx);
   return 0;
 }
 
@@ -484,12 +484,12 @@ ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
   switch (pfd->fs_type) {
     case EXT2FS:
       ret = ext2_read(pfd->fs->rfs, pfd->ridx, files[fd].offset, buf, nbyte);
+      files[fd].offset += ret;
       break;
     default:
-      assert(0);
+      printf("Cannot read here! \n");
       break;
   }
-  files[fd].offset += ret;
   return ret;
 }
 
@@ -500,12 +500,12 @@ ssize_t vfs_write(int fd, char *buf, size_t nbyte) {
   switch (pfd->fs_type) {
     case EXT2FS:
       ret = ext2_write(pfd->fs->rfs, pfd->ridx, files[fd].offset, buf, nbyte);
+      files[fd].offset += ret;
       break;
     default:
-      assert(0);
+      printf("Cannot write here! \n");
       break;
   }
-  files[fd].offset += ret;
   return ret;
 }
 
