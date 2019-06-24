@@ -443,7 +443,7 @@ rmdirEnd:
     ext2_rd_ind(ext2, ridx);
     ext2->ind.size -= DIR_SIZE;
 
-    for (m = 1; m < ext2->ind.blocks;) {
+    for (m = 1; m < ext2->ind.blocks; m++) {
       ext2_rd_dir(ext2, ext2->ind.block[m]);
       for (cnt = 0, n = 0; n < DIR_AMUT; n++)
         if (ext2->dir[n].inode == 0) cnt++;
