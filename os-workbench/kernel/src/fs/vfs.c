@@ -449,17 +449,19 @@ int vfs_rmdir(const char *path) {
   // printf("fuck! \n");
   // assert(idx == pnidx->ddot)
 
+  int ret = 1;
+
   switch (pidx->fs_type) {
     case EXT2FS:
-      ext2_rmdir(pidx->fs->rfs, idx, tmppath + offset + 1);
-      remove_dir(nidx, idx);
+      ret = ext2_rmdir(pidx->fs->rfs, idx, tmppath + offset + 1);
+      if (!ret) remove_dir(nidx, idx);
       break;
 
     default:
       printf("Cannot rmdir here! \n");
       break;
   }
-  return 0;
+  return ret;
 }
 
 int vfs_link(const char *oldpath, const char *newpath) { return 0; }
