@@ -417,154 +417,110 @@ int ext2_mkdir(ext2_t* ext2, int ridx, char* dirname) {
   return idx;
 }
 
-/*
-void ext2_write(ext2_t* ext2, char* path, char* buf, uint32_t len) {
-  uint32_t i, j, k, flag, need_blocks = (len + (BLK_SIZE - 1)) / BLK_SIZE;
-  int now_current_dir = ext2->current_dir;
-  flag = ext2_reserch_file(ext2, path, TYPE_FILE, &i, &j, &k);
-  if (flag) {
-    // don't need open
-    ext2_rd_ind(ext2, ext2->dir[k].inode);
-    if ((ext2->ind.mode & 0x2) == 0) {
-      printf("File can't be writed!\n");
-      return;
-    }
-    if (ext2->ind.blocks <= need_blocks) {
-      while (ext2->ind.blocks < need_blocks)
-        ext2->ind.block[ext2->ind.blocks++] = ext2_alloc_block(ext2);
-    } else {
-      while (ext2->ind.blocks > need_blocks)
-        ext2_remove_block(ext2, ext2->ind.block[--ext2->ind.blocks]);
-    }
-    for (int n = 0; n < need_blocks; n++) {
-      if (n != need_blocks - 1) {
-        ext2_rd_datablock(ext2, ext2->ind.block[n]);
-        memcpy(ext2->datablockbuf, buf + n * BLK_SIZE, BLK_SIZE);
-        ext2_wr_datablock(ext2, ext2->ind.block[n]);
-      } else {
-        ext2_rd_datablock(ext2, ext2->ind.block[n]);
-        memcpy(ext2->datablockbuf, buf + n * BLK_SIZE, len - n * BLK_SIZE);
-        ext2_wr_datablock(ext2, ext2->ind.block[n]);
-      }
-    }
-    ext2->ind.size = len;
-    ext2_wr_ind(ext2, ext2->dir[k].inode);
-  } else {
-    printf("File is no exists!\n");
-  }
-  ext2->current_dir = now_current_dir;
-}
-*/
+int ext2_rmdir(ext2_t* ext2, int parridx, int kth) {
+  ext2_rd_ind(ext2, parridx);
+  int ridx = ext2->dir[kth].inode;
+  ext2_rd_ind(ext2, ridx);
+  if (ext2->ind.size == 2 * DIR_SIZE) {
+    assert(ext2->ind.blocks == 2);
+    ext2->ind.size = ext2->ind.blocks = 0;
+    ext2_remove_block(ext2, ext2->ind.block[0]);
+    ext2_remove_block(ext2, ext2->ind.block[1]);
+    ext2_wr_ind(ext2, ridx);
 
-void ext2_rmdir(ext2_t* ext2, char* dirname, char* out) {
-  int offset = sprintf(out, "");
-  if (!strcmp(dirname, ".") || !strcmp(dirname, "..")) {
-    offset += sprintf(out + offset, "Can remove!\n");
-    return;
-  }
-  uint32_t i, j, k, n, m, flag;
-  int now_current_dir = ext2->current_dir;
-  flag = ext2_reserch_file(ext2, dirname, TYPE_DIR, &i, &j, &k);
-  if (flag) {
-    ext2_rd_ind(ext2, ext2->dir[k].inode);
-    if (ext2->ind.size == 2 * DIR_SIZE) {
-      ext2->ind.size = 0;
-      ext2->ind.blocks = 0;
-      ext2_remove_block(ext2, ext2->ind.block[0]);
-      ext2_rd_ind(ext2, ext2->current_dir);
-      ext2_rd_dir(ext2, ext2->ind.block[j]);
-      ext2_remove_block(ext2, ext2->dir[k].inode);
-      ext2->dir[k].inode = 0;
-      ext2_wr_dir(ext2, ext2->ind.block[j]);
-      ext2->ind.size -= DIR_SIZE;
-      int cnt = 0;
-      for (m = 1; cnt < DIR_AMUT && m < ext2->ind.blocks;) {
-        ext2_rd_dir(ext2, ext2->ind.block[m]);
-        for (cnt = 0, n = 0; n < DIR_AMUT; n++) {
-          if (ext2->dir[n].inode == 0) cnt++;
-        }
-        if (cnt == DIR_AMUT) {
-          ext2_remove_block(ext2, ext2->ind.block[m]);
-          ext2->ind.blocks--;
-          for (; m < ext2->ind.blocks; m++) {
-            ext2->ind.block[m] = ext2->ind.block[m + 1];
-          }
+    ext2_rd_ind(ext2, parridx);
+    ext2_remove_block(ext2, ext2->dir[k].inode);
+    ext2->dir[k].inode = 0;
+    ext2_wr_dir(ext2, ext2->ind.block[j]);
+    ext2->ind.size -= DIR_SIZE;
+    int cnt = 0;
+    for (m = 1; cnt < DIR_AMUT && m < ext2->ind.blocks;) {
+      ext2_rd_dir(ext2, ext2->ind.block[m]);
+      for (cnt = 0, n = 0; n < DIR_AMUT; n++) {
+        if (ext2->dir[n].inode == 0) cnt++;
+      }
+      if (cnt == DIR_AMUT) {
+        ext2_remove_block(ext2, ext2->ind.block[m]);
+        ext2->ind.blocks--;
+        for (; m < ext2->ind.blocks; m++) {
+          ext2->ind.block[m] = ext2->ind.block[m + 1];
         }
       }
-      ext2_wr_ind(ext2, ext2->current_dir);
-    } else {
-      offset += sprintf(out + offset, "Directory no null!\n");
     }
-  } else {
-    offset += sprintf(out + offset, "Directory is no exists!\n");
+    else {
+      printf("Dir is not empty! \n");
+    }
+    ext2_wr_ind(ext2, ridx);
   }
-  ext2->current_dir = now_current_dir;
-}
 
-/*
-void ext2_cat(ext2_t* ext2, char* dirname, char* out) {
-  ext2_read(ext2, dirname, out, 1024, out);
-}
-*/
+  /*
+  void ext2_cat(ext2_t* ext2, char* dirname, char* out) {
+    ext2_read(ext2, dirname, out, 1024, out);
+  }
+  */
 
-void ext2_rd_sb(ext2_t* ext2) {
-  ext2->dev->ops->read(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
-}
+  void ext2_rd_sb(ext2_t * ext2) {
+    ext2->dev->ops->read(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
+  }
 
-void ext2_wr_sb(ext2_t* ext2) {
-  ext2->dev->ops->write(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
-}
+  void ext2_wr_sb(ext2_t * ext2) {
+    ext2->dev->ops->write(ext2->dev, DISK_START, &ext2->sb, SB_SIZE);
+  }
 
-void ext2_rd_gd(ext2_t* ext2) {
-  ext2->dev->ops->read(ext2->dev, GDT_START, &ext2->gdt, GD_SIZE);
-}
+  void ext2_rd_gd(ext2_t * ext2) {
+    ext2->dev->ops->read(ext2->dev, GDT_START, &ext2->gdt, GD_SIZE);
+  }
 
-void ext2_wr_gd(ext2_t* ext2) {
-  ext2->dev->ops->write(ext2->dev, GDT_START, &ext2->gdt, GD_SIZE);
-}
+  void ext2_wr_gd(ext2_t * ext2) {
+    ext2->dev->ops->write(ext2->dev, GDT_START, &ext2->gdt, GD_SIZE);
+  }
 
-void ext2_rd_ind(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = INDT_START + (i - 1) * IND_SIZE;
-  ext2->dev->ops->read(ext2->dev, offset, &ext2->ind, IND_SIZE);
-}
+  void ext2_rd_ind(ext2_t * ext2, uint32_t i) {
+    uint32_t offset = INDT_START + (i - 1) * IND_SIZE;
+    ext2->dev->ops->read(ext2->dev, offset, &ext2->ind, IND_SIZE);
+  }
 
-void ext2_wr_ind(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = INDT_START + (i - 1) * IND_SIZE;
-  ext2->dev->ops->write(ext2->dev, offset, &ext2->ind, IND_SIZE);
-}
+  void ext2_wr_ind(ext2_t * ext2, uint32_t i) {
+    uint32_t offset = INDT_START + (i - 1) * IND_SIZE;
+    ext2->dev->ops->write(ext2->dev, offset, &ext2->ind, IND_SIZE);
+  }
 
-void ext2_rd_dir(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
-  ext2->dev->ops->read(ext2->dev, offset, &ext2->dir, BLK_SIZE);
-}
+  void ext2_rd_dir(ext2_t * ext2, uint32_t i) {
+    uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
+    ext2->dev->ops->read(ext2->dev, offset, &ext2->dir, BLK_SIZE);
+  }
 
-void ext2_wr_dir(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
-  ext2->dev->ops->write(ext2->dev, offset, &ext2->dir, BLK_SIZE);
-}
+  void ext2_wr_dir(ext2_t * ext2, uint32_t i) {
+    uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
+    ext2->dev->ops->write(ext2->dev, offset, &ext2->dir, BLK_SIZE);
+  }
 
-void ext2_rd_blockbitmap(ext2_t* ext2) {
-  ext2->dev->ops->read(ext2->dev, BLK_BITMAP, &ext2->blockbitmapbuf, BLK_SIZE);
-}
+  void ext2_rd_blockbitmap(ext2_t * ext2) {
+    ext2->dev->ops->read(ext2->dev, BLK_BITMAP, &ext2->blockbitmapbuf,
+                         BLK_SIZE);
+  }
 
-void ext2_wr_blockbitmap(ext2_t* ext2) {
-  ext2->dev->ops->write(ext2->dev, BLK_BITMAP, &ext2->blockbitmapbuf, BLK_SIZE);
-}
+  void ext2_wr_blockbitmap(ext2_t * ext2) {
+    ext2->dev->ops->write(ext2->dev, BLK_BITMAP, &ext2->blockbitmapbuf,
+                          BLK_SIZE);
+  }
 
-void ext2_rd_inodebitmap(ext2_t* ext2) {
-  ext2->dev->ops->read(ext2->dev, IND_BITMAP, &ext2->inodebitmapbuf, BLK_SIZE);
-}
+  void ext2_rd_inodebitmap(ext2_t * ext2) {
+    ext2->dev->ops->read(ext2->dev, IND_BITMAP, &ext2->inodebitmapbuf,
+                         BLK_SIZE);
+  }
 
-void ext2_wr_inodebitmap(ext2_t* ext2) {
-  ext2->dev->ops->write(ext2->dev, IND_BITMAP, &ext2->inodebitmapbuf, BLK_SIZE);
-}
+  void ext2_wr_inodebitmap(ext2_t * ext2) {
+    ext2->dev->ops->write(ext2->dev, IND_BITMAP, &ext2->inodebitmapbuf,
+                          BLK_SIZE);
+  }
 
-void ext2_rd_datablock(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
-  ext2->dev->ops->read(ext2->dev, offset, &ext2->datablockbuf, BLK_SIZE);
-}
+  void ext2_rd_datablock(ext2_t * ext2, uint32_t i) {
+    uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
+    ext2->dev->ops->read(ext2->dev, offset, &ext2->datablockbuf, BLK_SIZE);
+  }
 
-void ext2_wr_datablock(ext2_t* ext2, uint32_t i) {
-  uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
-  ext2->dev->ops->write(ext2->dev, offset, &ext2->datablockbuf, BLK_SIZE);
-}
+  void ext2_wr_datablock(ext2_t * ext2, uint32_t i) {
+    uint32_t offset = DATA_BLOCK + i * BLK_SIZE;
+    ext2->dev->ops->write(ext2->dev, offset, &ext2->datablockbuf, BLK_SIZE);
+  }
