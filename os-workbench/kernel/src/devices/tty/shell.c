@@ -150,16 +150,22 @@ static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
 struct shellinfo {
   char *name;
   char *script;
+  void (*func)(device_t *tty, char *argv, char *pwd);
   int offset;
-} INFO[] = {{"ls ", "  ls [dirname]\n", 3}};
+} INFO[] = {
+    {"ls ", "  ls [dirname]     (list directory's items)", ls_do, 3},
+    {"cd ", "  cd [dirname]     (change directory)", cd_do, 3},
+    {"cat ", "  cat [filename]   (read file)", cat_do, 4},
+    {"cat > ", "  cat > [dirname]  (write file, end: '~')", catto_do, 6},
+    {"mkdir ", "  mkdir [dirname]  (make directory)", mkdir_do, 6},
+    {"rmdir ", "  rmdir [dirname]  (remove directory)", rmdir_do, 6},
+};
 
 static void default_do(device_t *tty) {
   int offset = 0;
   offset += sprintf(bigbuf + offset, "Unexpected command\n");
-  offset += sprintf(bigbuf + offset, "  cd [dirname]     (change directory)\n");
-  offset += sprintf(bigbuf + offset, "  cat [filename]   (read file)\n");
-  offset +=
-      sprintf(bigbuf + offset, "  cat > [dirname]  (write file, end: '~')\n");
+  for (int i = 0; i < sizeof(INFO) / sizeof(struct shellinfo); i++)
+    offset += sprintf(bigbuf + offset, "%s\n", INFO[i].script);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
@@ -180,23 +186,15 @@ void shell_task(void *name) {
     if (!strcmp(readbuf, "pwd"))
       pwd_do(tty, pwd);
     */
-    if (!strncmp(readbuf, "echo ", 5))
-      echo_do(tty, readbuf + 5);
-    else if (!strncmp(readbuf, "ls ", 3))
-      ls_do(tty, readbuf + 3, pwd);
-    else if (!strncmp(readbuf, "cd ", 3))
-      cd_do(tty, readbuf + 3, pwd);
-    else if (!strncmp(readbuf, "cat > ", 6))
-      catto_do(tty, readbuf + 6, pwd);
-    else if (!strncmp(readbuf, "cat ", 4))
-      cat_do(tty, readbuf + 4, pwd);
-    else if (!strncmp(readbuf, "mkdir ", 6))
-      mkdir_do(tty, readbuf + 6, pwd);
-    else if (!strncmp(readbuf, "rmdir ", 6))
-      rmdir_do(tty, readbuf + 6, pwd);
-    else
-      default_do(tty);
+    for (int i = 0; i < sizeof(INFO) / sizeof(struct shellinfo); i++) {
+      if (!strncmp(readbuf, INFO[i].name, INFO[i].offset)) {
+        *INFO[i].func(tty, readbuf + INFO[i].offset, pwd);
+        goto End;
+      }
+    }
+    default_do(tty);
 
+  End:
     sprintf(bigbuf, "");
   }
 }
