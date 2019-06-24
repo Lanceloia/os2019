@@ -424,7 +424,7 @@ int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
   for (i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
     for (j = 0; j < DIR_AMUT; j++)
-      if (!strcmp(ext2->dir[j].name, dirname)) goto RemoveEnd;
+      if (!strcmp(ext2->dir[j].name, name)) goto RemoveEnd;
   }
 RemoveEnd:
   if (mode == TYPE_DIR) {
