@@ -60,6 +60,7 @@ static void cat_do(device_t *tty, char *dirname, char *pwd) {
 static void catto_do(device_t *tty, char *dirname, char *pwd) {
   build_abs_path(dirname, pwd);
   int fd = vfs_open(abs_path, TYPE_FILE | WR_ABLE);
+  printf("path: %s\n", abs_path);
   while (1) {
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
     printf("fuck?\n");
