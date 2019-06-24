@@ -362,7 +362,7 @@ int vfs_init() {
 
   int fs_r0 = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
                              ext2_init, ext2_readdir);
-  int fs_r1 = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk1"), sizeof(ext2_t),
+  int fs_r1 = vfs_init_devfs("ramdisk1", dev_lookup("ramdisk1"), sizeof(ext2_t),
                              ext2_init, ext2_readdir);
   vinodes_mount(dev, "ramdisk0", EXT2FS, &filesys[fs_r0]);
   vinodes_mount(dev, "ramdisk1", EXT2FS, &filesys[fs_r1]);
