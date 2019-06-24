@@ -383,7 +383,7 @@ ssize_t ext2_write(ext2_t* ext2, int ridx, uint64_t offset, char* buf,
   return ret;
 }
 
-int ext2_mkdir(ext2_t* ext2, int ridx, char* dirname) {
+int ext2_create(ext2_t* ext2, int ridx, char* name, int mode) {
   ext2_rd_ind(ext2, ridx);
 
   assert(ext2->ind.size < 4096);
@@ -393,75 +393,74 @@ int ext2_mkdir(ext2_t* ext2, int ridx, char* dirname) {
     for (i = 0; i < ext2->ind.blocks; i++) {
       ext2_rd_dir(ext2, ext2->ind.block[i]);
       for (j = 0; j < DIR_AMUT; j++)
-        if (ext2->dir[j].inode == 0) goto mkdirEnd;
+        if (ext2->dir[j].inode == 0) goto CreateEnd;
     }
-  mkdirEnd:
+  CreateEnd:
     idx = ext2->dir[j].inode = ext2_alloc_inode(ext2);
-    ext2->dir[j].mode = TYPE_DIR;
-    ext2->dir[j].name_len = strlen(dirname);
-    strcpy(ext2->dir[j].name, dirname);
+    ext2->dir[j].mode = mode;
+    ext2->dir[j].name_len = strlen(name);
+    strcpy(ext2->dir[j].name, name);
     ext2_wr_dir(ext2, ext2->ind.block[i]);
   } else {
     ext2->ind.block[ext2->ind.blocks++] = ext2_alloc_block(ext2);
     ext2_rd_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
     idx = ext2->dir[0].inode = ext2_alloc_inode(ext2);
-    ext2->dir[0].mode = TYPE_DIR;
-    ext2->dir[0].name_len = strlen(dirname);
-    strcpy(ext2->dir[0].name, dirname);
+    ext2->dir[0].mode = mode;
+    ext2->dir[0].name_len = strlen(name);
+    strcpy(ext2->dir[0].name, name);
     for (int i = 1; i < DIR_AMUT; i++) ext2->dir[i].inode = 0;
     ext2_wr_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
   }
   ext2->ind.size += DIR_SIZE;  // origin 16
   ext2_wr_ind(ext2, ridx);
-  ext2_ind_prepare(ext2, idx, ridx, TYPE_DIR);
-  printf("Dir is made! \n");
+  ext2_ind_prepare(ext2, idx, ridx, mode);
   return idx;
 }
 
-int ext2_rmdir(ext2_t* ext2, int ridx, char* dirname) {
+int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
   ext2_rd_ind(ext2, ridx);
 
   int i, j;
   for (i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
     for (j = 0; j < DIR_AMUT; j++)
-      if (!strcmp(ext2->dir[j].name, dirname)) goto rmdirEnd;
+      if (!strcmp(ext2->dir[j].name, dirname)) goto RemoveEnd;
   }
-rmdirEnd:
-  printf("name: %s\n", ext2->dir[j].name);
-  ext2_rd_ind(ext2, ext2->dir[j].inode);
-  if (ext2->ind.size == 2 * DIR_SIZE) {
-    ext2->ind.size = ext2->ind.blocks = 0;
-    ext2_remove_block(ext2, ext2->ind.block[0]);
-    ext2_remove_block(ext2, ext2->ind.block[1]);
-    ext2_wr_ind(ext2, ext2->dir[j].inode);
+RemoveEnd:
+  if (mode == TYPE_DIR) {
+    ext2_rd_ind(ext2, ext2->dir[j].inode);
+    if (ext2->ind.size == 2 * DIR_SIZE) {
+      ext2->ind.size = ext2->ind.blocks = 0;
+      ext2_remove_block(ext2, ext2->ind.block[0]);
+      ext2_remove_block(ext2, ext2->ind.block[1]);
+      ext2_wr_ind(ext2, ext2->dir[j].inode);
 
-    ext2_remove_block(ext2, ext2->dir[j].inode);
-    ext2->dir[j].inode = 0;
-    ext2_wr_dir(ext2, ext2->dir[j].inode);
+      ext2_remove_block(ext2, ext2->dir[j].inode);
+      ext2->dir[j].inode = 0;
+      ext2_wr_dir(ext2, ext2->dir[j].inode);
 
-    ext2_rd_ind(ext2, ridx);
-    ext2->ind.size -= DIR_SIZE;
+      ext2_rd_ind(ext2, ridx);
+      ext2->ind.size -= DIR_SIZE;
 
-    /*
-        for (m = 1; m < ext2->ind.blocks; m++) {
-          ext2_rd_dir(ext2, ext2->ind.block[m]);
-          for (cnt = 0, n = 0; n < DIR_AMUT; n++)
-            if (ext2->dir[n].inode == 0) cnt++;
-          if (cnt == DIR_AMUT) {
-            ext2_remove_block(ext2, ext2->ind.block[m]);
-            ext2->ind.blocks--;
-            for (; m < ext2->ind.blocks; m++)
-              ext2->ind.block[m] = ext2->ind.block[m + 1];
-          }
+      for (m = 1; m < ext2->ind.blocks; m++) {
+        ext2_rd_dir(ext2, ext2->ind.block[m]);
+        for (cnt = 0, n = 0; n < DIR_AMUT; n++)
+          if (ext2->dir[n].inode == 0) cnt++;
+        if (cnt == DIR_AMUT) {
+          ext2_remove_block(ext2, ext2->ind.block[m]);
+          ext2->ind.blocks--;
+          for (; m < ext2->ind.blocks; m++)
+            ext2->ind.block[m] = ext2->ind.block[m + 1];
         }
-    */
-    ext2_wr_ind(ext2, ridx);
-    printf("Dir is removed! \n");
-    return 0;
-  } else {
-    printf("Dir is not empty! \n");
-    return 1;
+      }
+
+      ext2_wr_ind(ext2, ridx);
+      printf("Dir is removed! \n");
+      return 0;
+    } else {
+      printf("Dir is not empty! \n");
+      return 1;
+    }
   }
 }
 
