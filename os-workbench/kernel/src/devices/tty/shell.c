@@ -188,7 +188,7 @@ void shell_task(void *name) {
     */
     for (int i = 0; i < sizeof(INFO) / sizeof(struct shellinfo); i++) {
       if (!strncmp(readbuf, INFO[i].name, INFO[i].offset)) {
-        *INFO[i].func(tty, readbuf + INFO[i].offset, pwd);
+        (*INFO[i].func)(tty, readbuf + INFO[i].offset, pwd);
         goto End;
       }
     }
