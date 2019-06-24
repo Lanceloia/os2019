@@ -446,7 +446,7 @@ RemoveEnd:
     }
   } else {
     assert(0);
-    ret = 1;
+    return 1;
   }
 
   ext2_rd_ind(ext2, ridx);
