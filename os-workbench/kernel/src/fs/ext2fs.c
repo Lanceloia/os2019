@@ -19,7 +19,7 @@ int ext2_create(ext2_t* ext2, int ridx, char* name, int mode);
 int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode);
 void ext2_cd(ext2_t* ext2, char* dirname);
 // ssize_t ext2_read(ext2_t*, int, char*, uint32_t);
-void ext2_write(ext2_t*, char*, char*, uint32_t);
+void ext2_write(ext2_t*, int, off_t, char*, uint32_t);
 
 static int first_item_len(const char* path) {
   int ret = 0;
