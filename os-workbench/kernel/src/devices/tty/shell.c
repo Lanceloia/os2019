@@ -147,11 +147,19 @@ static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+struct shellinfo {
+  char *name;
+  char *script;
+  int offset;
+} = {{"ls ", "  ls [dirname]\n", 3}};
+
 static void default_do(device_t *tty) {
   int offset = 0;
   offset += sprintf(bigbuf + offset, "Unexpected command\n");
-  offset += sprintf(bigbuf + offset, "ls\t[dirname]\n");
-  offset += sprintf(bigbuf + offset, "cd\t[dirname]\n");
+  offset += sprintf(bigbuf + offset, "  cd [dirname]     (change directory)\n");
+  offset += sprintf(bigbuf + offset, "  cat [filename]   (read file)\n");
+  offset +=
+      sprintf(bigbuf + offset, "  cat > [dirname]  (write file, end: '~')\n");
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
