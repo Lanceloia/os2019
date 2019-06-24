@@ -81,7 +81,8 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2_wr_dir(ext2, ext2->ind.block[0]);
 
   /* test */
-  int hello_cpp = ext2_create(ext2, ext2->current_dir, "hello.cpp", TYPE_FILE);
+  int hello_cpp = ext2_create(ext2, ext2->current_dir, "hello.cpp",
+                              TYPE_FILE | RD_ABLE | WR_ABLE);
   ext2_write(ext2, hello_cpp, 0, hello_str, strlen(hello_str));
   ext2_create(ext2, ext2->current_dir, "default_dir", TYPE_DIR);
   return 1;
@@ -187,7 +188,7 @@ uint32_t ext2_reserch_file(ext2_t* ext2, char* path, int mode, uint32_t* ninode,
 
 void ext2_ind_prepare(ext2_t* ext2, uint32_t idx, uint32_t par, int mode) {
   ext2_rd_ind(ext2, idx);
-  if (mode == TYPE_DIR) {
+  if (mode & TYPE_DIR) {
     ext2->ind.size = 2 * DIR_SIZE;  // "." and ".."
     ext2->ind.blocks = 1;
     ext2->ind.block[0] = ext2_alloc_block(ext2);
@@ -198,12 +199,15 @@ void ext2_ind_prepare(ext2_t* ext2, uint32_t idx, uint32_t par, int mode) {
     strcpy(ext2->dir[0].name, ".");
     strcpy(ext2->dir[1].name, "..");
     ext2_wr_dir(ext2, ext2->ind.block[0]);
-    ext2->ind.mode = TYPE_DIR;
-  } else {
+    ext2->ind.mode = mode;
+  } else if (mode & TYPE_FILE) {
     ext2->ind.size = 0;
     ext2->ind.blocks = 0;
-    ext2->ind.mode = TYPE_FILE;
+    ext2->ind.mode = mode;
+  } else {
+    assert(0);
   }
+
   ext2_wr_ind(ext2, idx);
 }
 
