@@ -15,67 +15,6 @@ static void pwd_do(device_t *tty, char *pwd) {
 }
 */
 
-static void echo_do(device_t *tty, char *str) {
-  sprintf(bigbuf, "%s\n", str);
-  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
-}
-
-/*
-extern void vfs_cd(char *dirname, char *pwd, char *out);
-extern void ext2_cd(ext2_t *ext2, char *dirname, char *pwd, char *out);
-extern void procfs_cd(char *dirname, char *pwd, char *out);
-static void cd_do(device_t *tty, char *dirname, char *pwd) {
-  int type = vfs_identify_fs(pwd);
-  switch (type & ~INTERFACE) {
-    case VFS:  // vfs
-      vfs_cd(dirname, pwd, bigbuf);
-      break;
-    case EXT2:  // ext2
-      if ((type & INTERFACE) &&
-          (!strcmp(dirname, ".") || !strcmp(dirname, "..")))
-        vfs_cd(dirname, pwd, bigbuf);
-      else
-        ext2_cd(vfs_get_real_fs(pwd), dirname, pwd, bigbuf);
-      break;
-    case PROCFS:
-      if ((type & INTERFACE) &&
-          (!strcmp(dirname, ".") || !strcmp(dirname, "..")))
-        vfs_cd(dirname, pwd, bigbuf);
-      else
-        procfs_cd(dirname, pwd, bigbuf);
-      break;
-    default:
-      sprintf(bigbuf, "can't cd here.\n", bigbuf);
-      break;
-  };
-  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
-}
-*/
-
-/*
-extern void vfs_ls(char *dirname, char *pwd, char *out);
-extern void ext2_ls(ext2_t *ext2, char *dirname, char *out);
-extern void procfs_ls(char *dirname, char *out);
-static void ls_do(device_t *tty, char *dirname, char *pwd) {
-  int type = vfs_identify_fs(pwd);
-  switch (type & ~INTERFACE) {
-    case VFS:  // vfs
-      vfs_ls(dirname, pwd, bigbuf);
-      break;
-    case EXT2:  // ext2
-      ext2_ls(vfs_get_real_fs(pwd), dirname, bigbuf);
-      break;
-    case PROCFS:  // procfs
-      procfs_ls(dirname, bigbuf);
-      break;
-    default:
-      sprintf(bigbuf, "can't ls here.\n", bigbuf);
-      break;
-  }
-  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
-}
-*/
-
 char abs_path[256];
 
 static void build_abs_path(char *dirname, char *pwd) {
@@ -85,6 +24,11 @@ static void build_abs_path(char *dirname, char *pwd) {
   } else {
     strcpy(abs_path, dirname);
   }
+}
+
+static void echo_do(device_t *tty, char *str, char *pwd) {
+  sprintf(bigbuf, "%s\n", str);
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
 static void ls_do(device_t *tty, char *dirname, char *pwd) {
