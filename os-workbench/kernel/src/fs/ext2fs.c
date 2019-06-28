@@ -399,7 +399,7 @@ int ext2_create(ext2_t* ext2, int ridx, char* name, int mode) {
 int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
   ext2_rd_ind(ext2, ridx);
 
-  int i, j, k = -1;
+  int i = 0, j = 0, k = -1;
   for (i = 0; i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
     for (j = 0; j < DIR_AMUT; j++)
@@ -410,6 +410,7 @@ int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
     if (k != -1) break;
   }
 
+  if (k == -1) return 1;
   ext2_remove_block(ext2, ext2->dir[j].inode);
   ext2->dir[j].inode = 0;
   ext2_wr_dir(ext2, ext2->ind.block[i]);
