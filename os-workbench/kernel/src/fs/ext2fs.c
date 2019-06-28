@@ -366,6 +366,7 @@ int ext2_create(ext2_t* ext2, int ridx, char* name, int mode) {
 
   assert(ext2->ind.size < 4096);
   int idx;
+  printf("create: ridx[%d], size[%d]\n", ridx, ext2->ind.size);
   if (ext2->ind.size != ext2->ind.blocks * BLK_SIZE) {
     int i, j;
     for (i = 0; i < ext2->ind.blocks; i++) {
@@ -389,7 +390,7 @@ int ext2_create(ext2_t* ext2, int ridx, char* name, int mode) {
     for (int i = 1; i < DIR_AMUT; i++) ext2->dir[i].inode = 0;
     ext2_wr_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
   }
-  ext2->ind.size += DIR_SIZE;  // origin 16
+  ext2->ind.size += DIR_SIZE;  // now 32
   ext2_wr_ind(ext2, ridx);
   ext2_ind_prepare(ext2, idx, ridx, mode);
   return idx;
@@ -410,17 +411,17 @@ RemoveEnd:
     ext2_rd_ind(ext2, ext2->dir[j].inode);
     printf("The %d size is :%d\n", ext2->dir[j].inode, ext2->ind.size);
     if (ext2->ind.size == 2 * DIR_SIZE) {
+      printf("remove: %d %d", ext2->ind.block[0], ext2->ind.block[1]);
       ext2->ind.size = ext2->ind.blocks = 0;
       ext2_remove_block(ext2, ext2->ind.block[0]);
       ext2_remove_block(ext2, ext2->ind.block[1]);
-      ext2_wr_ind(ext2, ext2->dir[j].inode);
 
+      ext2_wr_ind(ext2, ext2->dir[j].inode);
       ext2_remove_block(ext2, ext2->dir[j].inode);
       ext2->dir[j].inode = 0;
       ext2_wr_dir(ext2, ext2->dir[j].inode);
     } else {
       printf("Dir is not empty! \n");
-
       return 1;
     }
   } else {
