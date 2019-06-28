@@ -390,6 +390,7 @@ int ext2_create(ext2_t* ext2, int ridx, char* name, int mode) {
     for (int i = 1; i < DIR_AMUT; i++) ext2->dir[i].inode = 0;
     ext2_wr_dir(ext2, ext2->ind.block[ext2->ind.blocks - 1]);
   }
+  printf("new create: %d\n", idx);
   ext2->ind.size += DIR_SIZE;  // now 32
   ext2_wr_ind(ext2, ridx);
   ext2_ind_prepare(ext2, idx, ridx, mode);
