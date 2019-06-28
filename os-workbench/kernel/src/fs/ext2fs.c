@@ -400,11 +400,13 @@ int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
   ext2_rd_ind(ext2, ridx);
 
   int i, j, k = -1;
-  for (i = 0; i < ext2->ind.blocks; i++) {
+  for (i = 0; k == -1 && i < ext2->ind.blocks; i++) {
     ext2_rd_dir(ext2, ext2->ind.block[i]);
     for (j = 0; j < DIR_AMUT; j++)
-      if (!strcmp(ext2->dir[j].name, name)) k = ext2->dir[j].inode;
-    if (k != -1) break;
+      if (!strcmp(ext2->dir[j].name, name)) {
+        k = ext2->dir[j].inode;
+        break;
+      }
   }
 
   ext2_remove_block(ext2, ext2->dir[j].inode);
