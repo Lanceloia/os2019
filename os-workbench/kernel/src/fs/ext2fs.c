@@ -418,7 +418,9 @@ int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
     printf("The %d size is :%d\n", k, ext2->ind.size);
     printf("The ridx = %d\n", ridx);
     if (ext2->ind.size == 2 * DIR_SIZE) {
+      assert(ext2->ind.blocks == 1);
       ext2->ind.size = ext2->ind.blocks = 0;
+      ext2_remove_block(ext2, ext2->ind.block[0]);
       ext2_wr_ind(ext2, ext2->dir[j].inode);
 
       ext2_remove_inode(ext2, ext2->dir[j].inode);
@@ -429,7 +431,6 @@ int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
       ext2->ind.size -= DIR_SIZE;
       ext2_wr_ind(ext2, ridx);
       return 0;
-
     } else {
       printf("Dir is not empty! \n");
       return 1;
