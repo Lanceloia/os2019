@@ -82,7 +82,6 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
 
 int ext2_lookup(filesystem_t* fs, const char* path, int mode) { return 0; }
 int ext2_readdir(filesystem_t* fs, int ridx, int kth, vinode_t* buf) {
-  // printf("fuck: kth == %d\n", kth);
   ext2_t* ext2 = (ext2_t*)fs->rfs;
   int cnt = 0;
   ext2_rd_ind(ext2, ridx);
@@ -354,7 +353,7 @@ ssize_t ext2_write(ext2_t* ext2, int ridx, uint64_t offset, char* buf,
   }
 
   if (ret != len) {
-    printf("ret == %d, len == %d\n", ret, len);
+    printf("something error, ret == %d, len == %d\n", ret, len);
   }
   ext2->ind.size = offset + len;
   ext2_wr_ind(ext2, ridx);

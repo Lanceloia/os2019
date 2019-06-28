@@ -61,7 +61,7 @@ static void catto_do(device_t *tty, char *dirname, char *pwd) {
   printf("path: %s\n", abs_path);
   while (1) {
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
-    printf("fuck?\n");
+    // printf("fuck?\n");
     if (readbuf[nread - 2] == '~') {
       vfs_write(fd, readbuf, nread - 2);
       break;
