@@ -418,6 +418,7 @@ RemoveEnd:
       ext2_wr_dir(ext2, ext2->dir[j].inode);
     } else {
       printf("Dir is not empty! \n");
+      printf("The size is :%d\n", ext2->ind.size);
       return 1;
     }
   } else {
