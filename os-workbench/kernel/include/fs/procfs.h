@@ -3,7 +3,7 @@
 
 #include <devices.h>
 
-struct inode {
+struct prot {
   /* inode, 64 bytes */
   char name[16];
   uint32_t cpu_number;
