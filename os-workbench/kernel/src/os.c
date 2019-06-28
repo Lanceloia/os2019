@@ -2,7 +2,9 @@
 #include <os.h>
 
 extern void shell_task(void *name);
+/*
 extern void procfs_add(void *procname);
+*/
 
 static void os_init() {
   pmm->init();
