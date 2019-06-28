@@ -87,7 +87,20 @@ static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
 static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
   build_abs_path(dirname, pwd);
   if (!vfs_access(abs_path, TYPE_DIR)) printf("Dir is not exists! \n");
-  if (vfs_remove(abs_path)) printf("Cannot rmdir here! \n");
+  switch (vfs_remove(abs_path)) {
+    case 0:
+      printf("Success! \n");
+      break;
+    case 1:
+      printf("The dir is no empty! \n");
+      break;
+    case 2:
+      printf("That is not a dir! \n");
+      break;
+    default:
+      assert(0);
+      break;
+  }
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
