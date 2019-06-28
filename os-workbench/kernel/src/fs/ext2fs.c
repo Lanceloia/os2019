@@ -415,6 +415,7 @@ int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
   if (mode == TYPE_DIR) {
     ext2_rd_ind(ext2, ext2->dir[j].inode);
     printf("The %d size is :%d\n", k, ext2->ind.size);
+    printf("The ridx = %d\n", ridx);
     if (ext2->ind.size == 2 * DIR_SIZE) {
       ext2->ind.size = ext2->ind.blocks = 0;
       ext2_wr_ind(ext2, ext2->dir[j].inode);
