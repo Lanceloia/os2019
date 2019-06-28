@@ -405,12 +405,12 @@ int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
     for (j = 0; j < DIR_AMUT; j++)
       if (!strcmp(ext2->dir[j].name, name)) goto RemoveEnd;
   }
+RemoveEnd:
 
   ext2_remove_block(ext2, ext2->dir[j].inode);
   ext2->dir[j].inode = 0;
   ext2_wr_dir(ext2, ext2->ind.block[i]);
 
-RemoveEnd:
   if (mode == TYPE_DIR) {
     ext2_rd_ind(ext2, ext2->dir[j].inode);
     printf("The %d size is :%d\n", ext2->dir[j].inode, ext2->ind.size);
