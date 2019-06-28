@@ -408,7 +408,7 @@ int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
 
   ext2_remove_block(ext2, ext2->dir[j].inode);
   ext2->dir[j].inode = 0;
-  ext2_wr_dir(ext2, ext2->dir[j].inode);
+  ext2_wr_dir(ext2, ext2->ind.block[i]);
 
 RemoveEnd:
   if (mode == TYPE_DIR) {
