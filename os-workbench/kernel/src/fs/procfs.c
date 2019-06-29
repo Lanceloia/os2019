@@ -19,15 +19,15 @@ int procfs_get_idx() {
   return idx;
 }
 
-#define procfs_add(idx, name, mode) \
-  do {                              \
-    idx = procfs_get_idx();         \
-    strcpy(procs[idx].name, name);  \
-    procs[idx].cpu_number = -1;     \
-    procs[idx].schduel_times = 0;   \
-    procs[idx].inode = idx;         \
-    procs[idx].mode = mode;         \
-    printf("fuck: %s\n", name);     \
+#define procfs_add(idx, _name, mode) \
+  do {                               \
+    idx = procfs_get_idx();          \
+    strcpy(procs[idx].name, _name);  \
+    procs[idx].cpu_number = -1;      \
+    procs[idx].schduel_times = 0;    \
+    procs[idx].inode = idx;          \
+    procs[idx].mode = mode;          \
+    printf("fuck: %s\n", _name);     \
   } while (0)
 
 void *procfs_addproc(const char *name) {
