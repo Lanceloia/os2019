@@ -479,7 +479,7 @@ int vfs_remove(const char *path) {
   switch (pidx->fs_type) {
     case EXT2FS:
       ret = ext2_remove(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1,
-                        TYPE_DIR);
+                        TYPE_FILE | TYPE_DIR);
       if (!ret) remove_dir(nidx, idx);
       break;
 
