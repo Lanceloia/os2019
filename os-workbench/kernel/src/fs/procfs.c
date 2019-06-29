@@ -10,7 +10,8 @@
 proc_t procs[MAX_PROC];
 int running[MAX_CPU];
 int total_proc = 4;
-uint64_t mem_size = 0;
+uint64_t mem_total = 0;
+uint64_t mem_used = 0;
 
 #define procfs_add(idx, _name)      \
   do {                              \
@@ -50,11 +51,9 @@ void procfs_mem_trace(uint64_t size, int mode) {
   switch (mode) {
     case 0:  // plus
       mem_size += size;
-      printf("add %d  ", size);
       break;
     case 1:  // minus
       mem_size -= size;
-      printf("minus %d  ", size);
       break;
     default:
       assert(0);
@@ -107,7 +106,10 @@ ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
       ret += sprintf(buf + ret, "%s\n", procs[k].name);
     }
   } else if (ridx == 3) {
-    ret += sprintf(buf + ret, "  [memory]: %d KB", mem_size / 1024);
+    ret += sprintf(buf + ret, "  [total]: %d KB\n", mem_total / 1024);
+    ret += sprintf(buf + ret, "  [used]: %d KB\n", mem_used / 1024);
+    ret +=
+        sprintf(buf + ret, "  [free]: %d KB\n", (mem_total - mem_used) / 1024);
   } else {
     ret += sprintf(buf + ret, "  pid: %d\n", procs[ridx].inode);
     ret += sprintf(buf + ret, "  name: %s\n", procs[ridx].name);

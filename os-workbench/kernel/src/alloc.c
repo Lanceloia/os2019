@@ -252,11 +252,14 @@ void free_print2(int flag) {
   naivelock_unlock(&memoplk);
 }
 
+extern uint64_t mem_total;
+
 static void pmm_init() {
   naivelock_lock(&memoplk);
 
   pm_start = (uintptr_t)_heap.start;
   pm_end = (uintptr_t)_heap.end;
+  mem_total = pm_end - pm_start;
 
   free_init(pm_start, pm_end);
   naivelock_unlock(&memoplk);
