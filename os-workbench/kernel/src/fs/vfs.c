@@ -439,7 +439,7 @@ int vfs_create(const char *path) {
   tmppath[offset] = '\0';
 
   int idx = lookup_auto(tmppath);
-  int ridx = -1, nidx = -1;
+  int ridx = -1, nidx = -1, ret = 0;
   switch (pidx->fs_type) {
     case EXT2FS:
       ridx = ext2_create(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1,
@@ -451,9 +451,10 @@ int vfs_create(const char *path) {
 
     default:
       printf("Cannot create here! \n");
+      ret = 1;
       break;
   }
-  return 0;
+  return ret;
 }
 
 int vfs_remove(const char *path) {
@@ -492,22 +493,24 @@ int vfs_remove(const char *path) {
 int vfs_link(const char *oldpath, const char *newpath) {
   strcpy(tmppath, oldpath);
   int oidx = lookup_auto(tmppath);
-  printf("old: %s, new: %s\n", oldpath, newpath);
   if (oidx == -1) {
     printf("Oldpath is not exists! \n");
     return 1;
   }
-  int offset = strlen(newpath) - last_item_len(newpath);
-  printf("item: %s", newpath + offset);
 
   strcpy(tmppath, newpath);
   int nidx = lookup_auto(tmppath);
   if (nidx != -1) {
-    printf("nidx == %d\n", nidx);
-    printf("newpath is exists! \n");
+    printf("Newpath is exists! \n");
     return 1;
-  } else {
   }
+
+  int offset = strlen(newpath) - last_item_len(newpath) - 1;
+  tmppath[offset] = '\0';
+  int par = lookup_auto(tmppath);
+  nidx = append_dir(par, tmppath + offset + 1, VFS, NULL);
+  pnidx->mode = TYPE_LINK;
+  add_link(oidx, nidx);
 
   return 0;
 }
