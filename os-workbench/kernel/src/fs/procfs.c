@@ -14,7 +14,7 @@ int total_proc = 0;
   do {                              \
     idx = total_proc++;             \
     strcpy(procs[idx].name, _name); \
-    procs[idx].inode = idx - 1;     \
+    procs[idx].inode = idx - 3;     \
     procs[idx].cpu_number = -1;     \
     procs[idx].sche_times = 0;      \
     procs[idx].memo_size = 0;       \
@@ -80,10 +80,21 @@ int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
 
 ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
   if (offset != 0) return 0;
-  int ret = sprintf(buf, "  pid: %d\n", procs[ridx].inode);
-  ret += sprintf(buf + ret, "  name: %s\n", procs[ridx].name);
-  ret += sprintf(buf + ret, "  cpuinfo: %d\n", procs[ridx].cpu_number);
-  ret += sprintf(buf + ret, "  memory_used: %d\n", procs[ridx].memo_size);
-  ret += sprintf(buf + ret, "  schduel_times: %d\n", procs[ridx].sche_times);
+
+  int ret = 0;
+
+  if (ridx == 2 || ridx == 3) {
+    for (int i = 0; i < total_proc; i++)
+      if (procs[i].cpu_number != -1) {
+        ret += sprintf(buf + ret, "  [cpu %d]: %s\n", procs[i].cpu_number,
+                       procs[i].name);
+      }
+  } else {
+    ret += sprintf(buf + ret, "  pid: %d\n", procs[ridx].inode);
+    ret += sprintf(buf + ret, "  name: %s\n", procs[ridx].name);
+    ret += sprintf(buf + ret, "  cpuinfo: %d\n", procs[ridx].cpu_number);
+    ret += sprintf(buf + ret, "  memory_used: %d\n", procs[ridx].memo_size);
+    ret += sprintf(buf + ret, "  schduel_times: %d\n", procs[ridx].sche_times);
+  }
   return ret;
 }
