@@ -132,7 +132,7 @@ struct shellinfo {
     {"link ", "  link [oldpath] [newpath]   (link path)", link_do, 5},
     {"rmdir ", "  rmdir [dirname]   (remove directory)", rmdir_do, 6},
     {"mkdir ", "  mkdir [dirname]   (make directory)", mkdir_do, 6},
-    {"cat > ", "  cat > [filename]  (write file, end with '~')", catto_do, 6},
+    {"cat > ", "  cat > [filename]  (write file, end with  ~ )", catto_do, 6},
     {"cat ", "  cat [filename]    (read file)", cat_do, 4},
     {"cd ", "  cd [dirname]      (change directory)", cd_do, 3},
     {"ls ", "  ls [dirname]      (list directory's items)", ls_do, 3},
@@ -142,7 +142,7 @@ struct shellinfo {
 static void default_do(device_t *tty) {
   int offset = 0;
   offset += sprintf(bigbuf + offset, "Unexpected command\n");
-  offset += sprintf(bigbuf + offset, "\n    help    \n");
+  offset += sprintf(bigbuf + offset, "\n            help            \n");
   for (int i = 0; i < sizeof(INFO) / sizeof(struct shellinfo); i++)
     offset += sprintf(bigbuf + offset, "%s\n", INFO[i].script);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
