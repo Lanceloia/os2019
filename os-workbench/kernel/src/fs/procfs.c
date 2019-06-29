@@ -30,7 +30,10 @@ int procfs_get_idx() {
     printf("fuck: %s\n", _name);     \
   } while (0)
 
+int is_initialized = 0;
+
 void *procfs_addproc(const char *name) {
+  if (!is_initialized) return NULL;
   int idx, mode = TYPE_FILE;
   procfs_add(idx, name, mode);
   return &procs[idx];
@@ -43,6 +46,7 @@ void procfs_schdule(void *proc) {
 }
 
 int procfs_init(filesystem_t *fs, const char *name, device_t *dev) {
+  is_initialized = 1;
   int dot, ddot, mode = TYPE_DIR;
   char dotname[] = ".", ddotname[] = "..";
   procfs_add(dot, dotname, mode);
