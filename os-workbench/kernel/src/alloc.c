@@ -283,7 +283,6 @@ static void kfree(void *ptr) {
   int idx = find_allocated_block((uintptr_t)ptr);
   procfs_mem_trace(pool[idx].size, 1);
   free_insert(&pool[idx]);
-  procfs_mem_trace(size, 0);
   naivelock_unlock(&memoplk);
 }
 
