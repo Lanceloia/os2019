@@ -192,6 +192,17 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
   return idx;
 }
 
+static int vfs_init_procfs(int (*readdir)(filesystem_t *, int, int,
+                                          vinode_t *)) {
+  int idx = filesys_alloc();
+  strcpy(filesys[idx].name, "procfs");
+  filesys[idx].rfs = NULL;
+  filesys[idx].dev = NULL;
+  filesys[idx].init = NULL;
+  filesys[idx].readdir = readdir;
+  return idx;
+}
+
 #define build_dot(CUR, FSTYPE, FS)                              \
   do {                                                          \
     strcpy(pdot->name, ".");                                    \
@@ -341,8 +352,8 @@ int vinode_open(int inode_idx, int mode) {
 
 typedef struct ext2 ext2_t;
 extern void ext2_init(filesystem_t *fs, const char *name, device_t *dev);
-extern int ext2_readdir(filesystem_t *fs, int vinode_idx, int kth,
-                        vinode_t *buf);
+extern int ext2_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf);
+extern int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf);
 
 int fuck() {
   lookup_auto("/");
@@ -364,8 +375,11 @@ int vfs_init() {
                              ext2_init, ext2_readdir);
   int fs_r1 = vfs_init_devfs("ramdisk1", dev_lookup("ramdisk1"), sizeof(ext2_t),
                              ext2_init, ext2_readdir);
+  int fs_proc = vfs_init_procfs(procfs_readdir);
+
   vinodes_mount(dev, "ramdisk0", EXT2FS, &filesys[fs_r0]);
   vinodes_mount(dev, "ramdisk1", EXT2FS, &filesys[fs_r1]);
+  vinodes_mount(root, "proc", PROCFS, &filesys[fs_proc]);
 
   return 0;
 }
