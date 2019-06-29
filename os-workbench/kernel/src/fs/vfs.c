@@ -496,6 +496,7 @@ int vfs_open(const char *path, int mode) {
 
 extern ssize_t ext2_read(ext2_t *, int, uint64_t, char *, uint32_t);
 extern ssize_t ext2_write(ext2_t *, int, uint64_t, char *, uint32_t);
+extern ssize_t procfs_read(int, uint64_t, char *, uint32_t);
 
 ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
   if (fd < 0) return 0;
@@ -507,6 +508,9 @@ ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
       ret = ext2_read(pfd->fs->rfs, pfd->ridx, files[fd].offset, buf, nbyte);
       files[fd].offset += ret;
       break;
+    case PROCFS:
+      ret = procfs_read(pfd->ridx, files[fd].offset, buf, nbyte);
+      files[fd].offset += ret;
     default:
       printf("Cannot read here! \n");
       break;
@@ -538,15 +542,16 @@ void vfs_ls(char *dirname) {
   printf("\n");
   int idx = lookup_auto(dirname);
   if (idx == -1) return;
-  printf("----------------------------------------------------\n");
+  printf("-----------------------------------------------------------\n");
   printf("-     index       name                  path        \n");
   printf(">>   %4d        %12s          %s\n", idx, vinodes[idx].name,
          vinodes[idx].path);
+  printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {
     printf("-    %4d        %12s          %s\n", k, vinodes[k].name,
            vinodes[k].path);
   }
-  printf("----------------------------------------------------\n");
+  printf("-----------------------------------------------------------\n");
 }
 
 MODULE_DEF(vfs){
