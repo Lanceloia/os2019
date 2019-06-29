@@ -262,11 +262,14 @@ static void pmm_init() {
   naivelock_unlock(&memoplk);
 }
 
+extern void procfs_mem_trace(uint64_t size, int mode);
+
 /* function kalloc():interface */
 static void *kalloc(size_t size) {
   if (size == 0) return NULL;
   naivelock_lock(&memoplk);
   mem_block_t *block = free_find(size);
+  procfs_mem_trace(block->size, 0);
   assert(block != NULL);
   free_check();
   assert(block->begin != 0);
@@ -278,7 +281,9 @@ static void *kalloc(size_t size) {
 static void kfree(void *ptr) {
   naivelock_lock(&memoplk);
   int idx = find_allocated_block((uintptr_t)ptr);
+  procfs_mem_trace(pool[idx].size, 1);
   free_insert(&pool[idx]);
+  procfs_mem_trace(size, 0);
   naivelock_unlock(&memoplk);
 }
 

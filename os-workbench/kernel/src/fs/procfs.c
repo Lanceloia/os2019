@@ -10,6 +10,7 @@
 proc_t procs[MAX_PROC];
 int running[MAX_CPU];
 int total_proc = 4;
+uint64_t mem_size = 0;
 
 #define procfs_add(idx, _name)      \
   do {                              \
@@ -42,6 +43,20 @@ void procfs_schdule(void *oldproc, void *newproc) {
     nproc->cpu_number = _cpu();
     nproc->sche_times++;
     running[_cpu()] = nproc->inode;
+  }
+}
+
+void procfs_mem_trace(uint64_t size, int mode) {
+  switch (mode) {
+    case 0:  // plus
+      mem_size += size;
+      break;
+    case 1:  // minus
+      mem_size -= size;
+      break;
+    default:
+      assert(0);
+      break;
   }
 }
 
@@ -83,17 +98,19 @@ ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
 
   int ret = 0;
 
-  if (ridx == 2 || ridx == 3) {
+  if (ridx == 2) {
     for (int i = 0; i < _ncpu(); i++) {
       int k = running[i] + 4;
-      ret += sprintf(buf + ret, "  [%d]: %s\n", procs[k].cpu_number,
-                     procs[k].name);
+      ret += sprintf(buf + ret, "  [cpu %d]: ", procs[k].cpu_number);
+      ret += sprintf(buf + ret, "%s\n", procs[k].name);
     }
+  } else if {
+    ret += sprintf(buf + ret, "  [memory]: %d KB", mem_size / 1024);
   } else {
     ret += sprintf(buf + ret, "  pid: %d\n", procs[ridx].inode);
     ret += sprintf(buf + ret, "  name: %s\n", procs[ridx].name);
-    ret += sprintf(buf + ret, "  cpuinfo: %d\n", procs[ridx].cpu_number);
-    ret += sprintf(buf + ret, "  memory_used: %d\n", procs[ridx].memo_size);
+    ret += sprintf(buf + ret, "  cpu: %d\n", procs[ridx].cpu_number);
+    ret += sprintf(buf + ret, "  mem: %d\n", procs[ridx].memo_size);
     ret += sprintf(buf + ret, "  schduel_times: %d\n", procs[ridx].sche_times);
   }
   return ret;
