@@ -31,8 +31,8 @@ int procfs_get_idx() {
   } while (0)
 
 void *procfs_addproc(const char *name) {
-  int idx;
-  procfs_add(idx, name, TYPE_FILE);
+  int idx, mode = TYPE_FILE;
+  procfs_add(idx, name, mode);
   return &procs[idx];
 }
 
