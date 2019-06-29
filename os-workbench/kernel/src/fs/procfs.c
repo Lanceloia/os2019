@@ -8,13 +8,14 @@
  */
 
 proc_t procs[MAX_PROC];
+int running[MAX_CPU];
 int total_proc = 4;
 
 #define procfs_add(idx, _name)      \
   do {                              \
     idx = total_proc++;             \
     strcpy(procs[idx].name, _name); \
-    procs[idx].inode = idx - 3;     \
+    procs[idx].inode = idx - 4;     \
     procs[idx].cpu_number = -1;     \
     procs[idx].sche_times = 0;      \
     procs[idx].memo_size = 0;       \
@@ -40,6 +41,7 @@ void procfs_schdule(void *oldproc, void *newproc) {
     proc_t *nproc = (proc_t *)newproc;
     nproc->cpu_number = _cpu();
     nproc->sche_times++;
+    running[_cpu()] = nproc->inode;
   }
 }
 
@@ -82,11 +84,11 @@ ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
   int ret = 0;
 
   if (ridx == 2 || ridx == 3) {
-    for (int i = 0; i < total_proc; i++)
-      if (procs[i].cpu_number != -1) {
-        ret += sprintf(buf + ret, "  [cpu %d]: %s\n", procs[i].cpu_number,
-                       procs[i].name);
-      }
+    for (int i = 0; i < _ncpu(); i++) {
+      int k = running[i];
+      ret += sprintf(buf + ret, "  [%d]: %s\n", procs[k].cpu_number,
+                     procs[k].name);
+    }
   } else {
     ret += sprintf(buf + ret, "  pid: %d\n", procs[ridx].inode);
     ret += sprintf(buf + ret, "  name: %s\n", procs[ridx].name);
