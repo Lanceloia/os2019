@@ -11,10 +11,10 @@ static void os_init() {
   kmt->init();
   dev->init();
   vfs->init();
-  kmt->create(pmm->alloc(sizeof(task_t)), "proc-tty1", shell_task, "tty1");
-  kmt->create(pmm->alloc(sizeof(task_t)), "proc-tty2", shell_task, "tty2");
-  kmt->create(pmm->alloc(sizeof(task_t)), "proc-tty3", shell_task, "tty3");
-  kmt->create(pmm->alloc(sizeof(task_t)), "proc-tty4", shell_task, "tty4");
+  kmt->create(pmm->alloc(sizeof(task_t)), "tty1", shell_task, "tty1");
+  kmt->create(pmm->alloc(sizeof(task_t)), "tty2", shell_task, "tty2");
+  kmt->create(pmm->alloc(sizeof(task_t)), "tty3", shell_task, "tty3");
+  kmt->create(pmm->alloc(sizeof(task_t)), "tty4", shell_task, "tty4");
 }
 
 static void hello() {
