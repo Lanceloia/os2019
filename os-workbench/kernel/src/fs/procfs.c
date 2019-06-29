@@ -100,9 +100,9 @@ ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
   int ret = 0;
 
   if (ridx == 2) {
+    ret += sprintf(buf + ret, "\n  cpuinfo  \n");
     for (int i = 0; i < _ncpu(); i++) {
       int k = running[i] + 4;
-      ret += sprintf(buf + ret, "\n  cpuinfo  \n");
       ret += sprintf(buf + ret, "  [cpu %d]: ", procs[k].cpu_number);
       ret += sprintf(buf + ret, "%s\n", procs[k].name);
     }
@@ -113,6 +113,7 @@ ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
     ret += sprintf(buf + ret, "  [used]: %d KB\n", mem_used / 1024);
     ret += sprintf(buf + ret, "  [free]: %d KB\n", mem_free / 1024);
   } else {
+    ret += sprintf(buf + ret, "\n  taskinfo  \n");
     ret += sprintf(buf + ret, "  pid: %d\n", procs[ridx].inode);
     ret += sprintf(buf + ret, "  name: %s\n", procs[ridx].name);
     ret += sprintf(buf + ret, "  cpu: %d\n", procs[ridx].cpu_number);
