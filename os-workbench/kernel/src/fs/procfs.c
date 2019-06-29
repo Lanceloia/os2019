@@ -10,14 +10,14 @@
 proc_t procs[MAX_PROC];
 int total_proc = 0;
 
-#define procfs_add(idx, _name, mode) \
-  do {                               \
-    idx = total_proc++;              \
-    strcpy(procs[idx].name, _name);  \
-    procs[idx].cpu_number = -1;      \
-    procs[idx].sche_times = 0;       \
-    procs[idx].memo_size = 0;        \
-    procs[idx].mode = mode;          \
+#define procfs_add(idx, _name)      \
+  do {                              \
+    idx = total_proc++;             \
+    strcpy(procs[idx].name, _name); \
+    procs[idx].inode = idx - 1;     \
+    procs[idx].cpu_number = -1;     \
+    procs[idx].sche_times = 0;      \
+    procs[idx].memo_size = 0;       \
   } while (0)
 
 int is_initialized = 0;
@@ -28,8 +28,8 @@ void *procfs_addproc(const char *name) {
     printf("Cannot create more proc! \n");
     return NULL;
   }
-  int idx, mode = TYPE_FILE;
-  procfs_add(idx, name, mode);
+  int idx;
+  procfs_add(idx, name);
   return &procs[idx];
 }
 
@@ -59,7 +59,7 @@ int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
   printf("here!\n");
   for (int k = 0, cnt = 0; k < total_proc; k++) {
     if (++cnt == kth) {
-      strcpy(buf->name, procs[k].name);
+      sprintf(buf->name, procs[k].inode);
       buf->ridx = procs[k].inode;
       buf->mode = procs[k].mode;
       // printf("find %s\n", buf->name);
@@ -71,7 +71,8 @@ int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
 
 ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
   if (offset != 0) return 0;
-  int ret = sprintf(buf, "  name: %s\n", procs[ridx].name);
+  int ret = sprintf(buf, "  pid: %s\n", procs[ridx].inode);
+  ret += sprintf(buf + ret, "  name: %s\n", procs[ridx].name);
   ret += sprintf(buf + ret, "  cpuinfo: %d\n", procs[ridx].cpu_number);
   ret += sprintf(buf + ret, "  memory_used: %d\n", procs[ridx].memo_size);
   ret += sprintf(buf + ret, "  schduel_times: %d\n", procs[ridx].sche_times);
