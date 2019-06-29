@@ -262,6 +262,20 @@ static int vfs_init_tty(const char *name, device_t *dev) {
     vinodes[IDX].fs = FS;                                        \
   } while (0)
 
+#define build_general_file(IDX, DOT, DDOT, NAME, FSTYPE, FS) \
+  do {                                                       \
+    strcpy(vinodes[IDX].name, NAME);                         \
+    strcpy(vinodes[IDX].path, vinodes[DOT].path);            \
+    strcat(vinodes[IDX].path, NAME);                         \
+    vinodes[IDX].dot = DOT, vinodes[IDX].ddot = DDOT;        \
+    vinodes[IDX].next = -1, vinodes[IDX].child = -1;         \
+    vinodes[IDX].prev_link = vinodes[IDX].next_link = IDX;   \
+    vinodes[IDX].linkcnt = 1;                                \
+    vinodes[IDX].mode = TYPE_FILE;                           \
+    vinodes[IDX].fs_type = FSTYPE;                           \
+    vinodes[IDX].fs = FS;                                    \
+  } while (0)
+
 #define delete_vinode(IDX) \
   do {                     \
     vinodes_free(IDX);     \
@@ -291,7 +305,7 @@ static int build_root() {
   return idx;
 }
 
-static int append_dir(int par, char *name, int fy_type, filesystem_t *fs) {
+static int append_dir(int par, char *name, int fs_type, filesystem_t *fs) {
   int nidx = vinodes_alloc(), k = vinodes[par].child, dot = -1, ddot = -1;
   assert(k != -1);
 
@@ -304,7 +318,24 @@ static int append_dir(int par, char *name, int fy_type, filesystem_t *fs) {
   }
   assert(dot != -1 && ddot != -1);
   vinodes[k].next = nidx;
-  build_general_null_dir(nidx, dot, ddot, name, fy_type, fs);
+  build_general_null_dir(nidx, dot, ddot, name, fs_type, fs);
+  return nidx;
+}
+
+static int append_file(int par, char *name, int fs_type, filesystem_t *fs) {
+  int nidx = vinodes_alloc(), k = vinodes[par].child, dot = -1, ddot = -1;
+  assert(k != -1);
+
+  for (; vinodes[k].next != -1; k = vinodes[k].next) {
+    if (!strcmp(vinodes[k].name, ".")) {
+      dot = k;
+      ddot = vinodes[k].next;
+      // printf("dot: %d, ddot: %d\n", dot, ddot);
+    }
+  }
+  assert(dot != -1 && ddot != -1);
+  vinodes[k].next = nidx;
+  build_general_file(nidx, dot, ddot, name, fy_type, fs);
   return nidx;
 }
 
@@ -404,18 +435,13 @@ int vfs_init() {
                                 sizeof(ext2_t), ext2_init, ext2_readdir);
   int fs_proc = vfs_init_procfs(procfs_init, procfs_readdir);
 
-  int tty1 = vfs_init_tty("tty1", dev_lookup("tty1"));
-  int tty2 = vfs_init_tty("tty2", dev_lookup("tty2"));
-  int tty3 = vfs_init_tty("tty3", dev_lookup("tty3"));
-  int tty4 = vfs_init_tty("tty4", dev_lookup("tty4"));
-
   vinodes_mount(dev, "ramdisk0", EXT2FS, &filesys[fs_r0]);
   vinodes_mount(dev, "ramdisk1", EXT2FS, &filesys[fs_r1]);
   vinodes_mount(root, "proc", PROCFS, &filesys[fs_proc]);
-  vinodes_mount(dev, "tty1", TTY, &filesys[tty1]);
-  vinodes_mount(dev, "tty2", TTY, &filesys[tty2]);
-  vinodes_mount(dev, "tty3", TTY, &filesys[tty3]);
-  vinodes_mount(dev, "tty4", TTY, &filesys[tty4]);
+  append_file(dev, "tty1", TTY, NULL);
+  append_file(dev, "tty2", TTY, NULL);
+  append_file(dev, "tty2", TTY, NULL);
+  append_file(dev, "tty2", TTY, NULL);
 
   return 0;
 }
