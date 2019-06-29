@@ -509,7 +509,8 @@ ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
       files[fd].offset += ret;
       break;
     case PROCFS:
-      ret = procfs_read(pfd->ridx, buf);
+      ret = procfs_read(pfd->ridx, files[fd].offset, buf);
+      files[fd].offset += ret;
       break;
     default:
       printf("Cannot read here! \n");
@@ -544,9 +545,9 @@ void vfs_ls(char *dirname) {
   if (idx == -1) return;
   printf("-----------------------------------------------------------\n");
   printf("-     index       name                  path        \n");
-  printf(">>   %4d        %12s          %s\n", idx, vinodes[idx].name,
-         vinodes[idx].path);
   printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
+  printf(">>   %4d        %12s          %s\n\n", idx, vinodes[idx].name,
+         vinodes[idx].path);
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {
     printf("-    %4d        %12s          %s\n", k, vinodes[k].name,
            vinodes[k].path);
