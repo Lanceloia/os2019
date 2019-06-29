@@ -509,9 +509,9 @@ int vfs_link(const char *oldpath, const char *newpath) {
   tmppath[offset] = '\0';
   int par = lookup_auto(tmppath);
   nidx = append_dir(par, tmppath + offset + 1, VFS, NULL);
+  pnidx->path[strlen(pnidx->path) - 1] = '\0';
   pnidx->mode = TYPE_LINK;
   add_link(oidx, nidx);
-
   return 0;
 }
 
