@@ -5,9 +5,9 @@
 
 struct proc {
   /* proc, 32 bytes */
-  uint32_t inode;
   uint32_t cpu_number;
-  uint32_t schduel_times;
+  uint32_t sche_times;
+  uint32_t memo_size;
   uint32_t mode;
   char name[16];
 };

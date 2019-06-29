@@ -15,8 +15,8 @@ int total_proc = 0;
     idx = total_proc++;              \
     strcpy(procs[idx].name, _name);  \
     procs[idx].cpu_number = -1;      \
-    procs[idx].schduel_times = 0;    \
-    procs[idx].inode = idx;          \
+    procs[idx].sche_times = 0;       \
+    procs[idx].memo_size = 0;        \
     procs[idx].mode = mode;          \
   } while (0)
 
@@ -42,7 +42,7 @@ void procfs_schdule(void *oldproc, void *newproc) {
   if (newproc) {
     proc_t *nproc = (proc_t *)newproc;
     nproc->cpu_number = _cpu();
-    nproc->schduel_times++;
+    nproc->sche_times++;
   }
 }
 
@@ -72,7 +72,8 @@ int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
 ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
   if (offset != 0) return 0;
   int ret = sprintf(buf, "  name: %s\n", procs[ridx].name);
-  ret += sprintf(buf + ret, "  cpu: %d\n", procs[ridx].cpu_number);
-  ret += sprintf(buf + ret, "  schduel: %d\n", procs[ridx].schduel_times);
+  ret += sprintf(buf + ret, "  cpuinfo: %d\n", procs[ridx].cpu_number);
+  ret += sprintf(buf + ret, "  memory_used: %d\n", procs[ridx].memo_size);
+  ret += sprintf(buf + ret, "  schduel_times: %d\n", procs[ridx].sche_times);
   return ret;
 }
