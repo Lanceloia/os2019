@@ -436,8 +436,23 @@ int ext2_remove(ext2_t* ext2, int ridx, char* name, int mode) {
       return 1;  // ERROR 1
     }
   } else {
-    assert(0);
-    return 2;  // ERROR 2
+    // remove file
+    ext2_rd_ind(ext2, ext2->dir[j].inode);
+    for (int m = 0; m < ext2->ind.blocks; m++) {
+      ext2_remove_block(ext2->ind.block[m]);
+      ext2->ind.block[m] = 0;
+    }
+    ext2_wr_ind(ext2, ext2->dir[j].inode);
+
+    ext2_remove_inode(ext2, ext2->dir[j].inode);
+    ext2->dir[j].inode = 0;
+    ext2_wr_dir(ext2, ext2->ind.block[i]);
+
+    ext2_rd_ind(ext2, ridx);
+    ext2->ind.size -= DIR_SIZE;
+    ext2_wr_ind(ext2, ridx);
+
+    return 0;
   }
 }
 
