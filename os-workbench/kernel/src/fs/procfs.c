@@ -48,10 +48,10 @@ void procfs_schdule(void *oldproc, void *newproc) {
 
 int procfs_init(filesystem_t *fs, const char *name, device_t *dev) {
   is_initialized = 1;
-  int dot, ddot, mode = TYPE_DIR;
+  int dot, ddot;
   char dotname[] = ".", ddotname[] = "..";
-  procfs_add(dot, dotname, mode);
-  procfs_add(ddot, ddotname, mode);
+  procfs_add(dot, dotname);
+  procfs_add(ddot, ddotname);
   return 1;
 }
 
