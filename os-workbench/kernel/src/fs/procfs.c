@@ -65,6 +65,9 @@ int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
       if (k == 0 || k == 1) {
         strcpy(buf->name, procs[k].name);
         buf->mode = TYPE_DIR;
+      } else if (k == 2 || k == 3) {
+        strcpy(buf->name, procs[k].name);
+        buf->mode = TYPE_FILE;
       } else {
         sprintf(buf->name, "%d", procs[k].inode);
         buf->mode = TYPE_FILE;

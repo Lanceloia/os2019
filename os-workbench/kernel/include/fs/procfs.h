@@ -14,6 +14,6 @@ struct proc {
 
 typedef struct proc proc_t;
 
-#define MAX_PROC 16
+#define MAX_PROC 64
 
 #endif
