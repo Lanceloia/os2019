@@ -8,7 +8,7 @@
  */
 
 proc_t procs[MAX_PROC];
-int total_proc = 0;
+int total_proc = 4;
 
 #define procfs_add(idx, _name)      \
   do {                              \
@@ -20,10 +20,7 @@ int total_proc = 0;
     procs[idx].memo_size = 0;       \
   } while (0)
 
-int is_initialized = 0;
-
 void *procfs_addproc(const char *name) {
-  if (!is_initialized) return NULL;
   if (total_proc == MAX_PROC - 1) {
     printf("Cannot create more proc! \n");
     return NULL;
@@ -47,13 +44,14 @@ void procfs_schdule(void *oldproc, void *newproc) {
 }
 
 int procfs_init(filesystem_t *fs, const char *name, device_t *dev) {
-  is_initialized = 1;
-  int idx;
+  int _total_proc = total_proc, idx;
+  total_proc = 0;
   char *names[] = {".", "..", "cpuinfo", "meminfo"};
   procfs_add(idx, names[0]);
   procfs_add(idx, names[1]);
   procfs_add(idx, names[2]);
   procfs_add(idx, names[3]);
+  total_proc = _total_proc + 4;
   return 1;
 }
 
