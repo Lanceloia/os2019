@@ -51,7 +51,7 @@ int procfs_init(filesystem_t *fs, const char *name, device_t *dev) {
   procfs_add(idx, names[1]);
   procfs_add(idx, names[2]);
   procfs_add(idx, names[3]);
-  total_proc = _total_proc + 4;
+  total_proc = _total_proc;
   return 1;
 }
 
