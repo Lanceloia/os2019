@@ -62,7 +62,7 @@ struct filesystem {
   char name[NAME_lENGTH];
   void *rfs;
   device_t *dev;
-  void (*init)(filesystem_t *fs, char *name, device_t *dev);
+  void (*init)(filesystem_t *fs, const char *name, device_t *dev);
   int (*readdir)(filesystem_t *fs, int vinode_idx, int kth, vinode_t *buf);
 };
 

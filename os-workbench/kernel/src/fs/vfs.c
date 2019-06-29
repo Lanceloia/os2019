@@ -177,7 +177,8 @@ static int filesys_alloc() {
 static void filesys_free(int idx) { strcpy(filesys[idx].name, ""); }
 
 static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
-                          void (*init)(filesystem_t *, char *, device_t *),
+                          void (*init)(filesystem_t *, const char *,
+                                       device_t *),
                           int (*readdir)(filesystem_t *, int, int,
                                          vinode_t *)) {
   int idx = filesys_alloc();
@@ -190,7 +191,8 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
   return idx;
 }
 
-static int vfs_init_procfs(void (*init)(filesystem_t *, char *, device_t *),
+static int vfs_init_procfs(void (*init)(filesystem_t *, const char *,
+                                        device_t *),
                            int (*readdir)(filesystem_t *, int, int,
                                           vinode_t *)) {
   int idx = filesys_alloc();
@@ -199,7 +201,7 @@ static int vfs_init_procfs(void (*init)(filesystem_t *, char *, device_t *),
   filesys[idx].dev = NULL;
   filesys[idx].init = init;
   filesys[idx].readdir = readdir;
-  filesys[idx].init(&filesys[idx], filesys[idx].name, filesys[idx].dev);
+  filesys[idx].init(&filesys[idx], filesys[idx].name, &filesys[idx].dev);
   return idx;
 }
 
