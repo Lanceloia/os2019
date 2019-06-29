@@ -77,10 +77,18 @@ static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
     printf("Dir is exists! \n");
     return;
   }
-  if (vfs_create(abs_path)) {
-    printf("Cannot mkdir here! \n");
-    return;
+  switch (vfs_create(abs_path)) {
+    case 0:
+      printf("Success! \n");
+      break;
+    case 1:
+      printf("Failed! \n");
+      break;
+
+    default:
+      break;
   }
+
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
