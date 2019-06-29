@@ -50,10 +50,10 @@ void procfs_schdule(void *oldproc, void *newproc) {
 void procfs_mem_trace(uint64_t size, int mode) {
   switch (mode) {
     case 0:  // plus
-      mem_size += size;
+      mem_used += size;
       break;
     case 1:  // minus
-      mem_size -= size;
+      mem_used -= size;
       break;
     default:
       assert(0);
