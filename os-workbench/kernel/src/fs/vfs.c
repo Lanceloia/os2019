@@ -186,7 +186,7 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
   filesys[idx].dev = dev;
   filesys[idx].init = init;
   filesys[idx].readdir = readdir;
-  filesys[idx].init(&filesys[idx], filesys[idx].name, &filesys[idx].dev);
+  filesys[idx].init(&filesys[idx], filesys[idx].name, filesys[idx].dev);
   return idx;
 }
 
@@ -199,7 +199,7 @@ static int vfs_init_procfs(void (*init)(filesystem_t *, char *, device_t *),
   filesys[idx].dev = NULL;
   filesys[idx].init = init;
   filesys[idx].readdir = readdir;
-  filesys[idx].init(&filesys[idx], filesys[idx].name, &filesys[idx].dev);
+  filesys[idx].init(&filesys[idx], filesys[idx].name, filesys[idx].dev);
   return idx;
 }
 
