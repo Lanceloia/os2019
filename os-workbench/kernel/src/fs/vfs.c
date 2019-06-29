@@ -545,7 +545,7 @@ void vfs_ls(char *dirname) {
   if (idx == -1) return;
   printf("-----------------------------------------------------------\n");
   printf("-     index       name                  path        \n");
-  printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
+  // printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
   printf(">>   %4d        %12s          %s\n\n", idx, vinodes[idx].name,
          vinodes[idx].path);
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {

@@ -65,11 +65,9 @@ int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
 
 ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
   if (offset != 0) return 0;
-  int ret = sprintf(buf, "name            cpu      schdule_times\n");
-  ret += sprintf(buf + ret, "%16s", procs[ridx].name);
-  ret += sprintf(buf + ret, "%3d      ", procs[ridx].cpu_number);
-  ret += sprintf(buf + ret, "%d", procs[ridx].schduel_times);
-  ret += sprintf(buf + ret, "\n");
+  int ret = sprintf(buf, "  name: %s\n", procs[ridx].name);
+  ret += sprintf(buf + ret, "  cpu: %d\n", procs[ridx].cpu_number);
+  ret += sprintf(buf + ret, "  schduel: %d\n", procs[ridx].schduel_times);
   return ret;
 }
 
