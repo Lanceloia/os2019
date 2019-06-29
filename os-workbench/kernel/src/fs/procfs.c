@@ -39,6 +39,7 @@ void procfs_schdule(void *proc) {
   proc_t *_proc = (proc_t *)proc;
   _proc->cpu_number = _cpu();
   _proc->schduel_times++;
+  printf("schedule: %s\n", _proc->name);
 }
 
 int procfs_init(filesystem_t *fs, const char *name, device_t *dev) {
