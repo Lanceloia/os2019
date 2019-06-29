@@ -26,7 +26,7 @@ extern void procfs_schdule(void *oldproc, void *newproc);
 static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
   if (current) current->ctx = *ctx;
 
-  void *otask = current, *ntask = NULL;
+  task_t *otask = current, *ntask = NULL;
 
   if (current && current->state == RUNNING) current->state = RUNNABLE;
 
