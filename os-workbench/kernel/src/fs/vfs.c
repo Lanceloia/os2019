@@ -515,7 +515,18 @@ int vfs_link(const char *oldpath, const char *newpath) {
   return 0;
 }
 
-int vfs_unlink(const char *path) { return 0; }
+int vfs_unlink(const char *path) {
+  strcpy(tmppath, path);
+  int offset = strlen(path) - last_item_len(path) - 1;
+  tmppath[offset] = '\0';
+  int par = lookup_auto(tmppath);
+  for (int k = vinodes[par].child; k != -1; k = vinodes[k].next) {
+    if (!strcmp(tmppath + offset + 1, vinodes[k].name)) {
+      printf("%d %s\n", k, vinodes[k].name);
+    }
+  }
+  return 1;
+}
 
 int vfs_open(const char *path, int mode) {
   if (!vfs_access(path, mode)) return -1;

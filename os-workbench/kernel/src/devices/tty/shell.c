@@ -131,6 +131,15 @@ static void link_do(device_t *tty, char *argv, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+static void unlink_do(device_t *tty, char *path, char *pwd) {
+  int offset = 0;
+  for (; argv[offset] && argv[offset] != ' ';) offset++;
+  argv[offset] = '\0';
+  build_abs_path(argv, pwd);
+  vfs_unlink(abs_path);
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+}
+
 struct shellinfo {
   char *name;
   char *script;
