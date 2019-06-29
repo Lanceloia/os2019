@@ -39,6 +39,10 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
   extern char *vfs_getpath(const char *dirname);
   build_abs_path(dirname, pwd);
+  if (abs_path[strlen(abs_path) - 1] == '/')
+    strcat(abs_path, ".");
+  else
+    strcat(abs_path, "/.");
   if (vfs_access(abs_path, TYPE_DIR)) {
     strcpy(pwd, vfs_getpath(abs_path));
   }
@@ -142,7 +146,7 @@ struct shellinfo {
 static void default_do(device_t *tty) {
   int offset = 0;
   offset += sprintf(bigbuf + offset, "Unexpected command\n");
-  offset += sprintf(bigbuf + offset, "\n            help            \n");
+  offset += sprintf(bigbuf + offset, "\n             -- help --\n");
   for (int i = 0; i < sizeof(INFO) / sizeof(struct shellinfo); i++)
     offset += sprintf(bigbuf + offset, "%s\n", INFO[i].script);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
@@ -160,8 +164,8 @@ void shell_task(void *name) {
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
     readbuf[nread - 1] = '\0';
 
-    if (!strcmp(readbuf, "ls")) strcpy(readbuf, "ls .");
-    if (!strcmp(readbuf, "cd")) strcpy(readbuf, "cd .");
+    if (!strcmp(readbuf, "ls")) strcpy(readbuf, "ls ");
+    if (!strcmp(readbuf, "cd")) strcpy(readbuf, "cd ");
     if (!strcmp(readbuf, "pwd")) strcpy(readbuf, "pwd ");
 
     /*
