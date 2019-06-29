@@ -15,6 +15,7 @@
 #define VFS 0x00
 #define EXT2FS 0x01
 #define PROCFS 0x02
+#define TTY 0x04
 
 #define MAX_PATH_LENGTH 256
 #define MAX_NAME_LENGTH 32

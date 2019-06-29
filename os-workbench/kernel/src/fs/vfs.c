@@ -184,11 +184,11 @@ static int filesys_alloc() {
 
 static void filesys_free(int idx) { strcpy(filesys[idx].name, ""); }
 
-static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
-                          void (*init)(filesystem_t *, const char *,
-                                       device_t *),
-                          int (*readdir)(filesystem_t *, int, int,
-                                         vinode_t *)) {
+static int vfs_init_blockdev(const char *name, device_t *dev, size_t size,
+                             void (*init)(filesystem_t *, const char *,
+                                          device_t *),
+                             int (*readdir)(filesystem_t *, int, int,
+                                            vinode_t *)) {
   int idx = filesys_alloc();
   strcpy(filesys[idx].name, name);
   filesys[idx].rfs = pmm->alloc(size);
@@ -210,6 +210,16 @@ static int vfs_init_procfs(void (*init)(filesystem_t *, const char *,
   filesys[idx].init = init;
   filesys[idx].readdir = readdir;
   filesys[idx].init(&filesys[idx], filesys[idx].name, filesys[idx].dev);
+  return idx;
+}
+
+static int vfs_init_tty(const char *name, device_t *dev) {
+  int idx = filesys_alloc();
+  strcpy(filesys[idx].name, name);
+  filesys[idx].rfs = NULL;
+  filesys[idx].dev = dev;
+  filesys[idx].init = NULL;
+  filesys[idx].readdir = NULL;
   return idx;
 }
 
@@ -385,15 +395,24 @@ int vfs_init() {
   // printf("fuck");
   prepare_dir(dev, root, VFS, NULL);
 
-  int fs_r0 = vfs_init_devfs("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
-                             ext2_init, ext2_readdir);
-  int fs_r1 = vfs_init_devfs("ramdisk1", dev_lookup("ramdisk1"), sizeof(ext2_t),
-                             ext2_init, ext2_readdir);
+  int fs_r0 = vfs_init_blockdev("ramdisk0", dev_lookup("ramdisk0"),
+                                sizeof(ext2_t), ext2_init, ext2_readdir);
+  int fs_r1 = vfs_init_blockdev("ramdisk1", dev_lookup("ramdisk1"),
+                                sizeof(ext2_t), ext2_init, ext2_readdir);
   int fs_proc = vfs_init_procfs(procfs_init, procfs_readdir);
+
+  int tty1 = vfs_init_tty("tty1", dev_lookup("tty1"));
+  int tty2 = vfs_init_tty("tty2", dev_lookup("tty2"));
+  int tty3 = vfs_init_tty("tty3", dev_lookup("tty3"));
+  int tty4 = vfs_init_tty("tty4", dev_lookup("tty4"));
 
   vinodes_mount(dev, "ramdisk0", EXT2FS, &filesys[fs_r0]);
   vinodes_mount(dev, "ramdisk1", EXT2FS, &filesys[fs_r1]);
   vinodes_mount(root, "proc", PROCFS, &filesys[fs_proc]);
+  vinodes_mount(dev, "tty1", TTY, &filesys[tty1]);
+  vinodes_mount(dev, "tty2", TTY, &filesys[tty2]);
+  vinodes_mount(dev, "tty3", TTY, &filesys[tty3]);
+  vinodes_mount(dev, "tty4", TTY, &filesys[tty4]);
 
   return 0;
 }
