@@ -26,7 +26,7 @@ void *procfs_add(const char *procname) {
   procs[idx].schduel_times = 0;
   procs[idx].inode = idx;
   procs[idx].mode = TYPE_FILE;
-  printf("fuck: %s\n");
+  printf("fuck: %s\n", procname);
   return &procs[idx];
 }
 
