@@ -74,6 +74,7 @@ int vfs_unmount(const char *path);
 int vfs_create(const char *path);
 int vfs_remove(const char *path);
 int vfs_link(const char *oldpath, const char *newpath);
+int vfs_link(const char *path);
 int vfs_open(const char *path, int mode);
 ssize_t vfs_read(int fd, char *buf, size_t nbyte);
 ssize_t vfs_write(int fs, char *buf, size_t nbyte);
