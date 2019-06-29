@@ -492,7 +492,7 @@ int vfs_remove(const char *path) {
 int vfs_link(const char *oldpath, const char *newpath) {
   strcpy(tmppath, oldpath);
   int oidx = lookup_auto(tmppath);
-  printf("old: %s, new: $s\n", oldpath, newpath);
+  printf("old: %s, new: %s\n", oldpath, newpath);
   if (oidx == -1) {
     printf("Oldpath is not exists! \n");
     return 1;
@@ -503,6 +503,7 @@ int vfs_link(const char *oldpath, const char *newpath) {
   strcpy(tmppath, newpath);
   int nidx = lookup_auto(tmppath);
   if (nidx != -1) {
+    printf("nidx == %d\n", nidx);
     printf("newpath is exists! \n");
     return 1;
   } else {
