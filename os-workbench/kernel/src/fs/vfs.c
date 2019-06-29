@@ -213,16 +213,6 @@ static int vfs_init_procfs(void (*init)(filesystem_t *, const char *,
   return idx;
 }
 
-static int vfs_init_tty(const char *name, device_t *dev) {
-  int idx = filesys_alloc();
-  strcpy(filesys[idx].name, name);
-  filesys[idx].rfs = NULL;
-  filesys[idx].dev = dev;
-  filesys[idx].init = NULL;
-  filesys[idx].readdir = NULL;
-  return idx;
-}
-
 #define build_dot(CUR, FSTYPE, FS)                              \
   do {                                                          \
     strcpy(pdot->name, ".");                                    \
