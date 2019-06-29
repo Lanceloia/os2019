@@ -525,8 +525,16 @@ int vfs_unlink(const char *path) {
       printf("%d %s\n", k, vinodes[k].name);
       assert(strcmp(vinodes[k].name, "."));
       assert(strcmp(vinodes[k].name, ".."));
-      assert(vinodes[k].mode & TYPE_LINK);
-      remove_link(k);
+      if (vinodes[k].mode & TYPE_LINK) {
+        remove_link(k);
+        remove_dir(k, par);
+      } else {
+        if (vinodes[k].prev_link != k) {
+          assert(0);
+        } else {
+          remove_dir(k, dir);
+        }
+      }
       return 0;
     }
   }
