@@ -326,6 +326,7 @@ int vinodes_mount(int par, char *name, int fs_type, filesystem_t *fs) {
       break;
     case PROCFS:
       vinodes[ret].ridx = PROCFS_ROOT;  // no use
+      prepare_dir(ret, par, PROCFS, fs);
       break;
     default:
       assert(0);
