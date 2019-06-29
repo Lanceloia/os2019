@@ -475,11 +475,13 @@ int vfs_remove(const char *path) {
   // assert(idx == pnidx->ddot)
 
   int ret = 1;
+  int mode = TYPE_DIR;
+  for (int i = 0; i < strlen(tmppath + offset + 1); i++)
+    if (tmppath[offset + 1 + i] == '.') mode = TYPE_FILE;
 
   switch (pidx->fs_type) {
     case EXT2FS:
-      ret = ext2_remove(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1,
-                        TYPE_FILE | TYPE_DIR);
+      ret = ext2_remove(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1, mode);
       if (!ret) remove_dir(nidx, idx);
       break;
 
