@@ -59,7 +59,7 @@ int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
   printf("here!\n");
   for (int k = 0, cnt = 0; k < total_proc; k++) {
     if (++cnt == kth) {
-      sprintf(buf->name, procs[k].inode);
+      sprintf(buf->name, "%d", procs[k].inode);
       buf->ridx = procs[k].inode;
       buf->mode = procs[k].inode < 1 ? TYPE_DIR : TYPE_FILE;
       // printf("find %s\n", buf->name);
