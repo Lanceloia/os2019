@@ -18,7 +18,6 @@ int total_proc = 0;
     procs[idx].schduel_times = 0;    \
     procs[idx].inode = idx;          \
     procs[idx].mode = mode;          \
-    printf("fuck: %s\n", _name);     \
   } while (0)
 
 int is_initialized = 0;
@@ -58,7 +57,7 @@ int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
       strcpy(buf->name, procs[k].name);
       buf->ridx = procs[k].inode;
       buf->mode = procs[k].mode;
-      printf("find %s\n", buf->name);
+      // printf("find %s\n", buf->name);
       return 1;
     }
   }
@@ -72,28 +71,3 @@ ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
   ret += sprintf(buf + ret, "  schduel: %d\n", procs[ridx].schduel_times);
   return ret;
 }
-
-/*
-
-void procfs_cd(char *dirname, char *pwd, char *out) {
-  sprintf(out, "can't cd here\n");
-  return;
-}
-
-void procfs_ls(char *dirname, char *out) {
-  int offset = sprintf(out, "");
-  if (!strcmp(dirname, ".")) {
-    offset += sprintf(out + offset, "proc            cpu      schdule
-times\n"); for (int i = 0; i < MAX_PROC; i++) { if (strlen(procs[i].name) ==
-0) continue; offset += sprintf(out + offset, "%s", procs[i].name); for (int j
-= 0; j < 15 - strlen(procs[i].name); j++) offset += sprintf(out + offset,
-"%c", ' '); offset += sprintf(out + offset, " %d        ",
-procs[i].cpu_number); offset += sprintf(out + offset, "%d",
-procs[i].schduel_times); offset += sprintf(out + offset, "\n");
-    }
-  } else {
-    offset += sprintf(out + offset, "only support 'ls .'\n");
-  }
-}
-
-*/
