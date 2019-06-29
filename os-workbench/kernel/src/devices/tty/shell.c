@@ -135,10 +135,12 @@ static void default_do(device_t *tty) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+char pwd[1024] = "/";
+
 void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
   // vfsdirs_alloc(name, dev_dir, TTY, total_dev_cnt++);
-  char pwd[256] = "/";
+
   while (1) {
     sprintf(writebuf, "(%s) $ ", name);
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
