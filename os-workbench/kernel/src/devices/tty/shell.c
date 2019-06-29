@@ -133,7 +133,17 @@ static void link_do(device_t *tty, char *argv, char *pwd) {
 
 static void unlink_do(device_t *tty, char *path, char *pwd) {
   build_abs_path(path, pwd);
-  vfs_unlink(abs_path);
+  switch (vfs_unlink(abs_path)) {
+    case 0:
+      printf("Success! \n");
+      break;
+    case 1:
+      printf("Failed! \n");
+      break;
+    default:
+      assert(0);
+      break;
+  }
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 

@@ -523,6 +523,11 @@ int vfs_unlink(const char *path) {
   for (int k = vinodes[par].child; k != -1; k = vinodes[k].next) {
     if (!strcmp(tmppath + offset + 1, vinodes[k].name)) {
       printf("%d %s\n", k, vinodes[k].name);
+      assert(strcmp(vinodes[k].name, "."));
+      assert(strcmp(vinodes[k].name, ".."));
+      assert(vinodes[k].mode & TYPE_LINK);
+      remove_link(k);
+      return 0;
     }
   }
   return 1;
