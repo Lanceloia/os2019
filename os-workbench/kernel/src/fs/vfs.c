@@ -335,7 +335,7 @@ static int append_file(int par, char *name, int fs_type, filesystem_t *fs) {
   }
   assert(dot != -1 && ddot != -1);
   vinodes[k].next = nidx;
-  build_general_file(nidx, dot, ddot, name, fy_type, fs);
+  build_general_file(nidx, dot, ddot, name, fs_type, fs);
   return nidx;
 }
 
