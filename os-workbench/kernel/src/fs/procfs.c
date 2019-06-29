@@ -42,7 +42,7 @@ void procfs_schdule(void *proc) {
   _proc->schduel_times++;
 }
 
-int procfs_init(filesystem_t *fs, const char *name, device_t *dev) {
+int procfs_init(filesystem_t *fs, char *name, device_t *dev) {
   int dot, ddot, mode = TYPE_DIR;
   char dotname[] = ".", ddotname[] = "..";
   procfs_add(dot, dotname, mode);

@@ -34,7 +34,7 @@ char* hello_str =
     "0;\n}";
 char trash[4096];
 
-int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
+int ext2_init(filesystem_t* fs, char* name, device_t* dev) {
   ext2_t* ext2 = (ext2_t*)fs->rfs;
   memset(ext2, 0x00, sizeof(ext2_t));
   ext2->dev = dev;
