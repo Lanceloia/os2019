@@ -57,6 +57,7 @@ int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
       strcpy(buf->name, procs[k].name);
       buf->ridx = procs[k].inode;
       buf->mode = procs[k].mode;
+      printf("find %s\n", buf->name);
       return 1;
     }
   }
