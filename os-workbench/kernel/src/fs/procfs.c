@@ -44,8 +44,9 @@ void procfs_schdule(void *proc) {
 
 int procfs_init(filesystem_t *fs, const char *name, device_t *dev) {
   int dot, ddot, mode = TYPE_DIR;
-  procfs_add(dot, ".", mode);
-  procfs_add(ddot, "..", mode);
+  char dotname[] = ".", ddotname[] = "..";
+  procfs_add(dot, dotname, mode);
+  procfs_add(ddot, ddotname, mode);
   return 1;
 }
 
