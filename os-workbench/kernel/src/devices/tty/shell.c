@@ -6,7 +6,7 @@
 char readbuf[128], writebuf[128];
 char bigbuf[2048] = {};
 
-char abs_path[256];
+char abs_path[256], abs_path2[256];
 
 static void build_abs_path(char *dirname, char *pwd) {
   if (dirname[0] != '/') {
@@ -117,9 +117,10 @@ static void link_do(device_t *tty, char *argv, char *pwd) {
   for (; argv[offset] && argv[offset] != ' ';) offset++;
   argv[offset] = '\0';
   build_abs_path(argv, pwd);
-  tty->ops->write(tty, 0, abs_path, strlen(abs_path));
+  strcpy(abs_path2, abs_path);
   build_abs_path(argv + offset + 1, pwd);
-  tty->ops->write(tty, 0, abs_path, strlen(abs_path));
+  vfs_link(abs_path, abs_path2);
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
 struct shellinfo {

@@ -43,6 +43,14 @@ static int first_item_len(const char *path) {
   return ret;
 }
 
+static int last_item_len(const char *path) {
+  int ret = 0, len = strlen(path);
+  assert(path[len - 1]);
+  for (; path[len - ret - 1] != '/';) ret++;
+  assert(ret < len);
+  return ret;
+}
+
 static int item_match(const char *s1, const char *s2, int len) {
   // printf("P: %s\nT: %s\nlen: %d\n\n", s1, s2, len);
   if (strncmp(s1, s2, len)) return 0;
@@ -481,7 +489,24 @@ int vfs_remove(const char *path) {
   return ret;
 }
 
-int vfs_link(const char *oldpath, const char *newpath) { return 0; }
+int vfs_link(const char *oldpath, const char *newpath) {
+  int oidx = lookup_auto(oldpath);
+  if (oidx == -1) {
+    printf("Oldpath is not exists! \n");
+    return 1;
+  }
+  int offset = strlen(newpath) - last_item_len(newpath);
+  printf("item: %s", newpath + offset);
+
+  int nidx = lookup_auto(newpath);
+  if (nidx != -1 || strcmp()) {
+    printf("newpath is exists! \n");
+    return 1;
+  } else {
+  }
+
+  return 0;
+}
 
 int vfs_unlink(const char *path) { return 0; }
 
