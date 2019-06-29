@@ -34,13 +34,16 @@ void *procfs_addproc(const char *name) {
 }
 
 void procfs_schdule(void *oldproc, void *newproc) {
-  if (!newproc) return;
-  proc_t *oproc = (proc_t *)oldproc;
-  oproc->cpu_number = -1;
+  if (oldproc) {
+    proc_t *oproc = (proc_t *)oldproc;
+    oproc->cpu_number = -1;
+  }
 
-  proc_t *nproc = (proc_t *)newproc;
-  nproc->cpu_number = _cpu();
-  nproc->schduel_times++;
+  if (newproc) {
+    proc_t *nproc = (proc_t *)newproc;
+    nproc->cpu_number = _cpu();
+    nproc->schduel_times++;
+  }
 }
 
 int procfs_init(filesystem_t *fs, const char *name, device_t *dev) {
