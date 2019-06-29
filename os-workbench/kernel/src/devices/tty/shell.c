@@ -119,7 +119,7 @@ static void link_do(device_t *tty, char *argv, char *pwd) {
   build_abs_path(argv, pwd);
   strcpy(abs_path2, abs_path);
   build_abs_path(argv + offset + 1, pwd);
-  vfs_link(abs_path, abs_path2);
+  vfs_link(abs_path2, abs_path);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
