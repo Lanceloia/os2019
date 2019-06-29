@@ -85,7 +85,7 @@ ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
 
   if (ridx == 2 || ridx == 3) {
     for (int i = 0; i < _ncpu(); i++) {
-      int k = running[i];
+      int k = running[i] + 4;
       ret += sprintf(buf + ret, "  [%d]: %s\n", procs[k].cpu_number,
                      procs[k].name);
     }
