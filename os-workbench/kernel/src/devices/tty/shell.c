@@ -117,9 +117,9 @@ static void link_do(device_t *tty, char *argv, char *pwd) {
   for (; argv[offset] && argv[offset] != ' ';) offset++;
   argv[offset] = '\0';
   build_abs_path(argv, pwd);
-  tty->ops->write(tty, 0, abs_path, strlen(bigbuf));
+  tty->ops->write(tty, 0, abs_path, strlen(abs_path));
   build_abs_path(argv + offset + 1, pwd);
-  tty->ops->write(tty, 0, abs_path, strlen(bigbuf));
+  tty->ops->write(tty, 0, abs_path, strlen(abs_path));
 }
 
 struct shellinfo {
