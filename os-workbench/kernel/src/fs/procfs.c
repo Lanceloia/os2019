@@ -32,7 +32,7 @@ int procfs_get_idx() {
 
 void *procfs_addproc(const char *name) {
   int idx;
-  procfs_add_do(idx, name, TYPE_FILE);
+  procfs_add(idx, name, TYPE_FILE);
   return &procs[idx];
 }
 
