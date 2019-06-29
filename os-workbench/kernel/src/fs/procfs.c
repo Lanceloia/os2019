@@ -50,9 +50,11 @@ void procfs_mem_trace(uint64_t size, int mode) {
   switch (mode) {
     case 0:  // plus
       mem_size += size;
+      printf("add %d  ", size);
       break;
     case 1:  // minus
       mem_size -= size;
+      printf("add %d  ", size);
       break;
     default:
       assert(0);
