@@ -538,7 +538,8 @@ int vfs_unlink(const char *path) {
           remove_link(k);
           remove_dir(k, par);
         } else {
-          vfs_remove(path);
+          ;
+          printf("here %d", vfs_remove(path));
         }
       }
       return 0;
