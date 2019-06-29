@@ -348,6 +348,9 @@ int vinodes_mount(int par, char *name, int fs_type, filesystem_t *fs) {
     case PROCFS:
       vinodes[ret].ridx = PROCFS_ROOT;  // no use
       break;
+    case TTY:
+      vinodes[ret].ridx = 0;  // no use
+      break;
     default:
       assert(0);
       break;
