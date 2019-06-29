@@ -143,6 +143,7 @@ struct shellinfo {
   void (*func)(device_t *tty, char *argv, char *pwd);
   int offset;
 } INFO[] = {
+    {"unlink ", "  unlink [path]              (unlink path)", unlink_do, 7},
     {"link ", "  link [oldpath] [newpath]   (link path)", link_do, 5},
     {"rmdir ", "  rmdir [dirname]   (remove directory)", rmdir_do, 6},
     {"mkdir ", "  mkdir [dirname]   (make directory)", mkdir_do, 6},
