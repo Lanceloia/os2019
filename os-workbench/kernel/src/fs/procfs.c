@@ -33,12 +33,14 @@ void *procfs_addproc(const char *name) {
   return &procs[idx];
 }
 
-void procfs_schdule(void *proc) {
-  if (!proc) return;
-  proc_t *_proc = (proc_t *)proc;
-  _proc->cpu_number = _cpu();
-  _proc->schduel_times++;
-  // printf("schedule: %s\n", _proc->name);
+void procfs_schdule(void *oldproc, void *newproc) {
+  if (!newproc) return;
+  proc_t *oproc = (proc_t *)oldproc;
+  oproc->cpu_number = -1;
+
+  proc_t *nproc = (proc_t *)newproc;
+  nproc->cpu_number = _cpu();
+  nproc->schduel_times++;
 }
 
 int procfs_init(filesystem_t *fs, const char *name, device_t *dev) {

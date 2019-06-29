@@ -21,10 +21,12 @@ static task_t *current_tasks[MAX_CPU];
 #define current (current_tasks[_cpu()])
 
 extern void *procfs_addproc(const char *proc);
-extern void procfs_schdule(void *proc);
+extern void procfs_schdule(void *oldproc, void *newproc);
 
 static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
   if (current) current->ctx = *ctx;
+
+  void *otask = current, *ntask = NULL;
 
   if (current && current->state == RUNNING) current->state = RUNNABLE;
 
@@ -37,7 +39,9 @@ static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
   current = tasks[idx];
   current->state = RUNNING;
 
-  procfs_schdule(current->proc);
+  ntask = current;
+
+  procfs_schdule(otask->proc, ntask->proc);
 
   return &current->ctx;
 }
