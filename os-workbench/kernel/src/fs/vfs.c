@@ -5,7 +5,6 @@
 
 #define MAX_VINODE 1024
 #define MAX_FILESYSTEM 16
-#define VFS_ROOT 0
 
 #define pidx (&vinodes[idx])
 #define poidx (&vinodes[oidx])
@@ -324,6 +323,9 @@ int vinodes_mount(int par, char *name, int fs_type, filesystem_t *fs) {
       break;
     case EXT2FS:
       vinodes[ret].ridx = EXT2_ROOT;
+      break;
+    case PROCFS:
+      vinodes[ret].ridx = PROCFS_ROOT;  // no use
       break;
     default:
       assert(0);

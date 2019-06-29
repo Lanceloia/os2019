@@ -19,7 +19,9 @@
 #define MAX_PATH_LENGTH 256
 #define MAX_NAME_LENGTH 32
 
+#define VFS_ROOT 0
 #define EXT2_ROOT 1
+#define PROCFS_ROOT -1
 
 typedef struct filesystem filesystem_t;
 
