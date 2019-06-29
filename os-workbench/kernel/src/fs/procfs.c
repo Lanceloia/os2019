@@ -35,7 +35,7 @@ void procfs_schdule(void *proc) {
   _proc->schduel_times++;
 }
 
-void procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
+int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
   for (int k = 0, int cnt = 0; k < MAX_PROC; k++) {
     if (++cnt == kth) {
       strcpy(buf->name, procs[k].name);
