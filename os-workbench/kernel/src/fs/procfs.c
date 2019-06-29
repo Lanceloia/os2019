@@ -104,7 +104,7 @@ ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
       ret += sprintf(buf + ret, "  [cpu %d]: ", procs[k].cpu_number);
       ret += sprintf(buf + ret, "%s\n", procs[k].name);
     }
-  } else if {
+  } else if (ridx == 3) {
     ret += sprintf(buf + ret, "  [memory]: %d KB", mem_size / 1024);
   } else {
     ret += sprintf(buf + ret, "  pid: %d\n", procs[ridx].inode);
