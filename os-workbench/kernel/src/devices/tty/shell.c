@@ -112,12 +112,23 @@ static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+static void link_do(device_t *tty, char *argv, char *pwd) {
+  int offset = 0;
+  for (; argv[offset] && argv[offset] != ' ';) offset++;
+  argv[offset] = '\0';
+  build_abs_path(argv, pwd);
+  tty->ops->write(tty, 0, abs_path, strlen(bigbuf));
+  build_abs_path(argv + offset + 1, pwd);
+  tty->ops->write(tty, 0, abs_path, strlen(bigbuf));
+}
+
 struct shellinfo {
   char *name;
   char *script;
   void (*func)(device_t *tty, char *argv, char *pwd);
   int offset;
 } INFO[] = {
+    {"link ", "  link [oldpath] [newpath]   (link path)", link_do, 5},
     {"rmdir ", "  rmdir [dirname]   (remove directory)", rmdir_do, 6},
     {"mkdir ", "  mkdir [dirname]   (make directory)", mkdir_do, 6},
     {"cat > ", "  cat > [filename]  (write file, end with '~')", catto_do, 6},
@@ -125,11 +136,12 @@ struct shellinfo {
     {"cd ", "  cd [dirname]      (change directory)", cd_do, 3},
     {"ls ", "  ls [dirname]      (list directory's items)", ls_do, 3},
     {"echo ", "  echo [expr]       (print expreesion)", echo_do, 5},
-    {"pwd ", "  pwd               (print work directory", pwd_do, 4}};
+    {"pwd ", "  pwd               (print work directory)", pwd_do, 4}};
 
 static void default_do(device_t *tty) {
   int offset = 0;
   offset += sprintf(bigbuf + offset, "Unexpected command\n");
+  offset += sprintf(bigbuf + offset, "\n    help    \n");
   for (int i = 0; i < sizeof(INFO) / sizeof(struct shellinfo); i++)
     offset += sprintf(bigbuf + offset, "%s\n", INFO[i].script);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
