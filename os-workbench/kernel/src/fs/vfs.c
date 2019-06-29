@@ -201,7 +201,7 @@ static int vfs_init_procfs(void (*init)(filesystem_t *, const char *,
   filesys[idx].dev = NULL;
   filesys[idx].init = init;
   filesys[idx].readdir = readdir;
-  filesys[idx].init(&filesys[idx], filesys[idx].name, &filesys[idx].dev);
+  filesys[idx].init(&filesys[idx], filesys[idx].name, filesys[idx].dev);
   return idx;
 }
 
