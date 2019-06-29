@@ -48,15 +48,17 @@ void procfs_schdule(void *oldproc, void *newproc) {
 
 int procfs_init(filesystem_t *fs, const char *name, device_t *dev) {
   is_initialized = 1;
-  int dot, ddot;
-  char dotname[] = ".", ddotname[] = "..";
-  procfs_add(dot, dotname);
-  procfs_add(ddot, ddotname);
+  int idx;
+  char *names[] = {".", "..", "cpuinfo", "meminfo"};
+  procfs_add(idx, names[0]);
+  procfs_add(idx, names[1]);
+  procfs_add(idx, names[2]);
+  procfs_add(idx, names[3]);
   return 1;
 }
 
 int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
-  printf("here!\n");
+  // printf("here!\n");
   for (int k = 0, cnt = 0; k < total_proc; k++) {
     if (++cnt == kth) {
       buf->ridx = k;
@@ -75,7 +77,7 @@ int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {
 
 ssize_t procfs_read(int ridx, uint64_t offset, char *buf) {
   if (offset != 0) return 0;
-  int ret = sprintf(buf, "  pid: %s\n", procs[ridx].inode);
+  int ret = sprintf(buf, "  pid: %d\n", procs[ridx].inode);
   ret += sprintf(buf + ret, "  name: %s\n", procs[ridx].name);
   ret += sprintf(buf + ret, "  cpuinfo: %d\n", procs[ridx].cpu_number);
   ret += sprintf(buf + ret, "  memory_used: %d\n", procs[ridx].memo_size);
