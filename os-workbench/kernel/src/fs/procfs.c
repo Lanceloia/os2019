@@ -19,14 +19,20 @@ int procfs_get_idx() {
   return idx;
 }
 
-void *procfs_add(const char *procname) {
-  int idx = procfs_get_idx();
-  strcpy(procs[idx].name, procname);
-  procs[idx].cpu_number = -1;
-  procs[idx].schduel_times = 0;
-  procs[idx].inode = idx;
-  procs[idx].mode = TYPE_FILE;
-  printf("fuck: %s\n", procname);
+#define procfs_add(idx, name, mode) \
+  do {                              \
+    idx = procfs_get_idx();         \
+    strcpy(procs[idx].name, name);  \
+    procs[idx].cpu_number = -1;     \
+    procs[idx].schduel_times = 0;   \
+    procs[idx].inode = idx;         \
+    procs[idx].mode = mode;         \
+    printf("fuck: %s\n", name);     \
+  } while (0)
+
+void *procfs_addproc(const char *name) {
+  int idx;
+  procfs_add_do(idx, name, TYPE_FILE);
   return &procs[idx];
 }
 
@@ -34,6 +40,13 @@ void procfs_schdule(void *proc) {
   proc_t *_proc = (proc_t *)proc;
   _proc->cpu_number = _cpu();
   _proc->schduel_times++;
+}
+
+int procfs_init(filesystem_t *fs, const char *name, device_t *dev) {
+  int dot, ddot;
+  procfs_add(dot, ".", TYPE_DIR);
+  procfs_add(ddot, "..", TYPE_DIR);
+  return 1;
 }
 
 int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf) {

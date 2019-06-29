@@ -187,18 +187,21 @@ static int vfs_init_devfs(const char *name, device_t *dev, size_t size,
   filesys[idx].dev = dev;
   filesys[idx].init = init;
   filesys[idx].readdir = readdir;
-  filesys[idx].init(&filesys[idx], name, dev);
+  filesys[idx].init(&filesys[idx], &filesys[idx].name, &filesys[idx].dev);
   return idx;
 }
 
-static int vfs_init_procfs(int (*readdir)(filesystem_t *, int, int,
+static int vfs_init_procfs(void (*init)(filesystem_t *, const char *,
+                                        device_t *),
+                           int (*readdir)(filesystem_t *, int, int,
                                           vinode_t *)) {
   int idx = filesys_alloc();
   strcpy(filesys[idx].name, "procfs");
   filesys[idx].rfs = NULL;
   filesys[idx].dev = NULL;
-  filesys[idx].init = NULL;
+  filesys[idx].init = init;
   filesys[idx].readdir = readdir;
+  filesys[idx].init(&filesys[idx], &filesys[idx].name, &filesys[idx].dev);
   return idx;
 }
 
@@ -356,6 +359,7 @@ int vinode_open(int inode_idx, int mode) {
 typedef struct ext2 ext2_t;
 extern void ext2_init(filesystem_t *fs, const char *name, device_t *dev);
 extern int ext2_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf);
+extern void procfs_init(filesystem_t *fs, const char *name, device_t *dev);
 extern int procfs_readdir(filesystem_t *fs, int ridx, int kth, vinode_t *buf);
 
 int fuck() {
@@ -378,7 +382,7 @@ int vfs_init() {
                              ext2_init, ext2_readdir);
   int fs_r1 = vfs_init_devfs("ramdisk1", dev_lookup("ramdisk1"), sizeof(ext2_t),
                              ext2_init, ext2_readdir);
-  int fs_proc = vfs_init_procfs(procfs_readdir);
+  int fs_proc = vfs_init_procfs(procfs_init, procfs_readdir);
 
   vinodes_mount(dev, "ramdisk0", EXT2FS, &filesys[fs_r0]);
   vinodes_mount(dev, "ramdisk1", EXT2FS, &filesys[fs_r1]);
