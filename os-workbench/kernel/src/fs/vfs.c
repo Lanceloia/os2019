@@ -496,7 +496,7 @@ int vfs_open(const char *path, int mode) {
 
 extern ssize_t ext2_read(ext2_t *, int, uint64_t, char *, uint32_t);
 extern ssize_t ext2_write(ext2_t *, int, uint64_t, char *, uint32_t);
-extern ssize_t procfs_read(int, char *);
+extern ssize_t procfs_read(int, uint64_t, char *);
 
 ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
   if (fd < 0) return 0;
