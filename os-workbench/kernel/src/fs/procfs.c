@@ -35,6 +35,7 @@ void *procfs_addproc(const char *name) {
 }
 
 void procfs_schdule(void *proc) {
+  assert(proc);
   proc_t *_proc = (proc_t *)proc;
   _proc->cpu_number = _cpu();
   _proc->schduel_times++;
