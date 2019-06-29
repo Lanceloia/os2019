@@ -532,7 +532,7 @@ int vfs_unlink(const char *path) {
         if (vinodes[k].prev_link != k) {
           assert(0);
         } else {
-          remove_dir(k, dir);
+          remove_dir(k, par);
         }
       }
       return 0;
