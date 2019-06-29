@@ -499,7 +499,7 @@ int vfs_link(const char *oldpath, const char *newpath) {
   printf("item: %s", newpath + offset);
 
   int nidx = lookup_auto(newpath);
-  if (nidx != -1 || strcmp()) {
+  if (nidx != -1) {
     printf("newpath is exists! \n");
     return 1;
   } else {
