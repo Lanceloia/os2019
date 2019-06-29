@@ -430,8 +430,8 @@ int vfs_init() {
   vinodes_mount(root, "proc", PROCFS, &filesys[fs_proc]);
   append_file(dev, "tty1", TTY, NULL);
   append_file(dev, "tty2", TTY, NULL);
-  append_file(dev, "tty2", TTY, NULL);
-  append_file(dev, "tty2", TTY, NULL);
+  append_file(dev, "tty3", TTY, NULL);
+  append_file(dev, "tty4", TTY, NULL);
 
   return 0;
 }
@@ -599,6 +599,7 @@ int vfs_open(const char *path, int mode) {
 extern ssize_t ext2_read(ext2_t *, int, uint64_t, char *, uint32_t);
 extern ssize_t ext2_write(ext2_t *, int, uint64_t, char *, uint32_t);
 extern ssize_t procfs_read(int, uint64_t, char *);
+extern ssize_t tty_write(device_t *, off_t, const void *, size_t);
 
 ssize_t vfs_read(int fd, char *buf, size_t nbyte) {
   if (fd < 0) return 0;
@@ -630,6 +631,9 @@ ssize_t vfs_write(int fd, char *buf, size_t nbyte) {
       ret = ext2_write(pfd->fs->rfs, pfd->ridx, files[fd].offset, buf, nbyte);
       files[fd].offset += ret;
       break;
+    case TTY:
+      ret = tty_write(dev_lookup(vinodes[files[fd].vinode_idx].name),
+                      files[fd].offset, buf, nbyte);
     default:
       printf("Cannot write here! \n");
       break;
