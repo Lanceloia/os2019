@@ -201,7 +201,6 @@ static void mount_do(device_t *tty, char *argv, char *pwd) {
 }
 
 static void unmount_do(device_t *tty, char *argv, char *pwd) {
-  int offset = 0;
   build_abs_path(argv, pwd);
   switch (vfs_unmount(abs_path)) {
     case 0:
@@ -225,6 +224,7 @@ struct shellinfo {
 } INFO[] = {
     {"unlink ", "  unlink [path]            (unlink [path])", unlink_do, 7},
     {"link ", "  link [oldpath] [newpath] (link two [path])", link_do, 5},
+    {"unmount ", "  unmount [path]    (unmount [path])", unmount_do, 8},
     {"mount ", "  mount [fs] [path] (mount [fs] to [path])", mount_do, 6},
     {"rmdir ", "  rmdir [dirname]   (remove [dirname])", rmdir_do, 6},
     {"mkdir ", "  mkdir [dirname]   (create [dirname])", mkdir_do, 6},
