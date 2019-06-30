@@ -460,7 +460,7 @@ int vfs_unmount(const char *path) {
   tmppath[offset] = '\0';
   int par = lookup_auto(tmppath);
 
-  int file = vinodes[nidx].linkcnt;
+  int file = vinodes[idx].linkcnt;
   vinodes[file].mode |= MNT_ABLE;
 
   remove_dir(idx, par);
