@@ -29,7 +29,7 @@ static void echo_do(device_t *tty, char *str, char *pwd) {
 }
 
 static void ls_do(device_t *tty, char *dirname, char *pwd) {
-  extern void vfs_ls(char *path);
+  extern void vfs_ls(char *path, char *buf);
   build_abs_path(dirname, pwd);
   if (abs_path[strlen(abs_path) - 1] == '/')
     strcat(abs_path, ".");
