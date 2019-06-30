@@ -423,7 +423,7 @@ int vfs_help_getpathlen(const char *path) {
 }
 
 int vfs_mount(const char *filename, const char *dirname) {
-  printf("%s \n %s \n", filename, dirname);
+  // printf("%s \n %s \n", filename, dirname);
   if (vfs_access(filename, TYPE_FILE | FILESYS)) return 1;  // uncapable file
   if (!vfs_access(dirname, TYPE_DIR)) return 2;  // dir is already exists
   strcpy(tmppath, filename);
@@ -447,7 +447,18 @@ int vfs_mount(const char *filename, const char *dirname) {
   return 0;
 }
 
-int vfs_unmount(const char *path) { return 0; }
+int vfs_unmount(const char *path) {
+  if (!vfs_access(path, TYPE_DIR)) return 1;  // dir is not already exists
+
+  strcpy(tmppath, path);
+  int idx = lookup_auto(tmppath);
+
+  int offset = strlen(dirname) - last_item_len(dirname) - 1;
+  tmppath[offset] = '\0';
+  int par = lookup_auto(tmppath);
+  remove_dir(idx, par);
+  return 0;
+}
 
 extern int ext2_create(ext2_t *, int, char *, int);
 extern int ext2_remove(ext2_t *, int, char *, int);
@@ -456,10 +467,7 @@ int vfs_create(const char *path) {
   int len = strlen(path);
   int offset = vfs_help_getpathlen(path);
 
-  if (len == offset) {
-    printf("Incorrect pathname! \n");
-    return 1;
-  }
+  if (len == offset) return 1;  // Incorrect pathname
 
   strcpy(tmppath, path);
   tmppath[offset] = '\0';
@@ -477,62 +485,48 @@ int vfs_create(const char *path) {
       break;
 
     default:
-      printf("Cannot create here! \n");
-      ret = 1;
-      break;
+      return 2;  // Cannot create dir
   }
-  return ret;
+  return 0;
 }
 
 int vfs_remove(const char *path) {
   int len = strlen(path);
   int offset = vfs_help_getpathlen(path);
 
-  if (len == offset) {
-    printf("Incorrect pathname! \n");
-    return 1;
-  }
+  if (len == offset) return 1;  // Incorrect pathname
 
   strcpy(tmppath, path);
   int nidx = lookup_auto(tmppath);
   tmppath[offset] = '\0';
   int idx = lookup_auto(tmppath);
 
-  // printf("fuck! \n");
-  // assert(idx == pnidx->ddot)
-
-  int ret = 1;
   int mode = TYPE_DIR;
   for (int i = 0; i < strlen(tmppath + offset + 1); i++)
     if (tmppath[offset + 1 + i] == '.') mode = TYPE_FILE;
 
   switch (pidx->fs_type) {
     case EXT2FS:
-      ret = ext2_remove(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1, mode);
-      if (!ret) remove_dir(nidx, idx);
+      if (!ext2_remove(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1, mode);)
+        remove_dir(nidx, idx);
+      else
+        return 3;  // Remove failed!
       break;
 
     default:
-      printf("Cannot remove here! \n");
-      break;
+      return 2;  // Cannot remove dir
   }
-  return ret;
+  return 0;
 }
 
 int vfs_link(const char *oldpath, const char *newpath) {
   strcpy(tmppath, oldpath);
   int oidx = lookup_auto(tmppath);
-  if (oidx == -1) {
-    printf("Oldpath is not exists! \n");
-    return 1;
-  }
+  if (oidx == -1) return 1;  // Oldpath is not exists!
 
   strcpy(tmppath, newpath);
   int nidx = lookup_auto(tmppath);
-  if (nidx != -1) {
-    printf("Newpath is exists! \n");
-    return 1;
-  }
+  if (nidx != -1) return 2;  // Newpath is exists!
 
   int offset = strlen(newpath) - last_item_len(newpath) - 1;
   tmppath[offset] = '\0';
@@ -550,7 +544,7 @@ int vfs_unlink(const char *path) {
   int par = lookup_auto(tmppath);
   for (int k = vinodes[par].child; k != -1; k = vinodes[k].next) {
     if (!strcmp(tmppath + offset + 1, vinodes[k].name)) {
-      printf("%d %s\n", k, vinodes[k].name);
+      // printf("%d %s\n", k, vinodes[k].name);
       assert(strcmp(vinodes[k].name, "."));
       assert(strcmp(vinodes[k].name, ".."));
       if (vinodes[k].mode & TYPE_LINK) {

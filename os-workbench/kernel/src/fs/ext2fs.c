@@ -31,7 +31,7 @@ static int first_item_len(const char* path) {
 
 char* hello_str =
     "#include <iostream> \nusing namespace std;\nint main(){\n  return "
-    "0;\n}";
+    "0;\n}\n";
 char trash[4096];
 
 int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {

@@ -100,7 +100,10 @@ static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
       sprintf(bigbuf, "Success! \n");
       break;
     case 1:
-      sprintf(bigbuf, "Failed! \n");
+      sprintf(bigbuf, "Incorrect pathname! \n");
+      break;
+    case 2:
+      sprintf(bigbuf, "Uncapable filesystem! \n");
       break;
 
     default:
@@ -118,10 +121,13 @@ static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
       sprintf(bigbuf, "Success! \n");
       break;
     case 1:
-      sprintf(bigbuf, "The dir is no empty! \n");
+      sprintf(bigbuf, "Incorrect pathname! \n");
       break;
     case 2:
-      sprintf(bigbuf, "That is not a dir! \n");
+      sprintf(bigbuf, "Uncapable filesystem! \n");
+      break;
+    case 3:
+      sprintf(bigbuf, "Cannot remove! \n");
       break;
     default:
       assert(0);
@@ -137,7 +143,20 @@ static void link_do(device_t *tty, char *argv, char *pwd) {
   build_abs_path(argv, pwd);
   strcpy(abs_path2, abs_path);
   build_abs_path(argv + offset + 1, pwd);
-  vfs_link(abs_path2, abs_path);
+  switch (vfs_link(abs_path2, abs_path)) {
+    case 0:
+      sprintf(bigbuf, "Success! \n");
+      break;
+    case 1:
+      sprintf(bigbuf, "Oldpath is not exists! \n");
+      break;
+    case 2:
+      sprintf(bigbuf, "Newpath is exists! \n");
+      break;
+    default:
+      assert(0);
+      break;
+  }
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
