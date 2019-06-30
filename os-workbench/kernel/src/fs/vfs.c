@@ -399,6 +399,9 @@ int vfs_init() {
   append_file(dev, "tty3", TYPE_FILE | WR_ABLE, TTY, NULL);
   append_file(dev, "tty4", TYPE_FILE | WR_ABLE, TTY, NULL);
 
+  vfs_mount("/dev/ramdisk0", "/R0");
+  vfs_mount("/dev/ramdisk1", "/mnt/R1");
+
   return 0;
 }
 
