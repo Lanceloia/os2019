@@ -161,13 +161,14 @@ struct shellinfo {
     {"cd ", "  cd [dirname]      (change directory)", cd_do, 3},
     {"ls ", "  ls [dirname]      (list directory's items)", ls_do, 3},
     {"echo ", "  echo [expr]       (print expreesion)", echo_do, 5},
-    {"pwd ", "  pwd               (print work directory)", pwd_do, 4}};
+    {"pwd ", "  pwd               (print work directory)", pwd_do, 4},
+};
 
 static void default_do(device_t *tty) {
   int offset = 0;
   offset += sprintf(bigbuf + offset, "Unexpected command\n");
   offset += sprintf(bigbuf + offset, "\n             -- help --\n");
-  for (int i = 0; i < sizeof(INFO) / sizeof(struct shellinfo); i++)
+  for (int i = sizeof(INFO) / sizeof(struct shellinfo); i >= 0; i--)
     offset += sprintf(bigbuf + offset, "%s\n", INFO[i].script);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
