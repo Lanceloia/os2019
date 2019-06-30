@@ -507,7 +507,7 @@ int vfs_remove(const char *path) {
 
   switch (pidx->fs_type) {
     case EXT2FS:
-      if (!ext2_remove(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1, mode);)
+      if (!ext2_remove(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1, mode))
         remove_dir(nidx, idx);
       else
         return 3;  // Remove failed!
