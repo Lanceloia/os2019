@@ -444,8 +444,10 @@ int vfs_help_getpathlen(const char *path) {
 }
 
 int vfs_mount(const char *filename, const char *dirname) {
+  strcpy(tmppath, filename);
   if (vfs_access(filename, TYPE_FILE | FILESYS)) return 1;  // uncapable file
-  if (vfs_access(dirname, TYPE_DIR)) return 2;              // dir is not exists
+  strcpy(tmppath, dirname);
+  if (vfs_access(dirname, TYPE_DIR)) return 2;  // dir is not exists
   int file = lookup_auto(filename);
   int dir = lookup_auto(dirname);
   vinodes_mount(dir, "default", vinodes[file].fs_type, vinodes[file].fs);
