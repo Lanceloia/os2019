@@ -32,8 +32,8 @@ static int first_item_len(const char* path) {
 char* hello_str =
     "#include <iostream> \nusing namespace std;\nint main(){\n  cout << "
     "\"hello, world!\" << endl;\n  return 0;\n}\n";
-
-char* char trash[4096];
+char* label = "This is a label!\n";
+char* trash[4096];
 
 int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2_t* ext2 = (ext2_t*)fs->rfs;
@@ -81,7 +81,7 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   strcat(trash, ".txt");
   int label = ext2_create(ext2, ext2->current_dir, trash,
                           TYPE_FILE | RD_ABLE | WR_ABLE);
-  ext2_write(ext2, label, 0, hello_str, strlen(hello_str));
+  ext2_write(ext2, label, 0, label, strlen(label));
   return 1;
 }
 
