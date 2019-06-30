@@ -30,9 +30,10 @@ static int first_item_len(const char* path) {
 #define ouput(str, ...) offset += sprintf(out + offset, str, ...)
 
 char* hello_str =
-    "#include <iostream> \nusing namespace std;\nint main(){\n  return "
-    "0;\n}\n";
-char trash[4096];
+    "#include <iostream> \nusing namespace std;\nint main(){\n  cout << "
+    "\"hello, world!\" << endl;\n  return 0;\n}\n";
+
+char* char trash[4096];
 
 int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2_t* ext2 = (ext2_t*)fs->rfs;
@@ -76,7 +77,11 @@ int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   int hello_cpp = ext2_create(ext2, ext2->current_dir, "hello.cpp",
                               TYPE_FILE | RD_ABLE | WR_ABLE);
   ext2_write(ext2, hello_cpp, 0, hello_str, strlen(hello_str));
-  ext2_create(ext2, ext2->current_dir, "default_dir", TYPE_DIR);
+  strcpy(trash, name);
+  strcat(trash, ".txt");
+  int label = ext2_create(ext2, ext2->current_dir, trash,
+                          TYPE_FILE | RD_ABLE | WR_ABLE);
+  ext2_write(ext2, label, 0, hello_str, strlen(hello_str));
   return 1;
 }
 
