@@ -153,22 +153,46 @@ static void unlink_do(device_t *tty, char *path, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+static void mount_do(device_t *tty, char *argv, char *pwd) {
+  int offset = 0;
+  for (; argv[offset] && argv[offset] != ' ';) offset++;
+  argv[offset] = '\0';
+  build_abs_path(argv, pwd);
+  strcpy(abs_path2, abs_path);
+  build_abs_path(argv + offset + 1, pwd);
+  switch (vfs_mount(abs_path2, abs_path)) {
+    case 0:
+      sprintf(bigbuf, "Success! \n");
+    case 1:
+      sprintf(bigbuf, "Uncapable filesystem! \n");
+      break;
+    case 2:
+      sprintf(bigbuf, "Dir already exists! \n");
+      break;
+    default:
+      assert(0);
+      break;
+  }
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+}
+
 struct shellinfo {
   char *name;
   char *script;
   void (*func)(device_t *tty, char *argv, char *pwd);
   int offset;
 } INFO[] = {
-    {"unlink ", "  unlink [path]              (unlink path)", unlink_do, 7},
-    {"link ", "  link [oldpath] [newpath]   (link path)", link_do, 5},
-    {"rmdir ", "  rmdir [dirname]   (remove directory)", rmdir_do, 6},
-    {"mkdir ", "  mkdir [dirname]   (make directory)", mkdir_do, 6},
-    {"cat > ", "  cat > [filename]  (write file, end with  ~ )", catto_do, 6},
-    {"cat ", "  cat [filename]    (read file)", cat_do, 4},
-    {"cd ", "  cd [dirname]      (change directory)", cd_do, 3},
-    {"ls ", "  ls [dirname]      (list directory's items)", ls_do, 3},
-    {"echo ", "  echo [expr]       (print expreesion)", echo_do, 5},
-    {"pwd ", "  pwd               (print work directory)", pwd_do, 4},
+    {"unlink ", "  unlink [path]            (unlink [path])", unlink_do, 7},
+    {"link ", "  link [oldpath] [newpath] (link two [path])", link_do, 5},
+    {"mount ", "  mount [fs] [path] (mount [fs] to [path])", mount_do, 6},
+    {"rmdir ", "  rmdir [dirname]   (remove [dirname])", rmdir_do, 6},
+    {"mkdir ", "  mkdir [dirname]   (create [dirname])", mkdir_do, 6},
+    {"cat > ", "  cat > [file]  (write [file], end with [~])", catto_do, 6},
+    {"cat ", "  cat [file]    (read [file])", cat_do, 4},
+    {"cd ", "  cd [dirname]      (change [work_dir])", cd_do, 3},
+    {"ls ", "  ls [dirname]      (list [dirname]'s items)", ls_do, 3},
+    {"echo ", "  echo [message]       (print [message])", echo_do, 5},
+    {"pwd ", "  pwd               (print [work_dir])", pwd_do, 4},
 };
 
 static void default_do(device_t *tty) {

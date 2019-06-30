@@ -27,7 +27,6 @@ static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
   if (current) current->ctx = *ctx;
 
   task_t *otask = current, *ntask = NULL;
-
   if (current && current->state == RUNNING) current->state = RUNNABLE;
 
   int idx = (!current) ? 0 : current->idx;
@@ -40,9 +39,7 @@ static _Context *kmt_context_save_switch(_Event ev, _Context *ctx) {
   current->state = RUNNING;
 
   ntask = current;
-
   procfs_schdule(otask->proc, ntask->proc);
-
   return &current->ctx;
 }
 

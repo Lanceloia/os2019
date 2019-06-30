@@ -3,14 +3,15 @@
 
 #include <common.h>
 
-#define UNUSED 0x00
-#define EX_ABLE 0x01
-#define WR_ABLE 0x02
-#define RD_ABLE 0x04
-#define TYPE_FILE 0x10
-#define TYPE_DIR 0x20
-#define TYPE_LINK 0x40
-#define ALLOCED 0x80
+#define UNUSED 0x0000
+#define EX_ABLE 0x0001
+#define WR_ABLE 0x0002
+#define RD_ABLE 0x0004
+#define TYPE_FILE 0x0010
+#define TYPE_DIR 0x0020
+#define TYPE_LINK 0x0040
+#define FILESYS 0x0080
+#define ALLOCED 0x8000
 
 #define VFS 0x00
 #define EXT2FS 0x01
@@ -70,7 +71,7 @@ struct filesystem {
 // interface
 int vfs_init();
 int vfs_access(const char *path, int mode);
-int vfs_mount(const char *path, filesystem_t *fs);
+int vfs_mount(const char *filename, const char *dirname);
 int vfs_unmount(const char *path);
 int vfs_create(const char *path);
 int vfs_remove(const char *path);

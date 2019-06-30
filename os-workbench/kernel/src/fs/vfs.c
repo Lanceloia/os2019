@@ -52,28 +52,20 @@ static int last_item_len(const char *path) {
 }
 
 static int item_match(const char *s1, const char *s2, int len) {
-  // printf("P: %s\nT: %s\nlen: %d\n\n", s1, s2, len);
   if (strncmp(s1, s2, len)) return 0;
   return s1[len] == '\0';
 }
 
 static int lookup_cur(char *path, int *pflag, int cur, int *poffset) {
-  // cur: vinode_idx(cur_dir)
   if (!strlen(path)) {
     *pflag = 1;
     return cur;
   }
-  // printf("path: %s\n", path);
   int k, len = first_item_len(path);
-  for (k = vinodes[cur].child; k != -1; k = vinodes[k].next) {
-    if (item_match(vinodes[k].name, path, len)) {
-      // printf("name: %s\n", vinodes[k].name);
-      break;
-    }
-  }
+  for (k = vinodes[cur].child; k != -1; k = vinodes[k].next)
+    if (item_match(vinodes[k].name, path, len)) break;
 
   if (k == -1) {
-    // assert(0);
     *pflag = 0;
     return cur;
   }
@@ -158,7 +150,6 @@ static int lookup_auto(char *path) {
     oidx = nidx;
 
     if (item_match(buf.name, path + offset, flen)) {
-      // printf("read: %s, %d, %d\n\n", path + offset, flen, next);
       assert(next == -1);
       next = nidx;
     }
@@ -344,22 +335,16 @@ static int prepare_dir(int idx, int par, int fs_type, filesystem_t *fs) {
 }
 
 static int remove_dir(int idx, int par) {
-  // printf("%d %d fuck! \n", idx, par);
   int pre = vinodes[par].child;
   for (; vinodes[pre].next != idx;) pre = vinodes[pre].next;
   assert(vinodes[pre].next == idx);
   vinodes[pre].next = pidx->next;
-  // printf("d: %d, dd: %d\n", pidx->dot, pidx->ddot);
-  for (int k = pidx->child; k != -1; k = vinodes[k].next) {
-    delete_vinode(k);
-  }
-  // delete_vinode(pidx->ddot);
+  for (int k = pidx->child; k != -1; k = vinodes[k].next) delete_vinode(k);
   delete_vinode(idx);
   return 0;
 }
 
 int vinodes_mount(int par, char *name, int fs_type, filesystem_t *fs) {
-  // mount /dev/ramdisk0: par = vinode_idx("/dev"), name = "ramdisk0"
   int ret = append_dir(par, name, TYPE_DIR, fs_type, fs);
   switch (fs_type) {
     case VFS:
@@ -417,26 +402,22 @@ int fuck() {
 int vfs_init() {
   int root = build_root();
   int dev = append_dir(root, "dev", TYPE_DIR, VFS, NULL);
-  prepare_dir(dev, root, VFS, NULL);
-  int fs_proc = vfs_init_procfs(procfs_init, procfs_readdir);
-  vinodes_mount(root, "proc", PROCFS, &filesys[fs_proc]);
-
+  int proc = vfs_init_procfs(procfs_init, procfs_readdir);
   int r0 = vfs_init_blockdev("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
                              ext2_init, ext2_readdir);
   int r1 = vfs_init_blockdev("ramdisk1", dev_lookup("ramdisk1"), sizeof(ext2_t),
                              ext2_init, ext2_readdir);
-  append_file(dev, "ramdisk0", TYPE_FILE, EXT2FS, filesys[r0].rfs);
-  append_file(dev, "ramdisk1", TYPE_FILE, EXT2FS, filesys[r1].rfs);
+
+  prepare_dir(dev, root, VFS, NULL);
+  vinodes_mount(root, "proc", PROCFS, &filesys[proc]);
+
+  append_file(dev, "ramdisk0", TYPE_FILE | FILESYS, EXT2FS, &filesys[r0]);
+  append_file(dev, "ramdisk1", TYPE_FILE | FILESYS, EXT2FS, &filesys[r1]);
 
   append_file(dev, "tty1", TYPE_FILE | WR_ABLE, TTY, NULL);
   append_file(dev, "tty2", TYPE_FILE | WR_ABLE, TTY, NULL);
   append_file(dev, "tty3", TYPE_FILE | WR_ABLE, TTY, NULL);
   append_file(dev, "tty4", TYPE_FILE | WR_ABLE, TTY, NULL);
-
-  // printf("fuck");
-
-  // vinodes_mount(dev, "ramdisk0", EXT2FS, &filesys[fs_r0]);
-  // vinodes_mount(dev, "ramdisk1", EXT2FS, &filesys[fs_r1]);
 
   return 0;
 }
@@ -462,7 +443,14 @@ int vfs_help_getpathlen(const char *path) {
   return 0;
 }
 
-int vfs_mount(const char *path, filesystem_t *fs) { return 0; }
+int vfs_mount(const char *filename, const char *dirname) {
+  if (vfs_access(filename, TYPE_FILE | FILESYS)) return 1;  // uncapable file
+  if (vfs_access(dirname, TYPE_DIR)) return 2;              // dir is not exists
+  int file = lookup_auto(filename);
+  int dir = lookup_auto(dirname);
+  vinodes_mount(dir, "default", vinodes[file].fs_type, vinodes[file].fs);
+  return 0;
+}
 
 int vfs_unmount(const char *path) { return 0; }
 
