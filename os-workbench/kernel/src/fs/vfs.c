@@ -450,7 +450,7 @@ int vfs_mount(const char *filename, const char *dirname) {
 }
 
 int vfs_unmount(const char *path) {
-  if (!vfs_access(path, TYPE_DIR | UNMNT_ABLE)) return 1;  // dir is not exists
+  if (vfs_access(path, TYPE_DIR | UNMNT_ABLE)) return 1;  // dir is not exists
 
   strcpy(tmppath, path);
   int idx = lookup_auto(tmppath);
