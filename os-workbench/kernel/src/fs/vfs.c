@@ -427,6 +427,8 @@ char tmppath[1024];
 int vfs_access(const char *path, int mode) {
   strcpy(tmppath, path);
   int idx = lookup_auto(tmppath);
+  if (idx == -1) return 1;
+  printf("mode == %d, need == %d \n", vinodes[idx].mode, mode);
   return (vinodes[idx].mode & mode) != mode;
 }
 
