@@ -10,7 +10,8 @@
 #define TYPE_FILE 0x0010
 #define TYPE_DIR 0x0020
 #define TYPE_LINK 0x0040
-#define FILESYS 0x0080
+#define MNT_ABLE 0x0100
+#define UNMNT_ABLE 0x0200
 #define ALLOCED 0x8000
 
 #define VFS 0x00

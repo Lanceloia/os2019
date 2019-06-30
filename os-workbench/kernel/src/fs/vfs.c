@@ -388,8 +388,8 @@ int vfs_init() {
 
   prepare_dir(dev, root, VFS, NULL);
   append_dir(root, "proc", TYPE_DIR, PROCFS, &filesys[procfs]);
-  append_file(dev, "ramdisk0", TYPE_FILE | FILESYS, EXT2FS, &filesys[r0fs]);
-  append_file(dev, "ramdisk1", TYPE_FILE | FILESYS, EXT2FS, &filesys[r1fs]);
+  append_file(dev, "ramdisk0", TYPE_FILE | MNT_ABLE, EXT2FS, &filesys[r0fs]);
+  append_file(dev, "ramdisk1", TYPE_FILE | MNT_ABLE, EXT2FS, &filesys[r1fs]);
 
   append_file(dev, "tty1", TYPE_FILE | WR_ABLE, TTY, NULL);
   append_file(dev, "tty2", TYPE_FILE | WR_ABLE, TTY, NULL);
@@ -424,7 +424,7 @@ int vfs_help_getpathlen(const char *path) {
 
 int vfs_mount(const char *filename, const char *dirname) {
   // printf("%s \n %s \n", filename, dirname);
-  if (vfs_access(filename, TYPE_FILE | FILESYS)) return 1;  // uncapable file
+  if (vfs_access(filename, TYPE_FILE | MNT_ABLE)) return 1;  // uncapable file
   if (!vfs_access(dirname, TYPE_DIR)) return 2;  // dir is already exists
   strcpy(tmppath, filename);
   int file = lookup_auto(tmppath);
@@ -435,6 +435,9 @@ int vfs_mount(const char *filename, const char *dirname) {
   int par = lookup_auto(tmppath);
   int nidx = append_dir(par, tmppath + offset + 1, TYPE_DIR,
                         vinodes[file].fs_type, vinodes[file].fs);
+  vinodes[file].mode &= ~MNT_ABLE;
+  vinodes[nidx].linkcnt = file;
+  vinodes[nidx].mode |= UNMNT_ABLE;
   switch (vinodes[file].fs_type) {
     case EXT2FS:
       vinodes[nidx].ridx = EXT2_ROOT;
@@ -448,7 +451,7 @@ int vfs_mount(const char *filename, const char *dirname) {
 }
 
 int vfs_unmount(const char *path) {
-  if (!vfs_access(path, TYPE_DIR)) return 1;  // dir is not already exists
+  if (!vfs_access(path, TYPE_DIR | UNMNT_ABLE)) return 1;  // dir is not exists
 
   strcpy(tmppath, path);
   int idx = lookup_auto(tmppath);
@@ -456,6 +459,10 @@ int vfs_unmount(const char *path) {
   int offset = strlen(path) - last_item_len(path) - 1;
   tmppath[offset] = '\0';
   int par = lookup_auto(tmppath);
+
+  int file = vinodes[nidx].linkcnt;
+  vinodes[file].mode |= MNT_ABLE;
+
   remove_dir(idx, par);
   return 0;
 }
