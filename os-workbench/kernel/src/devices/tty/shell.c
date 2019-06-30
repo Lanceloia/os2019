@@ -200,6 +200,23 @@ static void mount_do(device_t *tty, char *argv, char *pwd) {
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
+static void unmount_do(device_t *tty, char *argv, char *pwd) {
+  int offset = 0;
+  build_abs_path(argv, pwd);
+  switch (vfs_unmount(abs_path)) {
+    case 0:
+      sprintf(bigbuf, "Success! \n");
+      break;
+    case 1:
+      sprintf(bigbuf, "Incorrect pathname! \n");
+      break;
+    default:
+      assert(0);
+      break;
+  }
+  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+}
+
 struct shellinfo {
   char *name;
   char *script;

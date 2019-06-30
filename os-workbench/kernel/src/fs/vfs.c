@@ -453,7 +453,7 @@ int vfs_unmount(const char *path) {
   strcpy(tmppath, path);
   int idx = lookup_auto(tmppath);
 
-  int offset = strlen(dirname) - last_item_len(dirname) - 1;
+  int offset = strlen(path) - last_item_len(path) - 1;
   tmppath[offset] = '\0';
   int par = lookup_auto(tmppath);
   remove_dir(idx, par);
@@ -473,7 +473,7 @@ int vfs_create(const char *path) {
   tmppath[offset] = '\0';
 
   int idx = lookup_auto(tmppath);
-  int ridx = -1, nidx = -1, ret = 0;
+  int ridx = -1, nidx = -1;
   switch (pidx->fs_type) {
     case EXT2FS:
       ridx = ext2_create(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1,
