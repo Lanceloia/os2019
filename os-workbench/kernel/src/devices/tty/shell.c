@@ -35,7 +35,7 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
     strcat(abs_path, ".");
   else
     strcat(abs_path, "/.");
-  vfs_ls(abs_path);
+  vfs_ls(abs_path, bigbuf);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
@@ -49,7 +49,7 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
   if (vfs_access(abs_path, TYPE_DIR)) {
     strcpy(pwd, vfs_getpath(abs_path));
   }
-  printf("Current: %s\n", pwd);
+  sprintf(bigbuf, "Current: %s\n", pwd);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
@@ -65,7 +65,7 @@ static void cat_do(device_t *tty, char *dirname, char *pwd) {
 static void catto_do(device_t *tty, char *dirname, char *pwd) {
   build_abs_path(dirname, pwd);
   int fd = vfs_open(abs_path, TYPE_FILE | WR_ABLE);
-  printf("path: %s\n", abs_path);
+  // printf("path: %s\n", abs_path);
   while (1) {
     int nread = tty->ops->read(tty, 0, bigbuf, sizeof(bigbuf));
     // printf("fuck?\n");
@@ -81,15 +81,15 @@ static void catto_do(device_t *tty, char *dirname, char *pwd) {
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
   build_abs_path(dirname, pwd);
   if (vfs_access(abs_path, TYPE_DIR)) {
-    printf("Dir is exists! \n");
+    sprintf(bigbuf, "Dir is exists! \n");
     return;
   }
   switch (vfs_create(abs_path)) {
     case 0:
-      printf("Success! \n");
+      sprintf(bigbuf, "Success! \n");
       break;
     case 1:
-      printf("Failed! \n");
+      sprintf(bigbuf, "Failed! \n");
       break;
 
     default:
@@ -101,16 +101,16 @@ static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
 
 static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
   build_abs_path(dirname, pwd);
-  if (!vfs_access(abs_path, TYPE_DIR)) printf("Dir is not exists! \n");
+  if (!vfs_access(abs_path, TYPE_DIR)) sprintf(bigbuf, "Dir is not exists! \n");
   switch (vfs_remove(abs_path)) {
     case 0:
-      printf("Success! \n");
+      sprintf(bigbuf, "Success! \n");
       break;
     case 1:
-      printf("The dir is no empty! \n");
+      sprintf(bigbuf, "The dir is no empty! \n");
       break;
     case 2:
-      printf("That is not a dir! \n");
+      sprintf(bigbuf, "That is not a dir! \n");
       break;
     default:
       assert(0);
@@ -134,10 +134,10 @@ static void unlink_do(device_t *tty, char *path, char *pwd) {
   build_abs_path(path, pwd);
   switch (vfs_unlink(abs_path)) {
     case 0:
-      printf("Success! \n");
+      sprintf(bigbuf, "Success! \n");
       break;
     case 1:
-      printf("Failed! \n");
+      sprintf(bigbuf, "Failed! \n");
       break;
     default:
       assert(0);
