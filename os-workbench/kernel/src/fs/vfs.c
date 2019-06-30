@@ -634,6 +634,8 @@ ssize_t vfs_write(int fd, char *buf, size_t nbyte) {
     case TTY:
       ret = tty_write(dev_lookup(vinodes[files[fd].vinode_idx].name),
                       files[fd].offset, buf, nbyte);
+      files[fd].offset += ret;
+      break;
     default:
       printf("Cannot write here! \n");
       break;
