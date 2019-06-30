@@ -3,7 +3,6 @@
 #include "../../../include/fs/ext2fs.h"
 #include "../../../include/fs/vfs.h"
 
-char readbuf[128], writebuf[128];
 char bigbuf[2048] = {};
 
 char abs_path[256], abs_path2[256];
@@ -177,11 +176,10 @@ char pwd[1024] = "/";
 
 void shell_task(void *name) {
   device_t *tty = dev_lookup(name);
-  // vfsdirs_alloc(name, dev_dir, TTY, total_dev_cnt++);
+  char readbuf[128], writebuf[128];
 
   while (1) {
     sprintf(writebuf, "(%s) $ ", name);
-    printf("%s\n", name);
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
     readbuf[nread - 1] = '\0';
