@@ -56,10 +56,13 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
 static void cat_do(device_t *tty, char *dirname, char *pwd) {
   build_abs_path(dirname, pwd);
   int fd = vfs_open(abs_path, TYPE_FILE | RD_ABLE);
-  while (vfs_read(fd, bigbuf, 1024))
+  if (fd == -1) {
+    sprintf(bigbuf, "That is not a readable file! \n");
     tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
-  bigbuf[0] = '\n', bigbuf[1] = '\0';
-  tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+  } else {
+    while (vfs_read(fd, bigbuf, 1024))
+      tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
+  }
 }
 
 static void catto_do(device_t *tty, char *dirname, char *pwd) {
