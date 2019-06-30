@@ -415,23 +415,26 @@ int fuck() {
 int vfs_init() {
   int root = build_root();
   int dev = append_dir(root, "dev", VFS, NULL);
-
-  // printf("fuck");
   prepare_dir(dev, root, VFS, NULL);
-
-  int fs_r0 = vfs_init_blockdev("ramdisk0", dev_lookup("ramdisk0"),
-                                sizeof(ext2_t), ext2_init, ext2_readdir);
-  int fs_r1 = vfs_init_blockdev("ramdisk1", dev_lookup("ramdisk1"),
-                                sizeof(ext2_t), ext2_init, ext2_readdir);
   int fs_proc = vfs_init_procfs(procfs_init, procfs_readdir);
-
-  vinodes_mount(dev, "ramdisk0", EXT2FS, &filesys[fs_r0]);
-  vinodes_mount(dev, "ramdisk1", EXT2FS, &filesys[fs_r1]);
   vinodes_mount(root, "proc", PROCFS, &filesys[fs_proc]);
+
+  int r0 = vfs_init_blockdev("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
+                             ext2_init, ext2_readdir);
+  int r1 = vfs_init_blockdev("ramdisk1", dev_lookup("ramdisk1"), sizeof(ext2_t),
+                             ext2_init, ext2_readdir);
+  append_file(dev, "ramdisk0", EXT2FS, filesys[r0].rfs);
+  append_file(dev, "ramdisk1", EXT2FS, filesys[r1].rfs);
+
   append_file(dev, "tty1", TTY, NULL);
   append_file(dev, "tty2", TTY, NULL);
   append_file(dev, "tty3", TTY, NULL);
   append_file(dev, "tty4", TTY, NULL);
+
+  // printf("fuck");
+
+  // vinodes_mount(dev, "ramdisk0", EXT2FS, &filesys[fs_r0]);
+  // vinodes_mount(dev, "ramdisk1", EXT2FS, &filesys[fs_r1]);
 
   return 0;
 }
