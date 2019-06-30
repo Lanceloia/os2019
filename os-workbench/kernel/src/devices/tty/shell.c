@@ -40,16 +40,20 @@ static void ls_do(device_t *tty, char *dirname, char *pwd) {
 }
 
 static void cd_do(device_t *tty, char *dirname, char *pwd) {
-  extern char *vfs_getpath(const char *dirname);
   build_abs_path(dirname, pwd);
-  if (abs_path[strlen(abs_path) - 1] == '/')
-    strcat(abs_path, ".");
-  else
-    strcat(abs_path, "/.");
-  if (!vfs_access(abs_path, TYPE_DIR)) {
-    strcpy(pwd, vfs_getpath(abs_path));
+  if (vfs_access(abs_path, TYPE_DIR)) {
+    sprintf(bigbuf, "That is not a dir! \n");
+  } else {
+    if (abs_path[strlen(abs_path) - 1] == '/')
+      strcat(abs_path, ".");
+    else
+      strcat(abs_path, "/.");
+    if (!vfs_access(abs_path, TYPE_DIR)) {
+      extern char *vfs_getpath(const char *dirname);
+      strcpy(pwd, vfs_getpath(abs_path));
+    }
+    sprintf(bigbuf, "Current: %s\n", pwd);
   }
-  sprintf(bigbuf, "Current: %s\n", pwd);
   tty->ops->write(tty, 0, bigbuf, strlen(bigbuf));
 }
 
