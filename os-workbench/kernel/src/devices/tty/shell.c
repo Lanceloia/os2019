@@ -181,6 +181,7 @@ void shell_task(void *name) {
 
   while (1) {
     sprintf(writebuf, "(%s) $ ", name);
+    printf("%s\n", name);
     tty->ops->write(tty, 0, writebuf, strlen(writebuf));
     int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
     readbuf[nread - 1] = '\0';
