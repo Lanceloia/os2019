@@ -433,11 +433,10 @@ int vfs_mount(const char *filename, const char *dirname) {
   int offset = strlen(dirname) - last_item_len(dirname) - 1;
   tmppath[offset] = '\0';
   int par = lookup_auto(tmppath);
-  int nidx = append_dir(par, tmppath + offset + 1, TYPE_DIR,
+  int nidx = append_dir(par, tmppath + offset + 1, TYPE_DIR | UNMNT_ABLE,
                         vinodes[file].fs_type, vinodes[file].fs);
   vinodes[file].mode &= ~MNT_ABLE;
   vinodes[nidx].linkcnt = file;
-  vinodes[nidx].mode |= UNMNT_ABLE;
   switch (vinodes[file].fs_type) {
     case EXT2FS:
       vinodes[nidx].ridx = EXT2_ROOT;
