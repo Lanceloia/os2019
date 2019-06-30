@@ -67,13 +67,13 @@ static void catto_do(device_t *tty, char *dirname, char *pwd) {
   int fd = vfs_open(abs_path, TYPE_FILE | WR_ABLE);
   printf("path: %s\n", abs_path);
   while (1) {
-    int nread = tty->ops->read(tty, 0, readbuf, sizeof(readbuf));
+    int nread = tty->ops->read(tty, 0, bigbuf, sizeof(bigbuf));
     // printf("fuck?\n");
-    if (readbuf[nread - 2] == '~') {
-      vfs_write(fd, readbuf, nread - 2);
+    if (bigbuf[nread - 2] == '~') {
+      vfs_write(fd, bigbuf, nread - 2);
       break;
     } else {
-      vfs_write(fd, readbuf, nread);
+      vfs_write(fd, bigbuf, nread);
     }
   }
 }
