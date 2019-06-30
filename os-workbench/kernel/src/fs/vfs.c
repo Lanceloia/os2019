@@ -344,28 +344,6 @@ static int remove_dir(int idx, int par) {
   return 0;
 }
 
-int vinodes_mount(int par, char *name, int fs_type, filesystem_t *fs) {
-  int ret = append_dir(par, name, TYPE_DIR, fs_type, fs);
-  switch (fs_type) {
-    case VFS:
-      vinodes[ret].ridx = VFS_ROOT;
-      break;
-    case EXT2FS:
-      vinodes[ret].ridx = EXT2_ROOT;
-      break;
-    case PROCFS:
-      vinodes[ret].ridx = PROCFS_ROOT;  // no use
-      break;
-    case TTY:
-      vinodes[ret].ridx = 0;  // no use
-      break;
-    default:
-      assert(0);
-      break;
-  }
-  return ret;
-}
-
 //
 static int files_alloc() {
   for (int i = 0; i < MAX_FILE; i++)
@@ -402,17 +380,17 @@ int fuck() {
 int vfs_init() {
   int root = build_root();
   int dev = append_dir(root, "dev", TYPE_DIR, VFS, NULL);
-  int proc = vfs_init_procfs(procfs_init, procfs_readdir);
-  int r0 = vfs_init_blockdev("ramdisk0", dev_lookup("ramdisk0"), sizeof(ext2_t),
-                             ext2_init, ext2_readdir);
-  int r1 = vfs_init_blockdev("ramdisk1", dev_lookup("ramdisk1"), sizeof(ext2_t),
-                             ext2_init, ext2_readdir);
+  append_dir(root, "proc", TYPE_DIR, PROCFS, &filesys[procfs]);
+
+  int procfs = vfs_init_procfs(procfs_init, procfs_readdir);
+  int r0fs = vfs_init_blockdev("ramdisk0", dev_lookup("ramdisk0"),
+                               sizeof(ext2_t), ext2_init, ext2_readdir);
+  int r1fs = vfs_init_blockdev("ramdisk1", dev_lookup("ramdisk1"),
+                               sizeof(ext2_t), ext2_init, ext2_readdir);
 
   prepare_dir(dev, root, VFS, NULL);
-  vinodes_mount(root, "proc", PROCFS, &filesys[proc]);
-
-  append_file(dev, "ramdisk0", TYPE_FILE | FILESYS, EXT2FS, &filesys[r0]);
-  append_file(dev, "ramdisk1", TYPE_FILE | FILESYS, EXT2FS, &filesys[r1]);
+  append_file(dev, "ramdisk0", TYPE_FILE | FILESYS, EXT2FS, &filesys[r0fs]);
+  append_file(dev, "ramdisk1", TYPE_FILE | FILESYS, EXT2FS, &filesys[r1fs]);
 
   append_file(dev, "tty1", TYPE_FILE | WR_ABLE, TTY, NULL);
   append_file(dev, "tty2", TYPE_FILE | WR_ABLE, TTY, NULL);
@@ -428,7 +406,7 @@ int vfs_access(const char *path, int mode) {
   strcpy(tmppath, path);
   int idx = lookup_auto(tmppath);
   if (idx == -1) return 1;
-  printf("mode == %d, need == %d \n", vinodes[idx].mode, mode);
+  // printf("mode == %d, need == %d \n", vinodes[idx].mode, mode);
   return (vinodes[idx].mode & mode) != mode;
 }
 
@@ -448,12 +426,25 @@ int vfs_help_getpathlen(const char *path) {
 int vfs_mount(const char *filename, const char *dirname) {
   printf("%s \n %s \n", filename, dirname);
   if (vfs_access(filename, TYPE_FILE | FILESYS)) return 1;  // uncapable file
-  if (vfs_access(dirname, TYPE_DIR)) return 2;              // dir is not exists
+  if (!vfs_access(dirname, TYPE_DIR)) return 2;  // dir is already exists
   strcpy(tmppath, filename);
   int file = lookup_auto(tmppath);
+
   strcpy(tmppath, dirname);
-  int dir = lookup_auto(tmppath);
-  vinodes_mount(dir, "default", vinodes[file].fs_type, vinodes[file].fs);
+  int offset = strlen(newpath) - last_item_len(newpath) - 1;
+  tmppath[offset] = '\0';
+  int par = lookup_auto(tmppath);
+  int nidx = append_dir(par, tmppath + offset + 1, TYPE_DIR,
+                        vinodes[file].fs_type, vinodes[file].fs);
+  switch (vinodes[file].fs_type) {
+    case EXT2FS:
+      vinodes[nidx].ridx = EXT2_ROOT;
+      break;
+
+    default:
+      break;
+  }
+
   return 0;
 }
 

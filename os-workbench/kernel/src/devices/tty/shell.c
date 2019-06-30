@@ -163,6 +163,7 @@ static void mount_do(device_t *tty, char *argv, char *pwd) {
   switch (vfs_mount(abs_path2, abs_path)) {
     case 0:
       sprintf(bigbuf, "Success! \n");
+      break;
     case 1:
       sprintf(bigbuf, "Uncapable filesystem! \n");
       break;
