@@ -33,7 +33,7 @@ char* hello_str =
     "#include <iostream> \nusing namespace std;\nint main(){\n  cout << "
     "\"hello, world!\" << endl;\n  return 0;\n}\n";
 char* label_str = "This is a label!\n";
-char* trash[4096];
+char trash[4096];
 
 int ext2_init(filesystem_t* fs, const char* name, device_t* dev) {
   ext2_t* ext2 = (ext2_t*)fs->rfs;
