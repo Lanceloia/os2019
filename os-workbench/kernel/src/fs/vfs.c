@@ -648,18 +648,17 @@ off_t vfs_lseek(int fd, off_t offset, int whence) { return 0; }
 int vfs_close(int fd) { return 0; }
 
 void vfs_ls(char *dirname, char *outbuf) {
-  int offset = sprintf(outbuf, "\n");
   int idx = lookup_auto(dirname);
   if (idx == -1) return;
-  offset +=
-      sprintf(outbuf + offset,
-              "-----------------------------------------------------------\n");
+  int offset = sprintf(
+      outbuf, "-----------------------------------------------------------\n");
+
   offset += sprintf(outbuf + offset,
-                    "-     index       name                  path        \n");
-  offset += sprintf(outbuf + offset, ">>   %4d        %12s          %s\n\n",
+                    "      index       name                  path        \n");
+  offset += sprintf(outbuf + offset, ">>   %4d         %12s          %s\n\n",
                     idx, vinodes[idx].name, vinodes[idx].path);
   for (int k = vinodes[idx].child; k != -1; k = vinodes[k].next) {
-    offset += sprintf(outbuf + offset, "-    %4d        %12s          %s\n", k,
+    offset += sprintf(outbuf + offset, "-    %4d         %12s          %s\n", k,
                       vinodes[k].name, vinodes[k].path);
   }
   offset +=
