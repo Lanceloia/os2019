@@ -487,7 +487,8 @@ int vfs_create(const char *path) {
     case EXT2FS:
       ridx = ext2_create(pidx->fs->rfs, pidx->ridx, tmppath + offset + 1,
                          TYPE_DIR);
-      nidx = append_dir(idx, tmppath + offset + 1, pidx->fs_type, pidx->fs);
+      nidx = append_dir(idx, tmppath + offset + 1, TYPE_DIR, pidx->fs_type,
+                        pidx->fs);
       prepare_dir(nidx, idx, pidx->fs_type, pidx->fs);
       pnidx->ridx = ridx;
       break;
@@ -553,9 +554,8 @@ int vfs_link(const char *oldpath, const char *newpath) {
   int offset = strlen(newpath) - last_item_len(newpath) - 1;
   tmppath[offset] = '\0';
   int par = lookup_auto(tmppath);
-  nidx = append_dir(par, tmppath + offset + 1, VFS, NULL);
+  nidx = append_dir(par, tmppath + offset + 1, TYPE_LINK, VFS, NULL);
   if (poidx->mode & TYPE_FILE) pnidx->path[strlen(pnidx->path) - 1] = '\0';
-  pnidx->mode = TYPE_LINK;
   add_link(oidx, nidx);
   return 0;
 }
