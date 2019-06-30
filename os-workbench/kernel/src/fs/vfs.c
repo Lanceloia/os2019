@@ -444,6 +444,7 @@ int vfs_help_getpathlen(const char *path) {
 }
 
 int vfs_mount(const char *filename, const char *dirname) {
+  printf("%s \n %s \n", filename, dirname);
   if (vfs_access(filename, TYPE_FILE | FILESYS)) return 1;  // uncapable file
   if (vfs_access(dirname, TYPE_DIR)) return 2;              // dir is not exists
   strcpy(tmppath, filename);
