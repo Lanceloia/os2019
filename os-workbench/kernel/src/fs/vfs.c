@@ -380,6 +380,7 @@ int fuck() {
 int vfs_init() {
   int root = build_root();
   int dev = append_dir(root, "dev", TYPE_DIR, VFS, NULL);
+  int mnt = append_dir(root, "mnt", TYPE_DIR, VFS, NULL);
   int procfs = vfs_init_procfs(procfs_init, procfs_readdir);
   int r0fs = vfs_init_blockdev("ramdisk0", dev_lookup("ramdisk0"),
                                sizeof(ext2_t), ext2_init, ext2_readdir);
@@ -387,6 +388,8 @@ int vfs_init() {
                                sizeof(ext2_t), ext2_init, ext2_readdir);
 
   prepare_dir(dev, root, VFS, NULL);
+  prepare_dir(mnt, root, VFS, NULL);
+
   append_dir(root, "proc", TYPE_DIR, PROCFS, &filesys[procfs]);
   append_file(dev, "ramdisk0", TYPE_FILE | MNT_ABLE, EXT2FS, &filesys[r0fs]);
   append_file(dev, "ramdisk1", TYPE_FILE | MNT_ABLE, EXT2FS, &filesys[r1fs]);
