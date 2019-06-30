@@ -444,7 +444,7 @@ char tmppath[1024];
 int vfs_access(const char *path, int mode) {
   strcpy(tmppath, path);
   int idx = lookup_auto(tmppath);
-  return vinodes[idx].mode & mode;
+  return (vinodes[idx].mode & mode) != mode;
 }
 
 char *vfs_getpath(const char *path) {
@@ -591,7 +591,7 @@ int vfs_unlink(const char *path) {
 }
 
 int vfs_open(const char *path, int mode) {
-  if (!vfs_access(path, mode)) return -1;
+  if (vfs_access(path, mode)) return -1;
 
   int idx = lookup_auto(tmppath);
   return vinode_open(idx, mode);
