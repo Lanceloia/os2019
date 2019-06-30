@@ -46,7 +46,7 @@ static void cd_do(device_t *tty, char *dirname, char *pwd) {
     strcat(abs_path, ".");
   else
     strcat(abs_path, "/.");
-  if (vfs_access(abs_path, TYPE_DIR)) {
+  if (!vfs_access(abs_path, TYPE_DIR)) {
     strcpy(pwd, vfs_getpath(abs_path));
   }
   sprintf(bigbuf, "Current: %s\n", pwd);
@@ -83,7 +83,7 @@ static void catto_do(device_t *tty, char *dirname, char *pwd) {
 
 static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
   build_abs_path(dirname, pwd);
-  if (vfs_access(abs_path, TYPE_DIR)) {
+  if (!vfs_access(abs_path, TYPE_DIR)) {
     sprintf(bigbuf, "Dir is exists! \n");
     return;
   }
@@ -104,7 +104,7 @@ static void mkdir_do(device_t *tty, char *dirname, char *pwd) {
 
 static void rmdir_do(device_t *tty, char *dirname, char *pwd) {
   build_abs_path(dirname, pwd);
-  if (!vfs_access(abs_path, TYPE_DIR)) sprintf(bigbuf, "Dir is not exists! \n");
+  if (vfs_access(abs_path, TYPE_DIR)) sprintf(bigbuf, "Dir is not exists! \n");
   switch (vfs_remove(abs_path)) {
     case 0:
       sprintf(bigbuf, "Success! \n");
