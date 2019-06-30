@@ -431,7 +431,7 @@ int vfs_mount(const char *filename, const char *dirname) {
   int file = lookup_auto(tmppath);
 
   strcpy(tmppath, dirname);
-  int offset = strlen(newpath) - last_item_len(newpath) - 1;
+  int offset = strlen(dirname) - last_item_len(dirname) - 1;
   tmppath[offset] = '\0';
   int par = lookup_auto(tmppath);
   int nidx = append_dir(par, tmppath + offset + 1, TYPE_DIR,
