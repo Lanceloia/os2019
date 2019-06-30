@@ -237,33 +237,33 @@ static int vfs_init_procfs(void (*init)(filesystem_t *, const char *,
     pddot->fs = FS;                                                 \
   } while (0)
 
-#define build_general_null_dir(IDX, DOT, DDOT, NAME, FSTYPE, FS) \
-  do {                                                           \
-    strcpy(vinodes[IDX].name, NAME);                             \
-    strcpy(vinodes[IDX].path, vinodes[DOT].path);                \
-    strcat(vinodes[IDX].path, NAME);                             \
-    strcat(vinodes[IDX].path, "/");                              \
-    vinodes[IDX].dot = DOT, vinodes[IDX].ddot = DDOT;            \
-    vinodes[IDX].next = -1, vinodes[IDX].child = -1;             \
-    vinodes[IDX].prev_link = vinodes[IDX].next_link = IDX;       \
-    vinodes[IDX].linkcnt = 1;                                    \
-    vinodes[IDX].mode = TYPE_DIR;                                \
-    vinodes[IDX].fs_type = FSTYPE;                               \
-    vinodes[IDX].fs = FS;                                        \
+#define build_general_null_dir(IDX, DOT, DDOT, NAME, MODE, FSTYPE, FS) \
+  do {                                                                 \
+    strcpy(vinodes[IDX].name, NAME);                                   \
+    strcpy(vinodes[IDX].path, vinodes[DOT].path);                      \
+    strcat(vinodes[IDX].path, NAME);                                   \
+    strcat(vinodes[IDX].path, "/");                                    \
+    vinodes[IDX].dot = DOT, vinodes[IDX].ddot = DDOT;                  \
+    vinodes[IDX].next = -1, vinodes[IDX].child = -1;                   \
+    vinodes[IDX].prev_link = vinodes[IDX].next_link = IDX;             \
+    vinodes[IDX].linkcnt = 1;                                          \
+    vinodes[IDX].mode = MODE;                                          \
+    vinodes[IDX].fs_type = FSTYPE;                                     \
+    vinodes[IDX].fs = FS;                                              \
   } while (0)
 
-#define build_general_file(IDX, DOT, DDOT, NAME, FSTYPE, FS) \
-  do {                                                       \
-    strcpy(vinodes[IDX].name, NAME);                         \
-    strcpy(vinodes[IDX].path, vinodes[DOT].path);            \
-    strcat(vinodes[IDX].path, NAME);                         \
-    vinodes[IDX].dot = DOT, vinodes[IDX].ddot = DDOT;        \
-    vinodes[IDX].next = -1, vinodes[IDX].child = -1;         \
-    vinodes[IDX].prev_link = vinodes[IDX].next_link = IDX;   \
-    vinodes[IDX].linkcnt = 1;                                \
-    vinodes[IDX].mode = TYPE_FILE;                           \
-    vinodes[IDX].fs_type = FSTYPE;                           \
-    vinodes[IDX].fs = FS;                                    \
+#define build_general_file(IDX, DOT, DDOT, NAME, MODE, FSTYPE, FS) \
+  do {                                                             \
+    strcpy(vinodes[IDX].name, NAME);                               \
+    strcpy(vinodes[IDX].path, vinodes[DOT].path);                  \
+    strcat(vinodes[IDX].path, NAME);                               \
+    vinodes[IDX].dot = DOT, vinodes[IDX].ddot = DDOT;              \
+    vinodes[IDX].next = -1, vinodes[IDX].child = -1;               \
+    vinodes[IDX].prev_link = vinodes[IDX].next_link = IDX;         \
+    vinodes[IDX].linkcnt = 1;                                      \
+    vinodes[IDX].mode = MODE;                                      \
+    vinodes[IDX].fs_type = FSTYPE;                                 \
+    vinodes[IDX].fs = FS;                                          \
   } while (0)
 
 #define delete_vinode(IDX) \
@@ -285,7 +285,7 @@ static int build_root() {
   pidx->next = -1, pidx->child = dot;
   pidx->prev_link = pidx->next_link = idx;
   pidx->linkcnt = 1;
-  pidx->mode = TYPE_DIR | RD_ABLE | WR_ABLE;
+  pidx->mode = TYPE_DIR;
   pidx->fs_type = VFS;
   pidx->fs = NULL;
 
@@ -295,7 +295,8 @@ static int build_root() {
   return idx;
 }
 
-static int append_dir(int par, char *name, int fs_type, filesystem_t *fs) {
+static int append_dir(int par, char *name, int mode, int fs_type,
+                      filesystem_t *fs) {
   int nidx = vinodes_alloc(), k = vinodes[par].child, dot = -1, ddot = -1;
   assert(k != -1);
 
@@ -308,11 +309,12 @@ static int append_dir(int par, char *name, int fs_type, filesystem_t *fs) {
   }
   assert(dot != -1 && ddot != -1);
   vinodes[k].next = nidx;
-  build_general_null_dir(nidx, dot, ddot, name, fs_type, fs);
+  build_general_null_dir(nidx, dot, ddot, name, mode, fs_type, fs);
   return nidx;
 }
 
-static int append_file(int par, char *name, int fs_type, filesystem_t *fs) {
+static int append_file(int par, char *name, int mode, int fs_type,
+                       filesystem_t *fs) {
   int nidx = vinodes_alloc(), k = vinodes[par].child, dot = -1, ddot = -1;
   assert(k != -1);
 
@@ -325,7 +327,7 @@ static int append_file(int par, char *name, int fs_type, filesystem_t *fs) {
   }
   assert(dot != -1 && ddot != -1);
   vinodes[k].next = nidx;
-  build_general_file(nidx, dot, ddot, name, fs_type, fs);
+  build_general_file(nidx, dot, ddot, name, mode, fs_type, fs);
   return nidx;
 }
 
@@ -358,7 +360,7 @@ static int remove_dir(int idx, int par) {
 
 int vinodes_mount(int par, char *name, int fs_type, filesystem_t *fs) {
   // mount /dev/ramdisk0: par = vinode_idx("/dev"), name = "ramdisk0"
-  int ret = append_dir(par, name, fs_type, fs);
+  int ret = append_dir(par, name, TYPE_DIR, fs_type, fs);
   switch (fs_type) {
     case VFS:
       vinodes[ret].ridx = VFS_ROOT;
@@ -414,7 +416,7 @@ int fuck() {
 
 int vfs_init() {
   int root = build_root();
-  int dev = append_dir(root, "dev", VFS, NULL);
+  int dev = append_dir(root, "dev", TYPE_DIR, VFS, NULL);
   prepare_dir(dev, root, VFS, NULL);
   int fs_proc = vfs_init_procfs(procfs_init, procfs_readdir);
   vinodes_mount(root, "proc", PROCFS, &filesys[fs_proc]);
@@ -423,13 +425,13 @@ int vfs_init() {
                              ext2_init, ext2_readdir);
   int r1 = vfs_init_blockdev("ramdisk1", dev_lookup("ramdisk1"), sizeof(ext2_t),
                              ext2_init, ext2_readdir);
-  append_file(dev, "ramdisk0", EXT2FS, filesys[r0].rfs);
-  append_file(dev, "ramdisk1", EXT2FS, filesys[r1].rfs);
+  append_file(dev, "ramdisk0", TYPE_FILE, EXT2FS, filesys[r0].rfs);
+  append_file(dev, "ramdisk1", TYPE_FILE, EXT2FS, filesys[r1].rfs);
 
-  append_file(dev, "tty1", TTY, NULL);
-  append_file(dev, "tty2", TTY, NULL);
-  append_file(dev, "tty3", TTY, NULL);
-  append_file(dev, "tty4", TTY, NULL);
+  append_file(dev, "tty1", TYPE_FILE | WR_ABLE, TTY, NULL);
+  append_file(dev, "tty2", TYPE_FILE | WR_ABLE, TTY, NULL);
+  append_file(dev, "tty3", TYPE_FILE | WR_ABLE, TTY, NULL);
+  append_file(dev, "tty4", TYPE_FILE | WR_ABLE, TTY, NULL);
 
   // printf("fuck");
 
